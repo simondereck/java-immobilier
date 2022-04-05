@@ -1,0 +1,159 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" th:href="@{/css/map/location.css}" />
+    <div class="location-div">
+        <div id='map'></div>
+        <div>
+            <div class="location-details">
+                <div th:if="${annonces}" th:each="annonce,iter:${annonces}" >
+                    <div th:if="${iter.index%4==0}">
+                        <div class="location-row">
+                            <div th:if="${iter.index < iter.size}" class="location-detail-item" th:data-id="${annonces[iter.index].id}">
+                                <div th:if="${annonces[iter.index].images}">
+                                    <img th:src="${annonces[iter.index].images[0]}" />
+                                </div>
+                                <div th:unless="${annonces[iter.index].images}">
+                                    <img th:src="@{/img/default.jpg}" />
+                                </div>
+                                <div class="location-detail-item-desc">
+                                    <view th:if="${annonces[iter.index].location}" th:remove="tag">
+                                        <div class="title" th:if="${villes[annonces[iter.index].location+'']}" th:text="${villes[annonces[iter.index].location+''].name}"></div>
+                                    </view>
+                                    <div th:if="${annonces[iter.index].furniture}" th:remove="tag">
+                                        <div class="title" th:text="${'家具齐全 '+ annonces[iter.index].size + ' 平 '}"></div>
+                                    </div>
+                                    <div th:unless="${annonces[iter.index].furniture}" th:remove="tag">
+                                        <div class="title" th:text="${'不带家具 '+ annonces[iter.index].size + ' 平 '}"></div>
+                                    </div>
+                                    <div th:text="${'起租时间：'+annonces[iter.index].sdate}"></div>
+                                    <div th:text="${'价格：'+annonces[iter.index].price}"></div>
+                                </div>
+                            </div>
+
+                            <div th:if="${iter.index+1 < iter.size }" class="location-detail-item" th:data-id="${annonces[iter.index+1].id}">
+                                <div th:if="${annonces[iter.index+1].images}">
+                                    <img th:src="${annonces[iter.index+1].images[0]}" />
+                                </div>
+                                <div th:unless="${annonces[iter.index+1].images}">
+                                    <img th:src="@{/img/default.jpg}" />
+                                </div>
+                                <div class="location-detail-item-desc">
+                                    <view th:if="${annonces[iter.index+1].location}" th:remove="tag">
+                                        <div class="title" th:if="${villes[annonces[iter.index+1].location+'']}" th:text="${villes[annonces[iter.index+1].location+''].name}"></div>
+                                    </view>
+                                    <div th:if="${annonces[iter.index+1].furniture}" th:remove="tag">
+                                        <div class="title" th:text="${'家具齐全 '+ annonces[iter.index+1].size + ' 平 '}"></div>
+                                    </div>
+                                    <div th:unless="${annonces[iter.index+1].furniture}" th:remove="tag">
+                                        <div class="title" th:text="${'不带家具 '+ annonces[iter.index+1].size + ' 平 '}"></div>
+                                    </div>
+                                    <div th:text="${'起租时间：'+annonces[iter.index+1].sdate}"></div>
+                                    <div th:text="${'价格：'+annonces[iter.index+1].price}"></div>
+                                </div>
+                            </div>
+
+                            <div th:if="${iter.index+2 < iter.size }" class="location-detail-item" th:data-id="${annonces[iter.index+2].id}">
+                                <div th:if="${annonces[iter.index+2].images}">
+                                    <img th:src="${annonces[iter.index+2].images[0]}" />
+                                </div>
+                                <div th:unless="${annonces[iter.index+2].images}">
+                                    <img th:src="@{/img/default.jpg}" />
+                                </div>
+                                <div class="location-detail-item-desc">
+                                    <view th:if="${annonces[iter.index+2].location}" th:remove="tag">
+                                        <div class="title" th:if="${villes[annonces[iter.index+2].location+'']}" th:text="${villes[annonces[iter.index+2].location+''].name}"></div>
+                                    </view>
+                                    <div th:if="${annonces[iter.index+2].furniture}" th:remove="tag">
+                                        <div class="title" th:text="${'家具齐全 '+ annonces[iter.index+2].size + ' 平 '}"></div>
+                                    </div>
+                                    <div th:unless="${annonces[iter.index+2].furniture}" th:remove="tag">
+                                        <div class="title" th:text="${'不带家具 '+ annonces[iter.index+2].size + ' 平 '}"></div>
+                                    </div>
+                                    <div th:text="${'起租时间：'+annonces[iter.index+2].sdate}"></div>
+                                    <div th:text="${'价格：'+annonces[iter.index+2].price}"></div>
+                                </div>
+                            </div>
+                            <div th:if="${iter.index+3 < iter.size }" class="location-detail-item" th:data-id="${annonces[iter.index+3].id}">
+                                <div th:if="${annonces[iter.index+3].images}">
+                                    <img th:src="${annonces[iter.index+3].images[0]}" />
+                                </div>
+                                <div th:unless="${annonces[iter.index+3].images}">
+                                    <img th:src="@{/img/default.jpg}" />
+                                </div>
+                                <div class="location-detail-item-desc">
+                                    <view th:if="${annonces[iter.index+3].location}" th:remove="tag">
+                                        <div class="title" th:if="${villes[annonces[iter.index+3].location+'']}" th:text="${villes[annonces[iter.index+3].location+''].name}"></div>
+                                    </view>
+                                    <div th:if="${annonces[iter.index+3].furniture}" th:remove="tag">
+                                        <div class="title" th:text="${'家具齐全 '+ annonces[iter.index+3].size + ' 平 '}"></div>
+                                    </div>
+                                    <div th:unless="${annonces[iter.index+3].furniture}" th:remove="tag">
+                                        <div class="title" th:text="${'不带家具 '+ annonces[iter.index+3].size + ' 平 '}"></div>
+                                    </div>
+                                    <div th:text="${'起租时间：'+annonces[iter.index+3].sdate}"></div>
+                                    <div th:text="${'价格：'+annonces[iter.index+3].price}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${pageHelper}" class="pages-set">
+                <div th:if="${pageHelper.totalPage>0}" th:remove="tag">
+                    <ul class="pagination">
+                        <div th:each="page,iter:${pageHelper.pages}" th:remove="tag">
+                            <li  class="page-item"><a th:text="${page.key}" th:href="${page.url}" class="page-link"></a></li>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGFpd2FpaHVhbmdkaSIsImEiOiJja2huZGpmZmUyZW5pMnJxcXA0bHlycmc0In0.Wh2Kzu-CfQYA0D91x5YyNg';
+
+        /*<![CDATA[*/
+
+        var lat = [[${region.lat}]];
+        var lng = [[${region.lng}]];
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+            center: [lng, lat], // starting position [lng, lat]
+            zoom: 12 // starting zoom
+        });
+
+        /*]]>*/
+
+        $(".location-detail-item").click(function (){
+            let id = $(this).attr("data-id");
+            window.location.href = "/location/house/detail/"+id+".html";
+        });
+
+        function addLatLng(latlng){
+            var marker = new mapboxgl.Marker()
+                .setLngLat(latlng)
+                .addTo(map);
+            map.resize();
+        }
+
+    </script>
+    <script th:if="${latlngs}"  th:inline="javascript">
+        $(function(){
+            /*<![CDATA[*/
+            var locations = [[${latlngs}]] ;
+            /*]]>*/
+            for (let i = 0; i < locations.length; i++) {
+                var obj = jQuery.parseJSON(locations[i].centerJson);
+                addLatLng(obj);
+            }
+        });
+
+    </script>
+</div>
+</html>

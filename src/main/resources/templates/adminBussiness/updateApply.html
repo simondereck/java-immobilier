@@ -1,0 +1,138 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="apply-div" th:data-id="${id}">
+<!--        <div th:if="${applys}" th:remove="tag">-->
+<!--            <table>-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>ID</th>-->
+<!--                    <th>姓,名</th>-->
+<!--                    <th>电话</th>-->
+<!--                    <th>邮箱</th>-->
+<!--                    <th>微信</th>-->
+<!--                    <th>创建时间</th>-->
+<!--                    <th>类型</th>-->
+<!--                    <th>状态</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <div th:each="apply,iter:${applys}">-->
+<!--                    <tr class="admin-item">-->
+<!--                        <td th:text="${apply.id}"></td>-->
+<!--                        <td th:text="${apply.nom + ' ' + apply.prenom}"></td>-->
+<!--                        <td th:text="${apply.telephone}"></td>-->
+<!--                        <td th:text="${apply.email}"></td>-->
+<!--                        <td th:text="${apply.wechat}"></td>-->
+<!--                        <td th:text="${apply.ctime}"></td>-->
+<!--                        <view th:if="${apply.type==1}" th:remove="tag">-->
+<!--                            <td>学生创业</td>-->
+<!--                        </view>-->
+<!--                        <view th:if="${apply.type==2}" th:remove="tag">-->
+<!--                            <td>加盟</td>-->
+<!--                        </view>-->
+
+<!--                        <view th:if="${apply.status==1}" th:remove="tag">-->
+<!--                            <td>已处理</td>-->
+<!--                        </view>-->
+<!--                        <view th:if="${apply.status==0}" th:remove="tag">-->
+<!--                            <td style="background-color: darkred;color: white;">未处理</td>-->
+<!--                        </view>-->
+<!--                    </tr>-->
+<!--                </div>-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+    </div>
+    <script>
+        $(function () {
+            let id = $(".apply-div").attr("data-id");
+            $.get("/admin/apply/detail/data?id="+id,function (data) {
+                if (data.status==1){
+                    let divApply = "   <form action='/admin/apply/update/"+data.apply.id+"' method='post'>" +
+                        "       <div class='form-group'>" +
+                        "           <label>姓</label>" +
+                        "           <div><input name='nom' class='form-control' value='"+data.apply.nom+"'/></div>" +
+                        "       </div>" +
+                        "       <div class='form-group'>" +
+                        "           <label>名</label>" +
+                        "           <div><input class='form-control' name='prenom' value='"+data.apply.prenom+"'/></div>" +
+                        "       </div>" +
+                        "       <div class='form-group'>" +
+                        "           <label>电话</label>" +
+                        "           <div><input class='form-control' name='telephone' value='"+data.apply.telephone+"'/></div>" +
+                        "       </div>" +
+                        "       <div class='form-group'>" +
+                        "           <label>邮箱</label>" +
+                        "           <div><input class='form-control' name='email' value='"+data.apply.email+"'/></div>" +
+                        "       </div>" +
+                        "       <div class='form-group'>" +
+                        "           <label>微信</label>" +
+                        "           <div><input class='form-control' name='wechat' value='"+data.apply.wechat+"'/></div>" +
+                        "       </div>" +
+                        "       <div class='form-group'>" +
+                        "           <label>类型</label>" +
+                        "           <div>" +
+                        "               <select class='form-control' name='type'>";
+
+                    if (data.apply.type==1){
+                        divApply +=  "<option value='1' selected>学生创业</option>" +
+                            "<option value='2'>加盟</option>";
+                    }else{
+                        divApply +=  "<option value='1'>学生创业</option>" +
+                            "<option value='2' selected>加盟</option>";
+                    }
+
+                    divApply += "</select></div>" +
+                        "       <div class='form-group'>" +
+                        "           <label>状态</label>" +
+                        "           <div>" +
+                        "               <select class='form-control' name='iStatus'>";
+                    if (data.apply.status==0){
+                        divApply +=   "<option value='0' selected>未处理</option>" +
+                            "<option value='1'>已处理</option>";
+                    }else{
+                        divApply +=   "<option value='0'>未处理</option>" +
+                            "<option value='1' selected>已处理</option>";
+                    }
+                    divApply += "</select>" +
+                        "       </div>" +
+                        "   </div>" +
+                        "   <div class='form-group button-group'>" +
+                        "       <button class='btn btn-success'>更新</button>" +
+                        "   </div>" +
+                        "   </form>";
+
+                    $(".apply-div").append(divApply);
+                }else{
+                    alert("没有找到您所要的申请");
+                }
+            });
+        });
+    </script>
+    <style>
+
+        .apply-div{
+            margin: auto;
+            width: 90vw;
+            height: 100%;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+        }
+
+
+        .button-group{
+            text-align: right;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+
+    </style>
+</div>
+</html>

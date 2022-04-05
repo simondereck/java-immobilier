@@ -1,0 +1,68 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <link rel="stylesheet"  th:href="@{/css/admin/cobber-detail.css}"/>
+    <div class="cobber-div">
+        <div class="user-info-title"><h3>更新合作商信息</h3></div>
+        <form method="post" th:action="@{/admin/cobber/update/}+${cobber.id}">
+            <div class="form-group">
+                <label for="prenom" class="control-label" >姓</label>
+                <div>
+                    <input type="text" class="form-control" name="prenom" id="prenom" th:value="${cobber.prenom}" placeholder="姓"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="nom" class="control-label" >名</label>
+                <div>
+                    <input type="text" class="form-control" name="nom" id="nom" th:value="${cobber.nom}" placeholder="名"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email" class="control-label" >email</label>
+                <div>
+                    <input type="text" class="form-control" name="email" id="email" th:value="${cobber.email}" placeholder="邮箱"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="telephone" class="control-label" >电话</label>
+                <div>
+                    <input type="text" class="form-control" name="telephone" id="telephone" th:value="${cobber.telephone}" placeholder="电话"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="control-label" >密码</label>
+                <div>
+                    <input type="password" class="form-control" name="password" id="password" th:value="${cobber.password}" placeholder="密码"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="status">状态</label>
+                <div>
+                    <select id="status" name="iStatus" class="form-control">
+                        <view th:if="${cobber.status==0}" th:remove="tag">
+                            <option value="0" selected>屏蔽</option>
+                        </view>
+                        <view th:unless="${cobber.status==0}" th:remove="tag">
+                            <option value="0">屏蔽</option>
+                        </view>
+                        <view th:if="${cobber.status==1||cobber.status==17||cobber.status==18}" th:remove="tag">
+                            <option value="1" selected>激活</option>
+                        </view>
+                        <view th:unless="${cobber.status==1||cobber.status==17||cobber.status==18}" th:remove="tag">
+                            <option value="1">激活</option>
+                        </view>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="button-group">
+                    <button type="submit" class="btn btn-success">更新</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

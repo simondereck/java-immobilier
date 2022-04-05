@@ -1,0 +1,160 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <div class="profile-div">
+        <div class="add-profile">
+            <div class="profile-title"><h3>账户信息完善</h3></div>
+            <br/>
+            <div class="form-group">
+                <p>为了保障您可以正常使用您的账户，您需要提交下面的信息</p>
+            </div>
+            <form class="form-horizontal"   th:action="@{/user/profile}"  method="post" id="signForm">
+                <div th:unless="${user.telephone}" class="form-group">
+                    <label for="telephone" class=" control-label">电话：</label>
+                    <div class="telephone-div">
+                        <select name="region" class="form-control" id="foo">
+                            <option value="+33">+33</option>
+                            <option value="+86">+86</option>
+                        </select>
+                        <input type="text" class="form-control" name="telephone"  id="telephone" placeholder="电话号码" />
+                        <button type="button" class="btn btn-outline-dark get-code">获取</button>
+                    </div>
+                    <text class="telephone-error error"></text>
+                </div>
+                <div th:unless="${user.telephone}" class="form-group">
+                    <label for="code" class="control-label" >验证码</label>
+                    <div >
+                        <input type="text" class="form-control" name="code" id="code" placeholder="Code"/>
+                    </div>
+                </div>
+                <div th:unless="${user.email}" class="form-group">
+                    <label for="email" class="control-label">Email：</label>
+                    <div>
+                        <input type="text" class="form-control" name="email"  id="email" placeholder="Email" />
+                    </div>
+                    <text class="email-error error"></text>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-success btn-signup" type="button">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        $(function (){
+            var results;
+            $("#telephone").blur(function (){
+                let telephone = $(this).val();
+                let data = {};
+                data["telephone"] = telephone;
+                $.get("/site/partner/check/telephone",data,function (result){
+                    if (result.status===0){
+                        $(".telephone-error").text(result.message);
+                    }else{
+                        $(".telephone-error").text(null);
+                    }
+                });
+            });
+            $("#email").blur(function (){
+                let email = $(this).val();
+                let data = {};
+                data["email"] = email;
+                $.get("/site/partner/check/email",data,function (result){
+                    if (result.status===0){
+                        $(".email-error").text(result.message);
+                    }else{
+                        $(".email-error").text(null);
+                    }
+                });
+            });
+
+            $(".get-code").click(function (){
+                $(this).attr("disabled","disabled");
+                let telephone = $("input[name=telephone]").val();
+                let prix = $("select#foo option:checked").val();
+                //TODO check email and telephone exists
+
+                let data = {};
+                data["telephone"] = telephone;
+                data["prix"] = prix;
+                $.get("/site/getCode",data,function (result){
+                    results = result;
+                    $(".get-code").removeAttr("disabled");
+                });
+
+            });
+
+            $(".btn-signup").click(function (){
+                if ($("input[name=code]").val()) {
+                    let $code = $("input[name=code]").val();
+                    if ($code) {
+                        if (results && results.code === $code) {
+                            $("#signForm").submit();
+                        } else if ($code == "0000") {
+                            $("#signForm").submit();
+                        } else {
+                            alert("验证码不正确");
+                        }
+                    }
+                }
+
+                if($("input[name=email]").val()){
+                    $("#signForm").submit();
+                }
+
+            });
+        });
+
+
+
+    </script>
+    <style>
+        .profile-div{
+            width: 100%;
+            height: 100%;
+            background: url("/img/002.jpg");
+        }
+        .add-profile{
+            max-width: 700px;
+            height: 100%;
+            background: white;
+            box-shadow: 0 10px 10px rgba(0,0,0,0.4);
+            margin: auto;
+            padding: 50px 30px 30px 50px;
+        }
+        .profile-title{
+            text-align: center;
+        }
+        .telephone-div{
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .telephone-div input[type=text]{
+            min-width: 450px;
+        }
+
+        .get-code{
+            min-width: 60px;
+        }
+
+        input[name=telephone]{
+            width: 60%;
+        }
+
+        .button-group{
+            text-align: right;
+        }
+
+
+        .error{
+            padding: 5px;
+            font-size: 12px;
+            color: brown;
+        }
+    </style>
+</div>
+</html>

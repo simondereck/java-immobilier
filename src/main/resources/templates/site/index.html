@@ -1,0 +1,659 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+        <div layout:fragment="content">
+            <link rel="stylesheet" th:href="@{/css/site/index.css}" />
+            <div class="index-contain">
+                <div class="search-div">
+                    <div class="search-items">
+                        <form>
+                            <div class="search-tilte">
+                                <h1>查找并预订您的房源</h1>
+                            </div>
+                            <div class="search-box">
+                                <div class="form-control search-box">
+                                    <input name="keywords" class="keywords" placeholder="搜索 城市、邮编、学校、公司"/>
+                                    <div class="map-location"><img th:src="@{/img/map.png}"/>地图找房</div>
+                                </div>
+                            </div>
+                            <div class="search-result-box">
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="user-div" id="user-div">
+                    <div class="user-item role-partenr">
+                        <img src="img/partner.jpg" />
+                        <div class="user-item-button">
+                            <button class="btn btn-primary btn-partner">我是业主</button>
+                        </div>
+                    </div>
+                    <div class="user-item role-user">
+                        <img src="img/user.jpg" />
+                        <div class="user-item-button">
+                            <button class="btn btn-success btn-user">我是租客</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="example">
+                    <div class="site-advance-title">
+                        <h3>开放、包容、多语言平台</h3>
+                        <div>官方直营学生公寓，欢迎个人及中介发布房源</div>
+                    </div>
+                    <div class="example-div">
+                        <div class="example-div-item">
+                            <h4>1：租客注册直接联系平台=海外皇地专业官方客服+平台费</h4>
+                            <div>① 平台按租客需求匹配学生公寓 → ② 付平台费 → ③ 在线签合同并约入住时间 → ④ 评分</div>
+
+                        </div>
+                        <div class="example-div-item">
+                            <h4>2：租客注册找个人房源=0中介费+直接房东</h4>
+                            <div>① 按租客需求匹配房源 → ② 等业主联系看房 → ③ 在线签合同 → ④ 评分</div>
+
+                        </div>
+                        <div class="example-div-item">
+                            <h4>3：租客注册找中介房源=付中介费+可选多房源</h4>
+                            <div>① 中介按租客需求匹配房源 → ② 联系中介看房 → ③ 付中介费并在线签合同 → ④ 评分</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ville-div">
+                    <div class="ville-div-item ville-div-map">
+                        <h3>地图  <label id="city"></label></h3>
+                        <div>
+                            <img usemap="#m_departement"
+                                 style="border-width: 0px;
+                                 margin: 0px; width: 570px;
+                                 height: 676px"
+                                 src="/img/departement.jpg"
+                                 border="0"
+                                 alt="carte de France"
+                                 width="570" height="676"
+                                 align="top">
+                            <map name="m_departement">
+                                <area shape="POLY" coords="523,546,521,566,517,563,515,561,511,563,510,566,495,572,488,584,494,589,488,592,489,597,496,602,489,609,490,610,499,610,493,621,503,624,497,629,497,631,515,642,523,624,523,610,530,599,529,572,525,566,527,557,525,546" href="/location/corse-20/location-corse.html" alt="Corse" title="Corse">
+                                <area shape="POLY" coords="482,101,500,98,505,86,519,86,538,102,529,134,514,128,477,127" href="/location/val-de-marne-94/location-val-de-marne.html" alt="Val de Marne" title="Val de Marne">
+                                <area shape="POLY" coords="474,52,482,48,508,51,530,36,538,100,520,84,505,84,499,69,480,68,480,56" href="/location/seine-saint-denis-93/location-seine-saint-denis.html" alt="Seine Saint-Denis" title="Seine Saint-Denis">
+                                <area shape="POLY" coords="470,76,480,70,497,71,503,85,499,97,482,100,464,90" href="/location/paris-75/location-paris.html" alt="Paris" title="Paris">
+                                <area shape="POLY" coords="438,93,450,67,472,54,478,57,478,68,469,75,462,91,480,101,476,127,454,112" href="/location/hauts-de-seine-92/location-hauts-de-seine.html" alt="Hauts de Seine" title="Hauts de Seine">
+                                <area shape="POLY" coords="72,249,79,239,69,234,67,228,73,225,86,229,91,226,107,232,108,238,115,230,123,232,122,239,129,244,127,267,114,271,114,266,99,268,98,266,104,266,105,261,97,259,94,263,88,262,85,256,81,254,74,253" href="/location/morbihan-56/location-morbihan.html" alt="Morbihan" title="Morbihan">
+                                <area shape="POLY" coords="150,301,151,311,140,308,131,300,126,307,126,310,135,322,139,331,160,344,172,339,181,344,187,341,185,325,176,305,162,299,153,307,152,307,151,301" href="/location/vendee-85/location-vendee.html" alt="Vendée" title="Vendée">
+                                <area shape="POLY" coords="113,273,130,269,130,262,148,259,156,253,163,256,168,266,166,272,174,274,175,278,166,279,161,281,158,283,165,291,161,296,154,304,154,297,148,300,149,308,142,306,132,298,129,293,124,291,126,289,126,285,131,285,135,286,139,288,140,286,136,282,130,280,124,281,121,284,111,281" href="/location/loire-atlantique-44/location-loire-atlantique.html" alt="Loire Atlantique" title="Loire Atlantique">
+                                <area shape="POLY" coords="70,195,65,193,61,198,56,192,36,195,27,200,25,210,37,208,45,216,32,215,33,218,37,217,40,218,42,220,44,223,44,227,26,228,34,231,38,237,39,244,44,244,45,241,56,241,60,246,70,248,76,240,67,236,64,226,72,223" href="/location/finistere-29/location-finistere.html" alt="Finistère" title="Finistère">
+                                <area shape="POLY" coords="465,377,459,368,458,359,463,356,469,355,477,348,475,345,479,340,484,339,491,338,496,338,498,344,497,351,509,365,498,373,495,376,486,366,478,380" href="/location/haute-savoie-74/location-haute-savoie.html" alt="Haute Savoie" title="Haute Savoie">
+                                <area shape="POLY" coords="458,370,464,378,479,382,486,369,495,379,499,375,515,397,513,406,486,417,479,414,473,408,476,399,465,392,462,398,456,396,451,387,455,382,457,377,458,374" href="/location/savoie-73/location-savoie.html" alt="Savoie" title="Savoie">
+                                <area shape="POLY" coords="447,455,454,457,455,445,461,444,461,442,472,433,485,431,484,423,478,421,479,416,486,419,494,416,503,430,511,431,514,438,510,440,494,454,485,451,479,457,474,453,463,467,465,470,457,471,456,465,446,461" href="/location/hautes-alpes-05/location-hautes-alpes.html" alt="Hautes Alpes" title="Hautes Alpes">
+                                <area shape="POLY" coords="417,408,424,406,432,412,432,420,444,422,445,437,459,442,459,443,453,444,452,455,445,453,444,462,454,467,456,472,448,476,430,466,428,467,430,462,424,458,420,465,424,468,420,470,418,465,412,465,414,454,416,443,419,435,419,423,418,414" href="/location/drome-26/location-drome.html" alt="Drôme" title="Drôme">
+                                <area shape="POLY" coords="428,377,430,377,432,380,433,380,438,373,444,379,449,387,455,397,463,400,466,395,474,400,471,409,477,415,475,422,482,424,483,430,471,431,460,441,447,436,446,421,433,419,433,411,424,404,416,407,415,402,415,398,419,394,418,392,417,391,428,388" href="/location/isere-38/location-isere.html" alt="Isère" title="Isère">
+                                <area shape="POLY" coords="414,355,420,335,429,335,434,338,443,349,449,344,457,349,467,338,470,341,462,354,457,357,456,359,456,364,457,369,457,373,455,379,453,382,450,386,445,378,440,372,438,371,436,373,434,376,433,378,431,376,429,375,427,375,422,376,413,368" href="/location/ain-01/location-ain.html" alt="Ain" title="Ain">
+                                <area shape="POLY" coords="412,356,409,349,399,349,398,354,393,363,397,374,398,387,410,391,410,395,414,396,417,394,413,391,426,387,426,377,422,377,412,369" href="/location/rhone-69/location-rhone.html" alt="Rhône" title="Rhône">
+                                <area shape="POLY" coords="432,304,439,298,442,287,449,288,454,294,452,300,470,316,465,325,467,328,467,336,457,346,449,342,444,346,436,337,441,325,437,314,440,313" href="/location/jura-39/location-jura.html" alt="Jura" title="Jura">
+                                <area shape="POLY" coords="450,288,471,278,476,272,493,269,496,269,498,275,496,280,503,280,490,299,481,304,481,315,468,327,467,326,472,315,454,300,455,295" href="/location/doubs-25/location-doubs.html" alt="Doubs" title="Doubs">
+                                <area shape="POLY" coords="495,253,492,257,492,267,496,267,499,273,501,270,506,269,502,263,503,257" href="/location/territoire-de-belfort-90/location-territoire-de-belfort.html" alt="Territoire de Belfort" title="Territoire de Belfort">
+                                <area shape="POLY" coords="507,221,495,251,505,255,505,262,510,273,519,272,525,263,523,253,523,243,523,232" href="/location/haut-rhin-68/location-haut-rhin.html" alt="Haut Rhin" title="Haut Rhin">
+                                <area shape="POLY" coords="464,242,449,255,449,262,437,264,437,265,442,268,438,276,442,285,449,286,470,276,475,271,490,267,489,256,493,251,484,247,467,246" href="/location/haute-saone-70/location-haute-saone.html" alt="Haute Saône" title="Haute Saône">
+                                <area shape="POLY" coords="436,220,438,218,452,213,457,222,483,215,490,217,501,211,501,219,505,220,494,250,485,245,468,244,465,239,456,246,446,237,449,229" href="/location/vosges-88/location-vosges.html" alt="Vosges" title="Vosges">
+                                <area shape="POLY" coords="501,190,496,184,499,179,508,182,519,183,523,175,533,175,544,179,536,190,531,200,529,208,528,217,526,223,523,230,507,219,503,218,503,210,510,203,510,191,503,187" href="/location/bas-rhin-67/location-bas-rhin.html" alt="Bas Rhin" title="Bas Rhin">
+                                <area shape="POLY" coords="452,153,457,156,462,151,473,153,488,172,492,168,504,173,512,169,521,174,518,181,510,180,499,176,494,184,501,192,504,189,508,192,508,201,502,208,498,203,470,191,470,186,456,179,457,166" href="/location/moselle-57/location-moselle.html" alt="Moselle" title="Moselle">
+                                <area shape="POLY" coords="436,152,446,149,449,151,455,166,454,180,467,187,468,192,497,205,501,209,490,215,483,212,458,219,453,211,450,211,448,197,451,182,448,175,444,155,436,157" href="/location/meurthe-et-moselle-54/location-meurthe-et-moselle.html" alt="Meurthe et Moselle" title="Meurthe et Moselle">
+                                <area shape="POLY" coords="417,203,417,206,436,218,434,220,447,230,444,238,455,247,447,255,447,261,436,263,436,265,431,266,419,261,420,254,408,242,408,239,413,238,412,225,405,216,406,213,410,212,412,204" href="/location/haute-marne-52/location-haute-marne.html" alt="Haute Marne" title="Haute Marne">
+                                <area shape="POLY" coords="431,147,434,152,434,159,443,157,446,175,449,182,446,197,448,212,438,216,419,204,419,201,414,192,419,185,416,170,420,162,421,148,428,151" href="/location/meuse-55/location-meuse.html" alt="Meuse" title="Meuse">
+                                <area shape="POLY" coords="386,127,399,126,408,115,409,115,407,125,409,127,409,133,430,146,427,149,420,147,418,161,415,169,396,166,380,158,379,147,386,140" href="/location/ardennes-08/location-ardennes.html" alt="Ardennes" title="Ardennes">
+                                <area shape="POLY" coords="364,166,379,160,394,168,414,170,417,185,412,192,416,201,410,202,408,210,404,211,392,209,391,201,380,201,370,213,360,209,355,199,356,195,365,183,362,182,365,173" href="/location/marne-51/location-marne.html" alt="Marne" title="Marne">
+                                <area shape="POLY" coords="381,203,389,203,391,210,404,212,402,216,410,225,411,236,406,238,406,242,389,247,376,247,358,222,355,221,355,215,359,210,370,215" href="/location/aube-10/location-aube.html" alt="Aube" title="Aube">
+                                <area shape="POLY" coords="389,295,409,308,430,303,436,297,440,286,435,276,439,268,436,267,431,268,416,262,417,254,406,243,390,249,393,257,383,279,384,283" href="/location/cote-d-or-21/location-cote-d-or.html" alt="Côte d'Or" title="Côte d'Or">
+                                <area shape="POLY" coords="366,322,369,322,372,324,383,318,382,299,388,297,409,311,431,306,437,313,434,314,439,326,434,337,430,333,418,334,413,354,410,347,397,347,396,353,379,354,377,349,380,347,381,336,371,333" href="/location/saone-et-loire-71/location-saone-et-loire.html" alt="Saône et Loire" title="Saône et Loire">
+                                <area shape="POLY" coords="376,350,373,352,374,367,370,369,370,379,382,396,378,403,394,402,403,412,413,402,413,398,409,397,408,393,397,388,396,375,391,364,395,355,378,356" href="/location/loire-42/location-loire.html" alt="Loire" title="Loire">
+                                <area shape="POLY" coords="414,404,415,409,417,420,418,432,417,437,415,442,412,452,410,466,411,468,402,464,394,468,387,466,385,458,377,442,391,433,404,414" href="/location/ardeche-07/location-ardeche.html" alt="Ardèche" title="Ardèche">
+                                <area shape="POLY" coords="509,443,510,445,507,449,508,458,499,472,508,486,498,493,486,496,482,493,473,502,464,498,462,499,454,493,450,478,457,474,467,472,465,467,475,456,479,460,485,454,495,457" href="/location/alpes-de-haute-provence-04/location-alpes-de-haute-provence.html" alt="Alpes de Haute Provence" title="Alpes de Haute Provence">
+                                <area shape="POLY" coords="500,494,511,486,501,472,509,459,514,467,533,474,543,470,544,476,536,487,537,491,529,498,521,502,521,503,521,506,515,508,514,509,513,511,511,505" href="/location/alpes-maritimes-06/location-alpes-maritimes.html" alt="Alpes Maritimes" title="Alpes Maritimes">
+                                <area shape="POLY" coords="463,500,464,500,473,504,482,496,485,499,498,495,509,507,512,514,510,516,506,516,498,527,502,527,501,531,495,532,491,534,488,536,484,535,481,536,479,539,476,538,467,536,468,539,467,540,466,537,460,533,463,520,459,508,465,504" href="/location/var-83/location-var.html" alt="Var" title="Var">
+                                <area shape="POLY" coords="418,491,424,494,435,501,444,504,451,506,458,504,461,502,463,504,457,507,461,520,458,533,446,532,445,526,442,523,440,525,432,526,427,520,424,520,422,522,423,525,411,525,412,522,410,520,408,519,403,519,396,519,396,518,407,511,405,510,405,508,407,506,410,506,412,507,413,501,414,495" href="/location/bouches-du-rhone-13/location-bouches-du-rhone.html" alt="Bouches du Rhône" title="Bouches du Rhône">
+                                <area shape="POLY" coords="412,467,417,467,419,472,426,469,422,465,425,461,428,463,427,469,430,468,447,478,452,494,460,500,456,503,447,503,437,500,426,493,421,490,419,490,421,486,420,482,416,479,416,474" href="/location/vaucluse-84/location-vaucluse.html" alt="Vaucluse" title="Vaucluse">
+                                <area shape="POLY" coords="356,477,353,481,361,485,356,491,365,494,372,487,394,506,390,513,392,515,392,518,394,519,394,516,403,510,403,507,406,504,408,503,411,504,411,493,416,489,419,486,419,484,413,479,414,474,412,471,402,466,394,470,385,467,383,460,380,463,383,472,378,480,369,477,367,481" href="/location/gard-30/location-gard.html" alt="Gard" title="Gard">
+                                <area shape="POLY" coords="372,490,365,496,355,493,350,499,344,499,344,505,338,507,332,511,325,510,326,519,323,523,321,526,329,531,334,526,351,534,355,531,358,530,362,530,372,521,381,515,388,512,392,506" href="/location/herault-34/location-herault.html" alt="Hérault" title="Hérault">
+                                <area shape="POLY" coords="327,432,318,448,305,450,291,459,295,477,303,474,317,483,326,502,336,501,338,505,342,504,342,497,348,497,358,486,351,482,354,477,345,472,344,459,337,449,332,436" href="/location/aveyron-12/location-aveyron.html" alt="Aveyron" title="Aveyron">
+                                <area shape="POLY" coords="355,431,346,435,339,447,346,458,347,471,356,475,366,479,368,475,377,478,381,472,378,462,383,458,375,442,367,435,360,439" href="/location/lozere-48/location-lozere.html" alt="Lozère" title="Lozère">
+                                <area shape="POLY" coords="344,408,345,406,359,402,366,406,393,404,402,413,389,431,376,440,367,433,361,437,357,430,349,409" href="/location/haute-loire-43/location-haute-loire.html" alt="Haute Loire" title="Haute Loire">
+                                <area shape="POLY" coords="334,352,322,359,323,369,315,377,318,382,319,398,343,408,343,405,359,400,366,404,376,403,380,396,368,380,368,369,356,364,338,361" href="/location/puy-de-dome-63/location-puy-de-dome.html" alt="Puy de Dôme" title="Puy de Dôme">
+                                <area shape="POLY" coords="364,322,370,334,379,338,379,346,371,350,372,366,369,367,356,362,339,359,335,350,322,357,309,341,312,336,324,335,323,327,337,319,339,319,345,325,360,326" href="/location/allier-03/location-allier.html" alt="Allier" title="Allier">
+                                <area shape="POLY" coords="336,272,353,278,358,276,380,286,383,285,386,295,380,298,381,317,372,322,370,320,363,319,359,324,346,323,340,318,342,310,341,303,340,298,339,291,336,287,334,285,336,281,336,279,336,277,333,273" href="/location/nievre-58/location-nievre.html" alt="Nièvre" title="Nièvre">
+                                <area shape="POLY" coords="342,224,354,223,357,224,375,249,389,249,391,257,382,278,382,283,380,284,359,273,353,275,337,270,334,261,345,245,338,235" href="/location/yonne-89/location-yonne.html" alt="Yonne" title="Yonne">
+                                <area shape="POLY" coords="322,180,337,181,341,178,354,195,353,198,358,209,353,214,353,221,340,223,336,234,319,236,315,225,318,221,320,205,323,197,321,183" href="/location/seine-et-marne-77/location-seine-et-marne.html" alt="Seine et Marne" title="Seine et Marne">
+                                <area shape="POLY" coords="307,269,319,272,325,277,332,274,334,279,332,283,332,286,333,287,335,289,338,295,340,303,340,308,339,317,336,316,320,325,321,333,311,334,307,340,305,340,300,298,290,297,293,292,295,290,304,290,302,281,310,281,304,271" href="/location/cher-18/location-cher.html" alt="Cher" title="Cher">
+                                <area shape="POLY" coords="279,244,293,240,298,229,313,227,318,238,336,236,343,245,332,262,335,271,326,275,321,271,308,267,305,264,289,266,281,258" href="/location/loiret-45/location-loiret.html" alt="Loiret" title="Loiret">
+                                <area shape="POLY" coords="305,200,309,203,317,203,319,204,316,220,314,224,298,227,295,219,297,209" href="/location/essonne-91/location-essonne.html" alt="Essonne" title="Essonne">
+                                <area shape="POLY" coords="302,189,301,187,283,179,277,181,278,187,281,192,283,204,294,217,295,208,303,198,300,194" href="/location/yvelines-78/location-yvelines.html" alt="Yvelines" title="Yvelines">
+                                <area shape="POLY" coords="286,171,288,174,300,172,320,179,319,182,315,185,310,184,304,188,302,185,284,178" href="/location/val-d-oise-95/location-val-d-oise.html" alt="Val d'Oise" title="Val d'Oise">
+                                <area shape="POLY" coords="289,140,291,143,307,144,322,150,333,144,340,143,340,162,335,165,340,177,337,179,321,178,301,169,289,172,287,170,290,167,288,161,287,142" href="/location/oise-60/location-oise.html" alt="Oise" title="Oise">
+                                <area shape="POLY" coords="345,124,365,122,384,127,384,139,378,147,378,158,362,165,363,173,360,182,362,184,355,193,342,177,338,166,342,163,342,142,340,135" href="/location/aisne-02/location-aisne.html" alt="Aisne" title="Aisne">
+                                <area shape="POLY" coords="303,63,319,59,321,73,331,82,341,76,345,82,347,93,361,95,362,104,375,103,382,108,382,124,365,120,344,122,341,121,344,111,338,101,340,97,330,91,331,84,326,85,321,85,316,83,311,79,307,72" href="/location/nord-59/location-nord.html" alt="Nord" title="Nord">
+                                <area shape="POLY" coords="282,101,283,70,301,64,305,73,309,80,315,84,320,87,325,87,329,86,327,92,338,97,335,101,342,111,339,120,315,116,317,109,304,111,291,102" href="/location/pas-de-calais-62/location-pas-de-calais.html" alt="Pas de Calais" title="Pas de Calais">
+                                <area shape="POLY" coords="275,119,280,112,284,114,285,112,281,107,282,103,289,104,303,113,314,112,312,117,339,122,343,124,338,135,340,141,332,142,322,148,308,142,292,141,289,138,285,129" href="/location/somme-80/location-somme.html" alt="Somme" title="Somme">
+                                <area shape="POLY" coords="223,152,225,154,230,155,238,154,254,160,258,167,274,156,286,159,285,141,287,138,284,130,274,121,269,125,259,129,251,132,243,133,227,141" href="/location/seine-maritime-76/location-seine-maritime.html" alt="Seine Maritime" title="Seine Maritime">
+                                <area shape="POLY" coords="231,157,238,156,252,162,257,170,275,158,286,161,288,167,285,169,282,178,274,180,276,188,270,197,262,197,249,203,244,192,235,189,236,185" href="/location/eure-27/location-eure.html" alt="Eure" title="Eure">
+                                <area shape="POLY" coords="252,236,249,225,256,222,256,213,251,204,262,199,271,199,277,190,279,193,280,205,293,220,296,227,291,238,277,242,277,245,265,245,261,239" href="/location/eure-et-loir-28/location-eure-et-loir.html" alt="Eure et Loir" title="Eure et Loir">
+                                <area shape="POLY" coords="242,262,250,249,252,238,260,240,264,247,277,246,279,259,288,267,304,265,305,267,302,271,306,279,300,279,302,288,295,288,292,291,282,287,271,293,266,287,262,287,258,267" href="/location/loir-et-cher-41/location-loir-et-cher.html" alt="Loir et Cher" title="Loir et Cher">
+                                <area shape="POLY" coords="272,295,282,289,291,293,287,299,298,300,304,339,288,339,274,342,264,341,262,334,253,328,252,322,256,321,260,305,269,304" href="/location/indre-36/location-indre.html" alt="Indre" title="Indre">
+                                <area shape="POLY" coords="274,344,287,340,307,341,320,358,321,368,312,376,316,382,309,384,299,380,293,382,292,377,282,373,272,351" href="/location/creuse-23/location-creuse.html" alt="Creuse" title="Creuse">
+                                <area shape="POLY" coords="313,403,320,405,320,400,343,410,348,411,355,429,345,433,338,446,334,434,326,429,317,446,306,447,300,428" href="/location/cantal-15/location-cantal.html" alt="Cantal" title="Cantal">
+                                <area shape="POLY" coords="266,400,299,382,309,387,316,384,317,402,312,401,298,427,287,429,278,422,272,424,266,414" href="/location/correze-19/location-correze.html" alt="Corrèze" title="Corrèze">
+                                <area shape="POLY" coords="254,454,257,452,273,433,273,426,278,424,287,431,298,429,304,448,289,457,290,466,267,472,256,464" href="/location/lot-46/location-lot.html" alt="Lot" title="Lot">
+                                <area shape="POLY" coords="250,465,255,465,267,474,291,468,293,477,283,480,275,491,262,498,250,498,244,489,246,483,242,482,249,477" href="/location/tarn-et-garonne-82/location-tarn-et-garonne.html" alt="Tarn et Garonne" title="Tarn et Garonne">
+                                <area shape="POLY" coords="277,491,284,482,302,476,315,485,324,503,335,503,336,505,331,509,322,508,324,519,321,521,298,522,298,520,285,509" href="/location/tarn-81/location-tarn.html" alt="Tarn" title="Tarn">
+                                <area shape="POLY" coords="304,566,311,564,310,556,328,557,333,552,341,556,343,548,345,542,348,538,350,535,335,528,330,533,319,528,321,523,298,523,290,522,284,532,284,536,295,540,297,556,291,558,294,563,300,562" href="/location/aude-11/location-aude.html" alt="Aude" title="Aude">
+                                <area shape="POLY" coords="285,574,313,565,312,558,329,559,333,554,342,558,342,576,347,579,347,582,339,578,320,586,308,580,298,586,289,579,285,578" href="/location/pyrenees-orientales-66/location-pyrenees-orientales.html" alt="Pyrénées Orientales" title="Pyrénées Orientales">
+                                <area shape="POLY" coords="268,532,282,533,283,537,293,542,294,555,289,557,293,564,299,564,302,567,285,573,245,557,255,539,263,542" href="/location/ariege-09/location-ariege.html" alt="Ariège" title="Ariège">
+                                <area shape="POLY" coords="228,564,228,556,231,556,236,549,229,538,236,529,243,523,251,525,261,511,251,500,263,500,276,493,284,510,297,521,296,522,290,520,282,531,267,530,262,540,254,537,243,556,236,555,235,564" href="/location/haute-garonne-31/location-haute-garonne.html" alt="Haute Garonne" title="Haute Garonne">
+                                <area shape="POLY" coords="205,511,206,510,216,524,234,529,227,538,234,549,231,554,227,554,226,564,205,564,194,555,194,548,209,527" href="/location/hautes-pyrenees-65/location-hautes-pyrenees.html" alt="Hautes Pyrénées" title="Hautes Pyrénées">
+                                <area shape="POLY" coords="198,509,201,490,240,483,244,484,242,489,258,511,250,523,242,521,235,527,217,523,206,508,204,509" href="/location/gers-32/location-gers.html" alt="Gers" title="Gers">
+                                <area shape="POLY" coords="213,486,240,481,247,475,248,463,255,463,251,453,255,451,252,449,245,451,244,445,226,447,222,440,216,443,219,446,210,454,211,463,205,471,205,475,215,477" href="/location/lot-et-garonne-47/location-lot-et-garonne.html" alt="Lot et Garonne" title="Lot et Garonne">
+                                <area shape="POLY" coords="239,384,246,391,253,390,264,400,264,414,270,425,271,433,256,450,252,447,247,449,246,443,227,445,224,439,223,434,211,434,214,418,211,417,212,413,223,409,223,402" href="/location/dordogne-24/location-dordogne.html" alt="Dordogne" title="Dordogne">
+                                <area shape="POLY" coords="248,362,249,356,248,353,263,343,272,344,270,352,280,375,290,379,291,383,265,398,253,388,247,389,241,382,252,367" href="/location/haute-vienne-87/location-haute-vienne.html" alt="Haute Vienne" title="Haute Vienne">
+                                <area shape="POLY" coords="246,358,246,363,250,367,238,382,221,401,221,407,211,411,201,404,200,394,193,379,206,377,208,367,216,360,230,362" href="/location/charente-16/location-charente.html" alt="Charente" title="Charente">
+                                <area shape="POLY" coords="216,296,210,299,215,308,214,341,219,343,221,358,230,359,246,356,245,352,262,341,260,335,250,329,250,321,240,307,227,309,225,302" href="/location/vienne-86/location-vienne.html" alt="Vienne" title="Vienne">
+                                <area shape="POLY" coords="142,512,146,514,196,511,203,512,206,526,192,547,192,554,182,557,174,548,147,538,145,541,142,539,148,530,139,525,136,527,129,521,135,519,139,515" href="/location/pyrenees-atlantiques-64/location-pyrenees-atlantiques.html" alt="Pyrénées Atlantiques" title="Pyrénées Atlantiques">
+                                <area shape="POLY" coords="156,455,165,453,164,458,180,459,190,468,191,473,203,472,202,476,212,479,211,486,199,489,195,509,146,512,142,510,148,493,151,477" href="/location/landes-40/location-landes.html" alt="Landes" title="Landes">
+                                <area shape="POLY" coords="163,393,161,417,156,440,160,435,165,441,165,442,165,445,158,445,156,453,167,451,166,456,181,457,192,466,193,471,203,470,208,462,208,453,216,446,213,442,221,439,221,435,209,435,212,420,209,419,203,420,192,415,191,408,182,405,184,422,181,421,179,417,177,408,173,400,165,392" href="/location/gironde-33/location-gironde.html" alt="Gironde" title="Gironde">
+                                <area shape="POLY" coords="166,344,173,342,180,346,183,354,203,363,206,367,205,376,191,377,198,394,199,404,210,412,208,417,204,418,194,413,193,406,181,403,178,394,172,389,160,380,160,376,165,372,167,365,167,359,165,355,162,352,167,348" href="/location/charente-maritime-17/location-charente-maritime.html" alt="Charente Maritime" title="Charente Maritime">
+                                <area shape="POLY" coords="179,305,192,303,193,300,208,300,212,309,212,342,217,345,219,358,215,358,207,365,205,361,185,352,182,346,189,343,188,324" href="/location/deux-sevres-79/location-deux-sevres.html" alt="Deux Sèvres" title="Deux Sèvres">
+                                <area shape="POLY" coords="226,271,240,264,256,269,260,289,265,289,269,294,267,302,258,303,254,319,251,320,241,304,228,307,227,301,217,294" href="/location/indre-et-loire-37/location-indre-et-loire.html" alt="Indre et Loire" title="Indre et Loire">
+                                <area shape="POLY" coords="166,256,171,266,169,270,176,272,177,281,167,281,161,283,167,290,163,297,177,302,190,301,191,297,208,297,215,293,223,270,197,258,188,260" href="/location/maine-et-loire-49/location-maine-et-loire.html" alt="Maine et Loire" title="Maine et Loire">
+                                <area shape="POLY" coords="213,222,217,221,227,216,230,217,231,225,249,235,250,237,248,249,239,262,225,269,199,257" href="/location/sarthe-72/location-sarthe.html" alt="Sarthe" title="Sarthe">
+                                <area shape="POLY" coords="214,219,208,211,187,216,182,213,175,212,173,226,175,243,170,244,166,254,188,257,197,256,211,220" href="/location/mayenne-53/location-mayenne.html" alt="Mayenne" title="Mayenne">
+                                <area shape="POLY" coords="184,197,198,191,213,194,222,188,234,187,232,190,243,194,254,214,254,221,247,224,249,233,233,224,232,216,228,214,216,219,209,209,187,215,183,212,189,204" href="/location/orne-61/location-orne.html" alt="Orne" title="Orne">
+                                <area shape="POLY" coords="183,196,172,192,185,180,182,170,174,164,175,160,179,158,190,162,201,163,211,167,222,161,230,158,234,185,222,186,212,192,198,189" href="/location/calvados-14/location-calvados.html" alt="Calvados" title="Calvados">
+                                <area shape="POLY" coords="155,203,163,203,155,195,155,167,147,155,146,140,144,139,144,137,156,141,164,139,169,140,170,143,166,147,173,159,171,164,180,171,182,179,169,192,182,197,186,204,182,211,175,210,168,208,159,213" href="/location/manche-50/location-manche.html" alt="Manche" title="Manche">
+                                <area shape="POLY" coords="72,194,74,223,85,226,90,223,108,231,109,234,114,227,123,230,127,223,136,221,138,209,123,199,108,208,93,186,77,187" href="/location/cotes-d-armor-22/location-cotes-d-armor.html" alt="Côtes d'Armor" title="Côtes d'Armor">
+                                <area shape="POLY" coords="132,203,139,199,142,198,143,203,153,203,158,214,168,209,173,212,171,226,174,241,169,242,164,253,156,250,147,256,130,260,132,243,125,238,125,231,129,225,138,223,141,208" href="/location/ille-et-vilaine-35/location-ille-et-vilaine.html" alt="Ille et Villaine" title="Ille et Villaine">
+                            </map>
+                        </div>
+                    </div>
+                    <div class="ville-div-item">
+                        <h3>从你喜欢的城市开始吧</h3>
+                        <div class="ville-scroll">
+                            <div class="ville-row">
+                                <div class="ville-item" data-href="/location/paris-75/location-paris.html">
+                                    <img th:src="@{/img/ville/paris.jpg}" />
+                                    <text>Paris</text>
+                                </div>
+                                <div class="ville-item" data-href="/location/gironde-33/location-gironde.html">
+                                    <img th:src="@{/img/ville/bordeaux.jpg}" />
+                                    <text>Bordeaux</text>
+                                </div>
+                                <div class="ville-item" data-href="/location/rhone-69/location-rhone.html">
+                                    <img th:src="@{/img/ville/lyon.jpg}" />
+                                    <text>Lyon</text>
+                                </div>
+                            </div>
+                            <div class="ville-row">
+                                <div class="ville-item" data-href="/location/loire-atlantique-44/location-loire-atlantique.html">
+                                    <img th:src="@{/img/ville/nantes.jpg}" />
+                                    <text>Nantes</text>
+                                </div>
+                                <div class="ville-item" data-href="/location/nord-59/location-nord.html">
+                                    <img th:src="@{/img/ville/lille.jpg}" />
+                                    <text>Lille</text>
+                                </div>
+
+                                <div class="ville-item" data-href="/location/ille-et-vilaine-35/location-ille-et-vilaine.html">
+                                    <img th:src="@{/img/ville/rennes.jpg}" />
+                                    <text>Rennes</text>
+                                </div>
+                            </div>
+                            <div class="ville-row">
+                                <div class="ville-item" data-href="/location/pas-de-calais-62/location-pas-de-calais.html">
+                                    <img th:src="@{/img/ville/nice.jpg}" />
+                                    <text>Nice</text>
+                                </div>
+                                <div class="ville-item" data-href="/location/herault-34/location-herault.html">
+                                    <img th:src="@{/img/ville/montpellier.jpg}" />
+                                    <text>Montpellier</text>
+                                </div>
+                                <div class="ville-item" data-href="/location/haute-garonne-31/location-haute-garonne.html">
+                                    <img th:src="@{/img/ville/toulouse.jpg}" />
+                                    <text>Toulouse</text>
+                                </div>
+                            </div>
+                            <div class="ville-row">
+                                <div class="ville-item" data-href="/location/bas-rhin-67/location-bas-rhin.html">
+                                    <img th:src="@{/img/ville/strasbourg.jpg}" />
+                                    <text>Strasbourg</text>
+                                </div>
+                                <div class="ville-item" data-href="/location/isere-38/location-isere.html">
+                                    <img th:src="@{/img/ville/grenoble.jpg}" />
+                                    <text>Grenoble</text>
+                                </div>
+                                <div class="ville-item" data-href="/location/maine-et-loire-49/location-maine-et-loire.html">
+                                    <img th:src="@{/img/ville/angers.jpg}" />
+                                    <text>Angers</text>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="new-div">
+                    <div class="new-div-title">
+                        <div class="new-div-title-item"><div class="new-div-title-item-title active" data-id="4">学生公寓</div></div>
+                        <div class="new-div-title-item"><div class="new-div-title-item-title" data-id="1">最新房源</div></div>
+                        <div class="new-div-title-item"><div class="new-div-title-item-title" data-id="3">最新业主</div></div>
+                        <div class="new-div-title-item"><div class="new-div-title-item-title" data-id="2">最新租客</div></div>
+                    </div>
+                    <div class="new-scroll" data-id="1">
+
+                    </div>
+
+                    <div class="needs-scroll" data-id="2">
+
+                    </div>
+                    <div class="partner-scroll" data-id="3">
+
+
+                    </div>
+                    <div class="residence-scroll" data-id="4">
+
+
+                    </div>
+                </div>
+                <div class="recommand-div">
+                    <h3>我们的推荐</h3>
+                    <div class="recommand-scroll">
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <script>
+                $("area[shape=POLY]").hover(function (){
+                   let title = $(this).attr("title");
+                   $('#city').text(title);
+                   $('#city').css("color","orange")
+                },function () {
+                    // $('#city').text("");
+                });
+
+                $(".btn-partner").click(function (){
+                    window.location.assign("/partner/login");
+                });
+
+                $(".btn-user").click(function (){
+                    window.location.assign("/user/login");
+                });
+
+                $(".ville-item").click(function (){
+                    let href = $(this).attr("data-href");
+                    window.location.assign(href);
+                });
+
+
+                $(".new-scroll").on('click',".location-detail-item",function (){
+                    let id = $(this).attr("data-id");
+                    window.location.assign("/location/house/detail/"+id+".html");
+                });
+
+                $(".residence-scroll").on('click',".location-detail-item",function () {
+                    let id = $(this).attr("data-id");
+                    window.location.assign("/site/residence/"+id+".html");
+
+                });
+
+                $(".new-div-title-item-title").hover(function () {
+                    let active = $(this).hasClass("active");
+                    if(!active){
+                        $(this).css("background","#0c5460");
+                        $(this).css("color","white");
+                    }else{
+                        $(this).css("box-shadow","5px 0 5px 0 rgba(0, 0, 0, .2)")
+                    }
+                },function () {
+                    let active = $(this).hasClass("active");
+                    if(!active){
+                        $(this).css("background","whitesmoke");
+                        $(this).css("color","black");
+                    }else{
+                        $(this).css("box-shadow","none");
+                    }
+                });
+
+                $(".new-div-title-item-title").click(function () {
+                    let id = $(this).attr("data-id");
+                    $(".new-div-title-item-title").each(function (key,item) {
+                        let selectid = $(item).attr("data-id");
+                        if (selectid==id){
+                            $(item).addClass("active");
+                        }else{
+                            $(item).removeClass("active");
+                            $(item).removeAttr("style");
+                        }
+                    });
+                    if(id==1){
+                        $(".new-scroll").show("slow");
+                        $(".needs-scroll").hide();
+                        $(".partner-scroll").hide();
+                    }else if (id==2){
+                        $(".needs-scroll").show("slow");
+                        $(".new-scroll").hide();
+                        $(".partner-scroll").hide();
+                        $(".residence-scroll").hide();
+                    }else if (id==3){
+                        $(".needs-scroll").hide();
+                        $(".new-scroll").hide();
+                        $(".partner-scroll").show("slow");
+                        $(".residence-scroll").hide();
+                    }else if (id==4){
+                        $(".needs-scroll").hide();
+                        $(".new-scroll").hide();
+                        $(".partner-scroll").hide();
+                        $(".residence-scroll").show("slow");
+                    }
+                });
+
+                $("input[name=keywords]").keyup(function (){
+                    let keywords = $(this).val();
+                    if(keywords!=null&&keywords!==""&&keywords.length>=2){
+                        let params = {keyword:keywords};
+                        $.get("/site/search",params,function (data) {
+                            let results = "";
+                            if (data["ville"]){
+                                let villes = "<div class='result-label'>城市</div>";
+                                let villeArray = data["ville"];
+                                for (let i = 0; i < villeArray.length; i++) {
+                                    let item = "<div class='result-item' data-id='"+villeArray[i].id+"' data-type='0'>" + villeArray[i].code + " --- "+ villeArray[i].name+ " --- " + villeArray[i].postcode+"</div>";
+                                    villes = villes + item;
+                                }
+                                results += villes;
+                            }
+                            if (data["universites"]){
+                                let universites ="<div class='result-label'>大学</div>";
+                                let univArray = data["universites"];
+                                for (let i = 0; i < univArray.length; i++) {
+                                    let item = "<div class='result-item' data-id='"+univArray[i].id+"' data-type='1'>"+univArray[i].name+ " --- "+ univArray[i].ville + "</div>";
+                                    universites = universites + item;
+                                }
+                                results += universites;
+                            }
+                            $(".search-result-box").html(results);
+                        });
+                    }else{
+                        $(".search-result-box").html("");
+                    }
+                });
+
+                $(".search-result-box").on('click','.result-item',function (){
+                    let id = $(this).attr("data-id");
+                    let type = $(this).attr("data-type");
+                    window.location.assign("/site/search/"+type+"/"+id);
+                });
+
+                $(".map-location").click(function (){
+                   window.location.assign("/site/map");
+                });
+
+                $(function () {
+                    $.get("/site/recommand",function (data) {
+                        let recommandString = "";
+                        for (let i = 0; i < data.length; i++) {
+                            if(i%5==0){
+                                recommandString += "<div class='recommand-row'>" ;
+                                for (let j = 0; j < 5; j++) {
+                                    if(data[i+j])
+                                    recommandString += "<div class='recommand-item' data-id='"+(i+j)+"'>"+data[i+j]+"</div>";
+                                }
+                                recommandString += "</div>";
+                            }
+                        }
+                        $(".recommand-scroll").html(recommandString);
+                    });
+
+                    $.get("/index/data",function (data) {
+                        console.log(data);
+                        if (data.status==1){
+                            let villes = data.villes;
+                            let needs = data.needs;
+                            let annonces = data.lastedAnnonces;
+                            let partners = data.partners;
+                            let rtypes = data.rtypes;
+                            let users = data.users;
+                            let residences = data.residences;
+
+                            let annonceDiv = "";
+                            for (let a in annonces){
+                                if (a%4==0){
+                                    annonceDiv += "<div class='location-row'>"
+                                    for (let i=0;i<4;i++){
+                                        let annonce = annonces[parseInt(a)+i];
+                                        if (annonce){
+                                            annonceDiv += "<div class='location-detail-item' data-id='"+annonce.id+"'>";
+                                            if (annonce.cover) {
+                                                annonceDiv += "<div>" +
+                                                    "   <img src='/partners/"+annonce.pid +"/" + annonce.cover + "' />";
+                                            }else{
+                                                annonceDiv += "<div>" +
+                                                    "   <img src='/img/default.jpg' />";
+                                            }
+
+                                            annonceDiv += "   <div class='cover'>";
+
+                                            switch (annonce.type) {
+                                                case 1:
+                                                    annonceDiv +=  "<label class='location-item-label'>房东直租</label>";
+                                                    break;
+                                                case 2:
+                                                    annonceDiv +=  "<label class='location-item-label'>中介</label>";
+                                                    break;
+                                                case 3:
+                                                    annonceDiv +=  "<label class='location-item-label'>学生公寓</label>";
+                                                    break;
+
+                                                default:
+                                                    annonceDiv +=  "<label class='location-item-label'>房东直租</label>";
+                                                    break;
+                                            }
+                                            annonceDiv += "   </div>"+
+                                                "</div>";
+
+                                            annonceDiv += "<div class='location-detail-item-desc'>";
+                                            if (annonce.location){
+                                                if (villes[annonce.location]){
+                                                    annonceDiv += "<div class='title'>"+villes[annonce.location+''].name+"</div>";
+                                                }
+                                                if (annonce.furniture){
+                                                    annonceDiv += "<div class='title'>家具齐全 " +annonce.size+" 平</div>";
+                                                }else{
+                                                    annonceDiv += "<div class='title'>不带家具 " +annonce.size+" 平</div>";
+                                                }
+                                            }
+
+                                            annonceDiv += "<div>起租时间： "+annonce.sdate+"</div>";
+                                            annonceDiv += "<div>价格： "+annonce.price+" EURO</div>";
+                                            annonceDiv += "</div>";
+                                            annonceDiv += "</div>";
+                                        }
+                                    }
+                                    annonceDiv += "</div>";
+                                }
+                            }
+                            annonceDiv += "<div style='text-align: right;'><a href='/site/new/more' style='margin-right: 50px;'>更多房源>></a></div>"
+                            $(".new-scroll").append(annonceDiv);
+
+
+
+                            let needsDiv = "";
+                            for (let n in needs){
+                                if(n%4==0){
+                                    needsDiv += "<div class='needs-row'>";
+                                    for (let i=0;i<4;i++){
+                                        let need = needs[parseInt(n)+i];
+                                        if (need){
+                                            needsDiv += "<div class='needs-item-detail'>" +
+                                                "<div class='needs-item-img'><img src='/img/homme.png' /></div>";
+                                            needsDiv += "<div class='needs-item-info'>";
+                                            if (users[need.uid].sex){
+                                                if (users[need.uid].sex==0){
+                                                    needsDiv += "<div>男</div>";
+                                                }else{
+                                                    needsDiv += "<div>女</div>";
+                                                }
+                                            }else{
+                                                needsDiv += "<div>男</div>";
+                                            }
+                                            needsDiv += "<div>我需要的房型："+rtypes[need.rtype]+"</div>";
+                                            if (need.location && villes[need.location]){
+                                                needsDiv += "<div>我需要的方位："+villes[need.location].name+"</div>";
+                                            }
+                                            needsDiv += "<div>希望入住时间："+need.sdate+"</div>";
+                                            needsDiv += "<div>我的预算："+need.budget+" EURO</div>";
+                                            needsDiv += "<div class='needs-item-info-time'>"+need.utime+"</div>"
+                                            needsDiv += "</div>"
+                                            needsDiv += "</div>";
+                                        }
+                                    }
+                                    needsDiv += "</div>";
+                                }
+                            }
+                            needsDiv += "<div style='text-align: right'><a href='/site/needs/more' style='margin-right: 50px;'>更多租客>></a></div>";
+                            $(".needs-scroll").append(needsDiv);
+
+                            let partnerDiv = "";
+                            for (let p in partners){
+                                if (p%4==0){
+                                    partnerDiv += "<div class='needs-row'>";
+                                    for (let i=0;i<4;i++){
+                                        let partner = partners[parseInt(p)+i];
+                                        if (partner){
+                                            partnerDiv += "<div class='needs-item-detail'>" +
+                                                "   <div class='needs-item-img'><img src='/img/homme.png' /></div>" +
+                                                "   <div class='needs-item-info'>" +
+                                                "       <div>姓名:"+partner.prenom + " , " + partner.nom +"</div>";
+                                            if (partner.annonce){
+                                                partnerDiv += "<div>房租: "+partner.annonce.price+" EURO</div>";
+                                                partnerDiv += "<div>面积: "+partner.annonce.size+" 平</div>";
+                                                partnerDiv += "<div>起租时间: "+partner.annonce.sdate+"</div>";
+                                                partnerDiv += "<div class='needs-item-info-time'>"+partner.annonce.ctime+"</div>";
+                                            }
+
+                                            partnerDiv += "   </div>" +
+                                                "</div>";
+                                        }
+                                    }
+                                    partnerDiv += "</div>";
+                                }
+                            }
+                            partnerDiv += "<div style='text-align: right;'><a href='/site/partner/more' style='margin-right: 50px;'>更多业主>></a></div>";
+                            $(".partner-scroll").append(partnerDiv);
+
+                            let residenceDiv = "";
+                            for (let r in residences){
+                                if (r%4==0){
+                                    residenceDiv += "<div class='location-row'>";
+                                    for (let i=0;i<4;i++){
+
+                                        let residence = residences[parseInt(r)+i];
+                                        if (residence){
+                                            residenceDiv += "<div class='location-detail-item' data-id='"+residence.id+"'>";
+                                            residenceDiv += "<div>";
+                                            if (residence.cover) {
+                                                residenceDiv += "<img src='/partners/" + residence.cover + "' />";
+                                            }else{
+                                                residenceDiv += "   <img src='/img/default.jpg' />";
+                                            }
+
+                                            residenceDiv += "</div>";
+
+
+                                            residenceDiv += "<div class='location-detail-item-desc'>";
+                                            if (residence.ville){
+                                                if (villes[residence.ville]){
+                                                    residenceDiv += "<div class='title'>"+villes[residence.ville+''].name+"</div>";
+                                                    residenceDiv += "<div class='title'>"+villes[residence.ville+''].postcode+"</div>";
+                                                }
+
+                                            }
+
+                                            if (residence.sizeMin){
+                                                residenceDiv += "<div class='title'>面积 从" +residence.sizeMin+" ㎡ 到 "+residence.sizeMax+" ㎡</div>";
+                                            }else{
+                                                residenceDiv += "<div class='title'>面积 " +residence.sizeMax+" ㎡</div>";
+                                            }
+
+
+                                            if (residence.partir){
+                                                residenceDiv += "<div>价格： 从"+residence.partir+" EURO 到 "+residence.maximun+" EURO</div>";
+                                            }else{
+                                                residenceDiv += "<div>价格： "+residence.maximun+" EURO</div>";
+                                            }
+
+                                            if (residence.available){
+                                                residenceDiv += "<div><view class='available margin-right-10'></view>立即可用</div>";
+                                            }else{
+                                                if (residence.disponibleAt){
+                                                    residenceDiv += "<div>可用时间： "+residence.disponibleAt+"</div>";
+                                                }else{
+                                                    residenceDiv += "<div><view class='unavailable margin-right-10'></view>暂时不可用</div>";
+                                                }
+                                            }
+                                            residenceDiv += "</div>";
+
+                                            residenceDiv += "</div>";
+                                        }
+                                    }
+                                    residenceDiv += "</div>";
+                                }
+                            }
+
+                            residenceDiv += "<div style='text-align: right;'><a href='/site/residence/more' style='margin-right: 50px;'>更多房源>></a></div>"
+                            $(".residence-scroll").append(residenceDiv);
+
+                        }
+                    })
+                });
+
+                $("html").on("click",".recommand-item",function () {
+                    let id = $(this).attr("data-id");
+                    window.location.assign("/site/corporation/"+id+".html");
+                });
+
+
+            </script>
+            <style>
+                .example-title{
+                    padding: 20px;
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+
+                .available{
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 10px;
+                    background-color: #4d9200;
+                    display: inline-block;
+                }
+
+                .unavailable{
+                    width: 10px;
+                    height: 10px;
+                    background-color: #c69500;
+                    border-radius: 10px;
+                    display: inline-block;
+                }
+
+                .margin-right-10{
+                    margin-right: 10px;
+                }
+                .new-scroll,
+                .needs-scroll,
+                .partner-scroll{
+                    display: none;
+                }
+                .residence-scroll{
+                    display: block;
+                }
+
+            </style>
+        </div>
+</html>

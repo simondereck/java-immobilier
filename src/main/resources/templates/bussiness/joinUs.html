@@ -1,0 +1,107 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/bussiness/join-us.css}" />
+    <div class="join-us-div">
+        <section class="top-bar-div">
+            <div><img th:src="@{/img/bussiness/join-us-4.jpg}" /></div>
+            <div class="description section-item-title">
+                加盟我们
+            </div>
+        </section>
+        <section class="section-item">
+            <div class="section-item-img"><img th:src="@{/img/bussiness/join-us-2.jpg}" /></div>
+            <div class="section-item-detail">
+                <div class="form-group"><h3>优势：</h3></div>
+                <div class="form-group">
+                    1)轻加盟，提成高(最高到80%)。
+                </div>
+                <div class="form-group">
+                    2)轻投资，无纸化办公，无办公室(无房租)，在家办公。
+                </div>
+                <div>
+                    3)时间自由，自己是老板，无固定上班时间，方便照顾家人及小孩，工作家庭二不误。
+                </div>
+                <div>
+                    4)学习工作二不误，可以利用无课时间及周末工作，时间自由安排，不影响学业。
+                </div>
+            </div>
+        </section>
+        <section class="section-item">
+            <div class="section-item-detail">
+                <form method="post" action="/bussiness/join/us" id="apply">
+                    <div class="form-group section-item-title"><h3>现在申请</h3></div>
+                    <div class="form-group">
+                        <label>姓</label>
+                        <div>
+                            <input name="nom" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>名</label>
+                        <div>
+                            <input name="prenom" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>性别</label>
+                        <div>
+                            <select name="sex" class="form-control">
+                                <option value="0">男</option>
+                                <option value="1">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>电话</label>
+                        <div>
+                            <input name="telephone" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>邮箱</label>
+                        <div>
+                            <input name="email" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>微信</label>
+                        <div>
+                            <input name="wechat" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group button-group"><button class="btn btn-success" type="button">提交</button></div>
+                </form>
+            </div>
+            <div class="section-item-img"><img th:src="@{/img/bussiness/join-us-3.jpg}"/></div>
+        </section>
+    </div>
+    <script th:if="${success==1}">
+        $(function () {
+            alert("你的信息已经成功提交");
+        });
+    </script>
+    <script>
+        $(function () {
+            $(".btn-success").click(function () {
+                let nom = $("input[name=nom]").val();
+                let prenom = $("input[name=prenom]").val();
+                let telephone = $("input[name=telephone]").val();
+                let email = $("input[name=email]").val();
+                let wechat = $("input[name=wechat]").val();
+                if (!telephone&&!email&&!wechat){
+                    alert("至少填写一个联系方式！");
+                    return;
+                }
+                if (!nom&&!prenom){
+                    alert("姓名不能为空！");
+                    return;
+                }
+                $("#apply").submit();
+            });
+        });
+    </script>
+</div>
+</html>

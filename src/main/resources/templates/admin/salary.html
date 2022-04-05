@@ -1,0 +1,30 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="personnel-admin-div">
+        <div class="personnel-title"><h3>欢迎，<view th:text="${session.user.name}" th:remove="tag"></view></h3></div>
+        <div class="personnel-admin">
+
+        </div>
+    </div>
+    <style>
+        .personnel-title{
+            text-align: center;
+        }
+        .personnel-admin-div{
+            width: 70%;
+            padding: 50px;
+            margin: auto;
+            background-color: white;
+            height: 100%;
+        }
+        .button-group{
+            text-align: right;
+        }
+
+
+    </style>
+</div>
+</html>

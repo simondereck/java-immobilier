@@ -1,0 +1,172 @@
+<div xmlns:th="http://www.w3.org/1999/xhtml" layout:fragment="power-order"
+     xmlns:layout="http://www.w3.org/1999/xhtml" th:remove="tag">
+    <div class="form-group order-title">
+        <h3>开电清单</h3>
+        <p>-------------- * 为必填选项 --------------</p>
+    </div>
+    <div class="form-group">
+        <form th:action="@{/site/corporation/order/}+${id}+@{.html}" method="post" id="orderForm">
+            <div class="form-group">
+                <label for="nom">*姓：</label>
+                <div>
+                    <view th:if="${session.user}" th:remove="tag">
+                        <input class="form-control" name="nom" id="nom" th:value="${session.user.name}"/>
+                    </view>
+                    <view th:unless="${session.user}" th:remove="tag">
+                        <input class="form-control" name="nom" id="nom"/>
+                    </view>
+                </div>
+                <text class="nom-error error"></text>
+            </div>
+            <div class="form-group">
+                <label for="prenom">*名:</label>
+                <div>
+                    <view th:if="${session.user}" th:remove="tag">
+                        <input class="form-control" name="prenom" id="prenom" th:value="${session.user.prenom}"/>
+                    </view>
+                    <view th:unless="${session.user}" th:remove="tag">
+                        <input class="form-control" name="prenom" id="prenom" />
+                    </view>
+                </div>
+                <text class="prenom-error error"></text>
+            </div>
+            <div class="form-group">
+                <label for="sex" class="control-label">*性别</label>
+                <div>
+                    <view th:remove="tag" th:if="${session.user}">
+                        <select name="sex" id="sex" class="form-control">
+                            <view th:if="${session.user.sex==0}" th:remove="tag">
+                                <option value="0" selected>先生</option>
+                            </view>
+                            <view th:unless="${session.user.sex==0}" th:remove="tag">
+                                <option value="0" >先生</option>
+                            </view>
+                            <view th:if="${session.user.sex==1}" th:remove="tag">
+                                <option value="1">女士</option>
+                            </view>
+                            <view th:unless="${session.user.sex==1}" th:remove="tag">
+                                <option value="1">女士</option>
+                            </view>
+                        </select>
+                    </view>
+                    <view th:unless="${session.user}">
+                        <select name="sex" id="sex" class="form-control">
+                            <option value="0" >先生</option>
+                            <option value="1">女士</option>
+                        </select>
+                    </view>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">*email</label>
+                <view th:remove="tag" th:if="${session.user}">
+                    <div>
+                        <input name="email" id="email" class="form-control" th:value="${session.user.email}"/>
+                    </div>
+                </view>
+                <view th:remove="tag" th:unless="${session.user}">
+                    <div>
+                        <input name="email" id="email" class="form-control"/>
+                    </div>
+                </view>
+                <text class="email-error error"></text>
+            </div>
+            <div class="form-group">
+                <label for="telephone">*电话</label>
+                <view th:remove="tag" th:if="${session.user}">
+                    <div>
+                        <input name="telephone" id="telephone" class="form-control" th:value="${session.user.telephone}"/>
+                    </div>
+                </view>
+                <view th:remove="tag" th:unless="${session.user}">
+                    <div>
+                        <input name="telephone" id="telephone" class="form-control" />
+                    </div>
+                </view>
+                <text class="telephone-error error"></text>
+            </div>
+            <div class="form-group">
+                <label for="rib">RIB</label>
+                <div>
+                    <input name="rib-file" id="rib" class="form-control" type="file"/>
+                    <input name="rib"  hidden />
+                </div>
+                <text class="meters-error error"></text>
+            </div>
+            <div class="form-group">
+                <label for="meters">*电表数</label>
+                <div>
+                    <input name="meters-file" id="meters" class="form-control" type="file"/>
+                    <input name="meters"  hidden />
+                </div>
+                <text class="meters-error error"></text>
+            </div>
+            <div class="form-group">
+                <label for="address">*开电地址</label>
+                <div>
+                    <input name="address" id="address" class="form-control"/>
+                </div>
+                <text class="address-error error"></text>
+            </div>
+            <div class="form-group">
+                <label>微信(选填)</label>
+                <div>
+                    <input  name="wechat" id="wechat" class="form-control"/>
+                </div>
+                <text class="wechat-error error"></text>
+            </div>
+            <div class="form-group button-group">
+                <button class="btn btn-success order-cobber" type="button">提交</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        $(".order-cobber").click(function () {
+            let email = $("#email").val();
+            let telephone = $("#telephone").val();
+            let meters = $("input[name=meters]").val();
+            let rib = $("input[name=rib]").val();
+            let address = $("#address").val();
+            let wechat = $("#wechat").val();
+            let prenom = $("#prenom").val();
+            let nom = $("#nom").val();
+
+            if (prenom && nom && email && telephone && address){
+                $("#orderForm").submit();
+            }
+
+            if (!email){
+                $(".email-error").text("邮件不能为空");
+            }else{
+                $(".email-error").text("");
+            }
+
+            if (!prenom){
+                $(".prenom-error").text("名不能为空");
+            }else{
+                $(".prenom-error").text("");
+            }
+
+
+            if (!nom){
+                $(".nom-error").text("姓不能为空");
+            }else{
+                $(".nom-error").text("");
+            }
+
+
+            if (!telephone){
+                $(".telephone-error").text("电话不能为空");
+            }else{
+                $("telephone-error").text("");
+            }
+
+            if (!address){
+                $(".address-error").text("开电地址不能为空");
+            }else{
+                $("address-error").text("");
+            }
+
+        });
+    </script>
+</div>

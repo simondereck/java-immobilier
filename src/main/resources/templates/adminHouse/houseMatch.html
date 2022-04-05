@@ -1,0 +1,135 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <link th:href="@{/css/house-match.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div class="content">
+            <div class="annonce-item">
+                <div class="annonce-item-info">
+                    <div>
+                        <h3 th:text="${'房东: '+ partner.prenom + ' , ' +partner.nom }"></h3>
+                    </div>
+                    <div>
+                        <view class="annonce-item-label">房屋地址：</view>
+                        <view th:text="${annonce.address}"></view>
+                    </div>
+                    <div>
+                        <view class="annonce-item-label">房  租：</view>
+                        <view th:text="${annonce.loyer + 'EUR'}"></view>
+                    </div>
+                    <div>
+                        <view class="annonce-item-label">物  业：</view>
+                        <view th:text="${annonce.charges + 'EUR'}"></view>
+                    </div>
+                    <div>
+                        <view class="annonce-item-label">入住时间：</view>
+                        <view th:text="${annonce.sdate}"></view>
+                    </div>
+                </div>
+                <div class="annonce-item-option">
+                    <button class="btn btn-success house-detail" th:data-id="${annonce.id}">房屋详情</button>
+                </div>
+            </div>
+            <div class="line-item"></div>
+            <div>
+
+            </div>
+            <div class="match-div">
+                <div th:each="item,iter:${dataMatches}" th:remove="tag">
+                    <div class="match-item">
+                        <div class="match-item-info">
+                            <view th:if="${matches}" th:remove="tag">
+                                <view th:if="${matches[item.id+'']}" th:remove="tag">
+                                    <div th:if="${matches[item.id+''].nid == item.id}">
+                                        <div th:class="${(matches[item.id+''].status == 1)?'line-like':'line-dislike'}"></div>
+                                    </div>
+                                </view>
+                            </view>
+                            <div>
+                                <view class="match-item-title">编  号：</view>
+                                <view th:text="${iter.count}"></view>
+                            </div>
+                            <div>
+                                <view class="match-item-title">预  算：</view>
+                                <view th:text="${item.budget + ' EUR'}"></view>
+                            </div>
+                            <div>
+                                <view class="match-item-title">位  置：</view>
+                                <view th:if="${locations[item.location+'']}">
+                                    <view th:text="${locations[item.location+''].code + ' --- ' + locations[item.location+''].name + ' --- ' + locations[item.location+''].postcode }"></view>
+                                </view>
+                            </div>
+                            <div>
+                                <view class="match-item-title">入住时间:</view>
+                                <view th:text="${item.sdate}"></view>
+                            </div>
+                            <div>
+                                <view class="match-item-title">房屋类型：</view>
+                                <view th:text="${rtypes[item.rtype]}"></view>
+                            </div>
+                            <div>
+                                <view class="match-item-title">交  通：</view>
+                                <view th:text="${trans[item.trans]}"></view>
+                            </div>
+                            <div>
+                                <view class="match-item-title">用  户：</view>
+                                <view th:text="${users[item.uid+''].prenom}"></view>
+                            </div>
+                            <div>
+                                <view class="match-item-title">邮  箱：</view>
+                                <view th:text="${users[item.uid+''].email}"></view>
+                            </div>
+                            <div>
+                                <view class="match-item-title">电  话：</view>
+                                <view th:text="${users[item.uid+''].telephone}"></view>
+                            </div>
+                        </div>
+                        <div class="match-item-button">
+                            <button class="btn btn-warning needs-like" th:data-id="${item.id}" th:data-aid="${annonce.id}">
+                                <span class="btn-icon heart"></span>
+                                喜欢
+                            </button>
+                            <button class="btn btn-danger needs-dislike" th:data-id="${item.id}" th:data-aid="${annonce.id}">
+                                <span class="btn-icon dislike"></span>
+                                不喜欢
+                            </button>
+                            <button class="btn btn-success needs-detail" th:data-id="${item.id}" th:data-aid="${annonce.id}">
+                                <span class="btn-icon house"></span>
+                                <text>预约看房</text>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(".needs-like").click(function(){
+            let id = $(this).attr("data-id");
+            let aid = $(this).attr("data-aid");
+            //save id et nid
+            // window.location.href = "/partner/admin/house/match/like?id=" + id + "&aid=" + aid;
+        });
+        $(".needs-dislike").click(function (){
+            let id = $(this).attr("data-id");
+            let aid = $(this).attr("data-aid");
+            //save id et nid
+            // window.location.href = "/partner/admin/house/match/dislike?id="+ id + "&aid=" + aid;
+        });
+        $(".needs-detail").click(function (){
+            let id = $(this).attr("data-id");
+            let aid = $(this).attr("data-aid");
+            //save id et nid
+            // window.location.href = "/partner/admin/house/match/detail?id=" + id + "&aid=" + aid;
+        });
+        $(".house-detail").click(function (){
+           let id = $(this).attr("data-id");
+            window.location.href=  "/admin/detail/annonce/"+id;
+           // window.location.href = "/partner/admin/house/detail/"+ id;
+        });
+    </script>
+</div>
+</html>

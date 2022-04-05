@@ -1,0 +1,164 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+            <div class="button-group">
+                <a class="btn btn-info" th:href="@{/partner/admin/addSource}">添加房源</a>
+            </div>
+            <div>
+                <div th:each="annonce,iter:${annonces}">
+                    <div class="line-item"></div>
+                    <div class="annonce-item">
+                        <div class="annonce-item-info">
+                            <div>
+                                <h3 th:text="${'房源: '+ user.name}"></h3>
+                            </div>
+                            <div>
+                                <view class="annonce-item-label">房屋地址：</view>
+                                <view th:text="${annonce.address}"></view>
+                            </div>
+                            <div>
+                                <view class="annonce-item-label">房  租：</view>
+                                <view th:text="${annonce.loyer + 'EUR'}"></view>
+                            </div>
+                            <div>
+                                <view class="annonce-item-label">物  业：</view>
+                                <view th:text="${annonce.charges + 'EUR'}"></view>
+                            </div>
+                            <div>
+                                <view class="annonce-item-label">入住时间：</view>
+                                <view th:text="${annonce.sdate}"></view>
+                            </div>
+                        </div>
+                        <div class="annonce-item-option">
+                            <button class="btn btn-success house-detail" th:data-id="${annonce.id}">房屋详情</button>
+                            <button class="btn btn-danger house-match" th:data-id="${annonce.id}">匹配</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="line-item"></div>
+            </div>
+        </div>
+        <div class="top-bar-div">
+            <div class="top-bar-item white" data-href="/partner/center/0.html"><div></div>所有房源</div>
+            <div class="top-bar-item green" data-href="/partner/center/1.html"><div></div>已租房源</div>
+            <div class="top-bar-item orange" data-href="/partner/center/2.html"><div></div>正在签约房源</div>
+            <div class="top-bar-item red" data-href="/partner/center/3.html"><div></div>空房源</div>
+        </div>
+    </div>
+    <script>
+        $(".house-detail").click(function (){
+           let id = $(this).attr("data-id");
+           window.location.href = "/partner/admin/house/detail/"+id;
+        });
+        $(".house-match").click(function (){
+            let id = $(this).attr("data-id");
+            window.location.href = "/partner/admin/house/match/"+id;
+        });
+    </script>
+    <style>
+
+        .partner-center .content{
+            height: 100%;
+            margin: 0 25% 0 5%;
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .partner-center .content::-webkit-scrollbar {
+            display: none;
+        }
+        .button-group{
+            text-align: right;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .top-bar-div{
+            position: absolute;
+            right: 50px;
+            background-color: rgba(255,255,255,0.5);
+            top: 140px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+        }
+        .top-bar-item{
+            width: 180px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+        .top-bar-item div{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .top-bar-item:hover{
+            background: #476b72;
+            color: white;
+            cursor: pointer;
+        }
+
+        .top-bar-div .active{
+            background-color: #476b72;
+            color: white;
+        }
+
+        .top-bar-div .white>div{
+            background-color: white;
+        }
+
+        .top-bar-div .orange>div{
+            background-color: yellow;
+        }
+
+        .top-bar-div .green>div{
+            background-color: #1c7430;
+        }
+
+
+        .top-bar-div .red>div{
+            background-color: darkred;
+        }
+
+        .annonce-item{
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid whitesmoke;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 20px;
+            /*box-shadow: 0 5px 5px rgba(0,0,0,0.3);*/
+        }
+
+        .annonce-item-info{
+            width:70%;
+        }
+
+        .annonce-item-option{
+            width:25%;
+            text-align: right;
+        }
+
+        .line-item{
+            width: 100%;
+            border-bottom: 1px dashed gray;
+        }
+
+        .annonce-item-label{
+            display: inline-block;
+            width: 150px;
+        }
+    </style>
+</div>
+</html>

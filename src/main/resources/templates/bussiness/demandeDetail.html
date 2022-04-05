@@ -1,0 +1,128 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <link th:href="@{/css/bussiness/demande-detail.css}" rel="stylesheet" />
+    <div class="detail-div-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">首页</a></li>
+                <li class="breadcrumb-item active" aria-current="page">买家详情</li>
+            </ol>
+        </nav>
+
+        <div class="detail-div" th:data-id="${id}">
+            <div class="house-div-title">
+                <div class="house-div-title-item house-active" data-id="0">买家需求</div>
+                <div class="house-div-title-item" data-id="1">联系方式</div>
+            </div>
+            <div>
+
+            </div>
+            <div>
+
+            </div>
+        </div>
+
+    </div>
+    <script>
+        $(function () {
+            let id = $(".detail-div").attr("data-id");
+            $.get("/bussiness/demande/detail/data/"+id,function (data) {
+               if (data.status==1){
+                   let detailDiv = "<div class='annonce-item detail-item' data-id='0'>" +
+                       "    <div class='form-group pirce line-item'><label>预算：</label><div class='line'></div><div>"+data.annonce.budget+"</div></div>" +
+                       "    <div class='form-group line-item'><label>面积：</label><div class='line'></div><div>"+data.annonce.size+" 平米</div></div>";
+                   if (data.annonce.payMethod==0){
+                       detailDiv += "<div class='form-group line-item'><label>方式：</label><div class='line'></div><div>全款</div></div>";
+                   }else{
+                       detailDiv += "<div class='form-group line-item'><label>方式：</label><div class='line'></div><div>首付</div></div>";
+                   }
+                   detailDiv += "<div class='form-group line-item'><label>职业：</label><div class='line'></div><div>"+data.profession[data.annonce.profession]+"</div></div>";
+
+                   switch (data.annonce.buyTime){
+                       case 0:
+                           detailDiv += "<div class='form-group line-item'><label>时间：</label><div class='line'></div><span>立刻购买</span></div>";
+                           break;
+                       case 1:
+                           detailDiv += "<div class='form-group line-item'><label>时间：</label><div class='line'></div><span>3个月内购买</span></div>";
+                           break;
+                       case 2:
+                           detailDiv += "<div class='form-group line-item'><label>时间：</label><div class='line'></div><span>6个月内购买</span></div>";
+                           break;
+                       case 3:
+                           detailDiv += "<div class='form-group line-item'><label>时间：</label><div class='line'></div><span>将来购买</span></div>"
+                           break;
+                   }
+
+                   detailDiv += "</div>"
+                   $(".detail-div").append(detailDiv);
+
+                   let contactDiv = "<div class='contact-item detail-item' data-id='1'>";
+                   if (data.annonce.sex==0){
+                       contactDiv += "<div class='form-group line-item'><label>性别：</label><div class='line'></div><span>男</span></div>";
+                   }else{
+                       contactDiv += "<div class='form-group'><label>性别：</label><span>女</span></div>";
+                   }
+                   contactDiv += "<div class='form-group line-item'><label>姓：</label><div class='line'></div><span>"+data.annonce.nom+"</span></div>";
+
+                   contactDiv += "<div class='form-group line-item'><label>名：</label><div class='line'></div><span>"+data.annonce.prenom+"</span></div>";
+
+                   contactDiv += "<div class='form-group line-item'><label>邮箱：</label><div class='line'></div><span>"+data.annonce.email+"</span></div>"
+
+                   contactDiv += "<div class='form-group line-item'><label>电话：</label><div class='line'></div><span>"+data.annonce.telephone+"</span></div>";
+
+                   contactDiv += "<div class='form-group line-item'><label>微信：</label><div class='line'></div><span>"+data.annonce.wechat+"</span></div>"
+
+                   contactDiv  += "</div>";
+
+                   $(".detail-div").append(contactDiv);
+
+               }else{
+                   alert("你所查看的需求不存在");
+               }
+            });
+
+            $(".house-div-title-item").click(function () {
+                let id = $(this).attr("data-id");
+
+                $(".house-div-title-item").each(function (key,value){
+                   if ($(value).attr("data-id")==id){
+                       $(value).addClass("house-active");
+                   }else{
+                       $(value).removeClass("house-active");
+                   }
+                });
+
+                $(".detail-item").each(function (key,item) {
+                   if ($(item).attr("data-id")==id){
+                       $(item).show();
+                   }else{
+                       $(item).hide();
+                   }
+                });
+            });
+        });
+    </script>
+    <style>
+        .line-item{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .line-item .line{
+            max-width: 60%;
+            min-width: 45%;
+            border-bottom: 1px dotted #0c5460;
+        }
+
+        .contact-item{
+            display: none;
+        }
+
+    </style>
+</div>
+</html>

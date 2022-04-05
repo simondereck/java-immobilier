@@ -1,0 +1,109 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <link rel="stylesheet"  th:href="@{/css/admin/cobber-detail.css}"/>
+    <div class="cobber-div">
+        <div class="admin-cobber-title"><h3>合作商小详情</h3></div>
+        <div>
+            <view th:if="${cobber}">
+                <div class="bg-light cobber-item">
+                    <div class="form-group">
+                        <label>姓：</label>
+                        <div th:text="${cobber.prenom}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>名：</label>
+                        <div th:text="${cobber.nom}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>邮件：</label>
+                        <div th:text="${cobber.email}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>电话：</label>
+                        <div th:text="${cobber.telephone}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>更新时间：</label>
+                        <div th:text="${cobber.utime}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>创建时间：</label>
+                        <div th:text="${cobber.ctime}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>状态：</label>
+                        <view th:if="${cobber.status==0}" th:remove="tag">
+                            <div>屏蔽</div>
+                        </view>
+                        <view th:unless="${cobber.status==0}" th:remove="tag">
+                            <div>激活</div>
+                        </view>
+                    </div>
+                    <div class="form-group button-group">
+                        <a th:href="@{/admin/cobber/update/}+${cobber.id}" class="btn btn-success">更新</a>
+                    </div>
+                </div>
+            </view>
+            <view th:if="${shop}" th:remove="tag">
+                <div class="bg-light cobber-item">
+                    <div class="form-group">
+                        <label>店铺名：</label>
+                        <div th:text="${shop.name}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>店铺联系电话：</label>
+                        <div th:text="${shop.telephone}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>店铺邮箱：</label>
+                        <div th:text="${shop.email}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>店铺地址：</label>
+                        <div th:text="${shop.address}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>店铺类型：</label>
+                        <div th:text="${types[shop.type]}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>店铺状态：</label>
+                        <view th:if="${shop.status==0}" th:remove="tag">
+                            <div>屏蔽</div>
+                        </view>
+                        <view th:if="${shop.status==1}" th:remove="tag">
+                            <div>激活</div>
+                        </view>
+                    </div>
+                    <div class="form-group">
+                        <label>店铺更新时间：</label>
+                        <div th:text="${shop.utime}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>店铺创建时间：</label>
+                        <div th:text="${shop.ctime}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>店铺描述：</label>
+                        <div id="description"  th:data-text="${shop.description}"></div>
+                    </div>
+                    <div class="form-group button-group">
+                        <a th:href="@{/admin/cobber/shop/update/}+${shop.id}" class="btn btn-success">更新</a>
+                    </div>
+                </div>
+            </view>
+        </div>
+        <script>
+            $(function (){
+                let description = $("#description").attr("data-text");
+                if (description){
+                    $("#description").html(description);
+                }
+            });
+        </script>
+    </div>
+</div>
+</html>

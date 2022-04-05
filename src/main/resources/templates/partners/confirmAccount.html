@@ -1,0 +1,31 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/partner/confirm-account.css}" />
+    <div class="confirm-div">
+        <div class="confirm-notice">
+            <h3>确认您的信息</h3>
+            <br />
+            <p>
+                感谢你的注册，请在您的邮箱 <span th:if="${email}" th:text="${email}"></span> 确认
+            </p>
+            <p>没有收到邮件，<a class="btn btn-link send-email">再次发送</a></p>
+        </div>
+    </div>
+    <script>
+        $(".send-email").click(function (){
+            $(this).attr("disabled","disabled");
+            $.get("/partner/account/sendEmail",function (result){
+                if (result){
+                    alert("邮件发送成功");
+                }else{
+                    alert("邮件发送失败");
+                }
+                $(".send-email").removeAttr("disabled");
+            });
+        });
+    </script>
+</div>
+</html>

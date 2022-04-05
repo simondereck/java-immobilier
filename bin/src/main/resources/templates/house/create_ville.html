@@ -1,0 +1,52 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="div-create-ville">
+        <div class="create-title"><h3>创建城市(用法语填写)</h3></div>
+        <div class="create-admin-form">
+            <form class="" method="post" th:action="@{/admin/ville/create_ville}">
+                <div class="form-group">
+                    <label for="name" class="control-label">城市名称：</label>
+                    <div>
+                        <input type="text" class="form-control" name="name"  id="name" placeholder="ville"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="postcode">邮编：</label>
+                    <div>
+                        <input type="text" class="form-control" name="postcode" id="postcode" placeholder="postcode" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="postcode">省</label>
+                    <div>
+                        <input type="number" class="form-control" name="code" id="code" placeholder="省" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="button-group">
+                        <button class="btn btn-success">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <style>
+        .create-title{
+            text-align: center;
+        }
+        .div-create-ville{
+            background-color: white;
+            width: 70%;
+            height: 100%;
+            margin: auto;
+            padding: 50px;
+        }
+        .button-group{
+            text-align: right;
+        }
+    </style>
+</div>
+</html>

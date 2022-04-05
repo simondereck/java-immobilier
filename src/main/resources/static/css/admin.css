@@ -1,0 +1,142 @@
+body{
+    background-image: url("/img/008.jpg");
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+    overflow-x: hidden;
+}
+
+.container-fluid{
+    padding:0;
+}
+
+footer{
+    background: #0c5460;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    color: whitesmoke;
+    width: 100%;
+
+}
+.footer-bar{
+    width: 80%;
+    display: flex;
+    margin: auto;
+}
+.footer-bar-item {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.footer-bar-item div{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+footer .white>div{
+    background-color: white;
+}
+
+footer .orange>div{
+    background-color: yellow;
+}
+
+footer .green>div{
+    background-color: #1c7430;
+}
+
+
+footer .red>div{
+    background-color: darkred;
+}
+
+
+.content-frame{
+    width:100vw;
+    height: calc(100vh - 60px);
+    /*height: 100%;*/
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.content-frame::-webkit-scrollbar {
+    display: none;
+}
+.nav-item img{
+    margin-top: 5px;
+}
+.web-message{
+    display: flex;
+    align-items: start;
+}
+.message-info{
+    padding: 5px;
+    background-color: red;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 8px;
+}
+
+.footer-div{
+    /*position: absolute;*/
+    /*bottom: 0;*/
+    max-width: 100%;
+}
+
+
+.client-button-contain{
+    background: transparent;
+    position:absolute;
+    bottom: 150px;
+    right: 0px;
+    width: 40px;
+    height: 100px;
+}
+
+
+
+.client-button-contain:hover{
+    width: 200px;
+    height: 100px;
+    padding:20px;
+}
+
+.client-button{
+    position: relative;
+    right: 0px;
+    background: orange;
+    padding:10px;
+    width: 40px;
+    height: 100px;
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+}
+
+.client-button-contain:hover .client-button{
+    cursor: pointer;
+    position: relative;
+    background: orange;
+    padding:10px;
+    width: 60px;
+    height: 60px;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 40px;
+    box-shadow: 0 10px 10px rgba(0,0,0,0.5);
+}
+
+
+
+
+.client-button img{
+    object-fit: cover;
+}

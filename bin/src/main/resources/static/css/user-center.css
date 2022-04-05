@@ -1,0 +1,30 @@
+.user-center{
+    width: 100%;
+    height: 100%;
+}
+.nav-user{
+    background: #0c5460;
+    color: whitesmoke;
+    display: flex;
+    justify-content: flex-end;
+}
+.nav-user-item{
+    padding: 15px;
+}
+
+.nav-user-item:hover{
+    background: #032228;
+    color: white;
+    cursor: pointer;
+}
+
+.nav-user .active{
+    background: #032228;
+    color: white;
+}
+
+
+
+body{
+    background: url("/img/002.jpg");
+}

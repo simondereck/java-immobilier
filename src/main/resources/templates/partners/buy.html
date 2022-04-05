@@ -1,0 +1,261 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+
+            <div class="form-group">
+                <div class="progress">
+                    <div id="step-progress" class="progress-bar bg-info" role="progressbar"  aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+            <form method="post" action="/partner/bussiness/buy" class="form-horizontal" id="buy">
+                <div class="step-1">
+                    <div class="form-group">
+                        <label for="budget">预算(*当地货币)</label>
+                        <div>
+                            <input class="form-control" type="number" name="budget" id="budget"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="area" class=" control-label">地段：</label>
+                        <div id="area-div">
+                            <input type="text" class="form-control search-input" name="area"  id="area" placeholder="地段"/>
+                            <input type="text" name="location" hidden="hidden" id="location"/>
+                        </div>
+                        <text class="location-error error"></text>
+                    </div>
+                    <div class="form-group">
+                        <label for="size">面积</label>
+                        <div class="input-group">
+                            <input name="size" type="number" class="form-control" id="size" aria-describedby="basic-addon1"/>
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon1">平米</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="payMethod">全款或首付</label>
+                        <div>
+                            <select class="form-control" name="payMethod" id="payMethod">
+                                <option value="0">全款</option>
+                                <option value="1">首付</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="profession">职业</label>
+                        <div>
+                            <select class="form-control" name="profession" id="profession"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>什么时候买</label>
+                        <div>
+                            <select class="form-control" name="buyTime" id="buyTime">
+                                <option value="0">立刻购买</option>
+                                <option value="1">3个月内购买</option>
+                                <option value="2">6个月内购买</option>
+                                <option value="3">将来购买</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="purpose">您是？</label>
+                        <div>
+                            <select name="purpose" id="purpose" class="form-control">
+                                <option value="0">职业买家</option>
+                                <option value="1">投资用</option>
+                                <option value="2">升值后就买</option>
+                                <option value="3">赚钱为目的</option>
+                                <option value="4">自住</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group button-group">
+                        <button class="btn btn-success btn-next" type="button">下一步</button>
+                    </div>
+
+                </div>
+
+                <div class="step-2">
+                    <div class="form-group">
+                        <label>性别</label>
+                        <div>
+                            <select class="form-control" name="sex">
+                                <view th:if="${session.user.sex}" th:remove="tag">
+                                    <view th:if="${session.user.sex==0}" th:remove="tag">
+                                        <option value="0" selected>男</option>
+                                    </view>
+                                    <view th:unless="${session.user.sex==0}" th:remove="tag">
+                                        <option value="0" >男</option>
+                                    </view>
+                                    <view th:if="${session.user.sex==1}" th:remove="tag">
+                                        <option value="1" selected>女</option>
+                                    </view>
+                                    <view th:unless="${session.user.sex==1}" th:remove="tag">
+                                        <option value="1">女</option>
+                                    </view>
+                                </view>
+                                <view th:unless="${session.user.sex}" th:remove="tag">
+                                    <option value="0">男</option>
+                                    <option value="1">女</option>
+                                </view>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nom">姓</label>
+                        <div>
+                            <input name="nom" th:value="${session.user.prenom}" id="nom" class="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prenom">名</label>
+                        <div>
+                            <input name="prenom" th:value="${session.user.name}" id="prenom" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="telephone">电话</label>
+                        <div>
+                            <input name="telephone" class="form-control" id="telephone" th:value="${session.user.telephone}"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <div>
+                            <input name="email" class="form-control" id="email" th:value="${session.user.email}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="wechat">微信</label>
+                        <div>
+                            <input name="wecaht" class="form-control" id="wechat" th:value="${session.user.wechat}"/>
+                        </div>
+                    </div>
+                    <div class="form-group button-group">
+                        <button class="btn btn-info btn-before" type="button">上一步</button>
+                        <button class="btn btn-success btn-submit" type="button">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <style>
+        .step-2{
+            display: none;
+        }
+    </style>
+    <script>
+        $(function () {
+           $.get("/data/garanties/professions",function (data) {
+               let professions = "";
+               for(let i in data){
+                    professions += "<option value='"+i+"'>"+data[i]+"</option>";
+               }
+               $("#profession").append(professions);
+           });
+
+            $("#area").keyup(function (){
+                let val = $(this).val();
+                var data = {keyword:val};
+                $.get("/user/location/keywords",data,function (result){
+                    if (result) {
+                        villes = result;
+                        var $table = "<table id='search-table'>" +
+                            " <tr class='header'>" +
+                            "<th style='width:30%' >邮编</th>" +
+                            "<th style='width:30%' >城市</th>" +
+                            "<th style='width:30%' >省</th></tr>";
+
+                        villes.forEach(function (ville, key) {
+                            $table += "<tr class='select-ville' data-id='"+ville.id+"' data-key='"+key+"'>" +
+                                "<td>"+ville.postcode+"</td>"+
+                                "<td>"+ville.name+"</td>"+
+                                "<td>"+ville.code+"</td>"+
+                                "</tr>"
+                        });
+                        $table += "</table>";
+                        let old = $("#search-table");
+                        if (old){
+                            old.remove();
+                        }
+                        $("#area-div").append($table);
+                    }
+                });
+            });
+
+            $(".form-horizontal").on('click',".select-ville",function (){
+                let key = $(this).attr("data-key");
+                let id = $(this).attr("data-id");
+                $("input[name=location]").val(id);
+                let value = villes[key].postcode + " -- " + villes[key].name + " -- " + villes[key].code;
+                $("input[name=area]").val(value);
+                $("#search-table").remove();
+            });
+
+            $(".btn-next").click(function () {
+                let budget = $("#budget").val();
+                let location = $("#location").val();
+                let size = $("#size").val();
+                if (!budget){
+                    alert("预算必须填写");
+                    return;
+                }
+
+                if (!location){
+                    alert("地理位置必须填写");
+                    return;
+                }
+
+                if (!size){
+                    alert("大小必须填写");
+                    return;
+                }
+                $("#step-progress").attr("aria-valuenow",50);
+                $("#step-progress").css("width","50%");
+                $(".step-1").toggle();
+                $(".step-2").toggle();
+            });
+            $(".btn-submit").click(function () {
+
+                let wechat = $("#wechat").val();
+                let nom = $("#nom").val();
+                let prenom = $("#prenom").val();
+                let email = $("#email").val();
+                let telephone = $("#telephone").val();
+                if (!nom||!prenom){
+                    alert("姓名必填");
+                    return;
+                }
+                if(!wechat&&!telephone&&!email){
+                    alert("至少填写一个联系方式");
+                    return;
+                }
+
+                $("#buy").submit();
+            });
+
+            $(".btn-before").click(function () {
+                // let parent = $(this).parents(".steps");
+                // let id = parent.attr("data-id");
+                // $(parent).toggle();
+                $(".step-1").toggle();
+                $(".step-2").toggle();
+                $("#step-progress").attr("aria-valuenow",0);
+                $("#step-progress").css("width","0%");
+            });
+
+        });
+    </script>
+</div>
+</html>

@@ -1,0 +1,211 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content ">
+            <div class="un-element bg-white">
+                <h3>房屋详情</h3>
+            </div>
+            <div class="location-div double-element">
+                <div class="address element-item">
+                    <label><h5>地址</h5></label>
+                    <div>
+                        <view th:text="${annonce.address}"></view>
+                        <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/address/}+${annonce.id}">更改</a>
+                    </div>
+                </div>
+                <div class="line-splite"></div>
+                <div class="location element-item">
+                    <label><h5>地区</h5></label>
+                    <div>
+                        <view th:text="${ville.name +' --- ' + ville.postcode + ' --- ' + ville.code }"></view>
+                        <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/address/}+${annonce.id}">更改</a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="sdate un-element bg-white">
+                <label><h5>可出租日期</h5></label>
+                <div>
+                    <view th:text="${annonce.sdate}"></view>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/sdate/}+${annonce.id}">更改</a>
+                </div>
+            </div>
+            <div class="house-div double-element">
+                <div class="house-type element-item">
+                    <label><h5>房子类型</h5></label>
+                    <div>
+                        <view th:text="${rtypes[annonce.rtype]}"></view>
+                        <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/rtype/}+${annonce.id}">更改</a>
+                    </div>
+                </div>
+                <div class="line-splite"></div>
+                <div class="house-size element-item">
+                    <label><h5>房屋大小</h5></label>
+                    <div>
+                        <view th:text="${annonce.size + 'm²'}"></view>
+                        <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/rtype/}+${annonce.id}">更改</a>
+                    </div>
+                </div>
+            </div>
+            <div class="price-total un-element bg-white">
+                <label><h5>总计</h5></label>
+                <div>
+                    <view th:text="${annonce.price + ' EUR'}"></view>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/price/}+${annonce.id}">更改</a>
+                </div>
+            </div>
+            <div class="price-div double-element bg-white">
+                <div class="loyer element-item">
+                    <label><h6>房租</h6></label>
+                    <div th:text="${annonce.loyer + ' EUR'}"></div>
+                </div>
+                <div class="line-splite"></div>
+                <div class="charges element-item">
+                    <label><h6>物业费</h6></label>
+                    <div th:text="${annonce.charges + ' EUR'}"></div>
+                </div>
+            </div>
+            <div class="detail-div un-element">
+                <label><h5>房屋描述</h5></label>
+                <div>
+                    <textarea th:text="${annonce.description}" disabled class="form-control"></textarea>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/description/}+${annonce.id}">更改</a>
+                </div>
+            </div>
+            <div class="energy un-element bg-white">
+                <label><h5>DPE 能源等级</h5></label>
+                <div class="energy-item-group" th:if="${annonce.energy==0}">
+                    <input type="radio" name="energy" checked="checked" value="0"/>
+                    <div class="energy-item energy-item-0" >
+                        <span style="color: black">无等级</span>
+                    </div>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/energy/}+${annonce.id}">更改</a>
+                </div>
+                <div class="energy-item-group" th:if="${annonce.energy==1}">
+                    <input type="radio" name="energy" value="1" checked="checked"/>
+                    <div class="energy-item energy-item-1" style="background-color: #478E3E;">
+                        <span>A</span>
+                        <div></div>
+                    </div>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/energy/}+${annonce.id}">更改</a>
+
+                </div>
+                <div class="energy-item-group" th:if="${annonce.energy==2}">
+                    <input type="radio" name="energy" value="2" checked="checked"/>
+                    <div class="energy-item energy-item-2" style="background-color: #579F31;">
+                        <span>B</span>
+                        <div></div>
+                    </div>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/energy/}+${annonce.id}">更改</a>
+
+                </div>
+                <div class="energy-item-group" th:if="${annonce.energy==3}">
+                    <input type="radio" name="energy" value="3" checked="checked"/>
+                    <div class="energy-item energy-item-3" style="background-color: #ABC524;">
+                        <span>C</span>
+                        <div></div>
+                    </div>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/energy/}+${annonce.id}">更改</a>
+
+                </div>
+                <div class="energy-item-group" th:if="${annonce.energy==4}">
+                    <input type="radio" name="energy" value="4" checked="checked"/>
+                    <div class="energy-item energy-item-4" style="background-color: #FFEE33;">
+                        <span>D</span>
+                        <div></div>
+                    </div>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/energy/}+${annonce.id}">更改</a>
+
+                </div>
+                <div class="energy-item-group" th:if="${annonce.energy==5}">
+                    <input type="radio" name="energy" value="5" checked="checked"/>
+                    <div class="energy-item energy-item-5" style="background-color: #EBAD30;">
+                        <span>E</span>
+                        <div></div>
+                    </div>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/energy/}+${annonce.id}">更改</a>
+
+                </div>
+                <div class="energy-item-group" th:if="${annonce.energy==6}">
+                    <input type="radio" name="energy" value="6" checked="checked"/>
+                    <div class="energy-item energy-item-6" style="background-color: #D3702F;">
+                        <span>F</span>
+                        <div></div>
+                    </div>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/energy/}+${annonce.id}">更改</a>
+
+                </div>
+                <div class="energy-item-group" th:if="${annonce.energy==7}">
+                    <input type="radio" name="energy" value="7" checked="checked"/>
+                    <div class="energy-item energy-item-7" style="background-color: #C74034;">
+                        <span>G</span>
+                        <div></div>
+                    </div>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/energy/}+${annonce.id}">更改</a>
+
+                </div>
+            </div>
+            <div class="trans un-element">
+                <label><h5>交通</h5></label>
+                <div>
+                    <view th:text="${trans[annonce.trans]}"></view>
+                    <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/trans/}+${annonce.id}">更改</a>
+                </div>
+            </div>
+            <div class="base un-element bg-white">
+                <label><h5>基本家具配置</h5></label>
+                <div class="bases form-group">
+                    <view  th:each="item,iter:${annonce.base}" class="base-item active" th:data-id="${iter.index}">
+                        <text th:text="${bases[item.value]}"></text>
+                    </view>
+                </div>
+                <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/bases/}+${annonce.id}">更改</a>
+            </div>
+            <div class="envir un-element">
+                <labl><h5>高级配置</h5></labl>
+                <div class="envir form-group">
+                    <view  th:each="item,iter:${annonce.envir}" class="imm-item active" th:data-id="${iter.index}">
+                        <text th:text="${imms[item.value]}"></text>
+                    </view>
+                </div>
+                <a class="btn btn-link" th:href="@{/partner/admin/house/detail/update/envir/}+${annonce.id}">更改</a>
+            </div>
+        </div>
+        <style>
+            .partner-center>.content{
+                width: 70%;
+                background: rgba(255,255,255,0.4);
+                margin:auto;
+                padding: 0;
+            }
+
+            .double-element{
+                padding: 30px;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .un-element{
+                padding: 30px;
+            }
+
+            .double-element .element-item{
+                width: 48%;
+            }
+
+            .line-splite{
+                width: 0;
+                height: 1;
+                border-right: 1px solid gray;
+            }
+
+        </style>
+    </div>
+</div>
+</html>

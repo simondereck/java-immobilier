@@ -1,0 +1,128 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/site/more.css}" />
+    <div class="more-div" th:data-page="${page}">
+        <div class="more-div-title"><h3>所有买家</h3></div>
+        <div>
+            <div class="location-details">
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            let page = $(".more-div").attr("data-page");
+            $.get("/site/bussiness/data/demande/more?page="+page,function (data) {
+                console.log(data);
+                if (data.status==1){
+                    let annonces = data.annonces;
+                    for (let k in annonces){
+                        let buyItem = "<div class='buy-item' data-id='"+annonces[k].id+"'>";
+                        buyItem += "<div class='form-group price'>预算："+annonces[k].budget+" EURO</div>"
+                        buyItem += "<div class='form-group'>地段："+annonces[k].area+"</div>";
+                        buyItem += "<div class='form-group'>面积："+annonces[k].size+" 平米</div>";
+                        if (annonces[k].payMethod==0){
+                            buyItem += "<div class='form-group'>方式：全款</div>";
+                        }else{
+                            buyItem += "<div class='form-group'>方式：首付</div>";
+                        }
+                        buyItem += "<div class='form-group'>职业："+data.profession[annonces[k].profession]+"</div>";
+
+
+                        if (annonces[k].buyTime==0){
+                            buyItem += "<div class='form-group'>时间：立刻购买</div>";
+
+                        }else if (annonces[k].buyTime==1){
+                            buyItem += "<div class='form-group'>时间：3个月内购买</div>";
+
+                        }else if (annonces[k].buyTime==2){
+                            buyItem += "<div class='form-group'>时间：6个月内购买</div>";
+
+                        }else {
+                            buyItem += "<div class='form-group'>时间：将来购买</div>";
+                        }
+
+                        buyItem +="</div>";
+
+                        $(".location-details").append(buyItem);
+                    }
+                    let pageHelper = "<div class='pages-set'>" +
+                        "   <ul class='pagination'>";
+                    for (let i in data.pageHelper.pages){
+                        if (data.pageHelper.currentPage == i){
+                            pageHelper += "<li class='page-item active'>" +
+                                "<a href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                "</li>";
+                        }else{
+                            pageHelper += "<li class='page-item'>" +
+                                "<a href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                "</li>";
+                        }
+
+                    }
+                    pageHelper += "</ul></div>";
+                    $(".more-div").append(pageHelper);
+                }
+
+
+
+            });
+
+            $("html").on("click",".location-detail-item",function () {
+               let id = $(this).attr("data-id");
+               window.location.assign("/bussiness/house/detail/"+id+".html");
+            });
+        })
+
+    </script>
+    <style>
+        @media screen and (min-width: 501px){
+            .more-div-title{
+                margin-bottom: 40px;
+            }
+            .more-div{
+                padding-left: 2.4%;
+            }
+
+            .buy-item{
+                display:inline-table;
+                background-color: white;
+                padding: 20px;
+                cursor: pointer;
+                margin-right: 2.4%;
+                margin-bottom: 20px;
+            }
+
+
+            .buy-item:hover{
+                box-shadow: 0 10px 10px rgba(0,0,0,0.3);
+            }
+        }
+
+        @media screen and (max-width: 500px){
+            .more-div-title{
+                margin-bottom: 40px;
+            }
+            .buy-item{
+                width: 100%;
+                background-color: white;
+                padding: 20px;
+                cursor: pointer;
+                margin-bottom: 20px;
+            }
+
+        }
+
+        .price{
+            font-size: 18px;
+            color: #0f6674;
+            font-weight: bold;
+        }
+    </style>
+</div>
+</html>

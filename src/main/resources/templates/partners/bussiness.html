@@ -1,0 +1,467 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+            <div class="button-group">
+                <button class="btn btn-success" id="sell">我要卖房</button>
+                <button class="btn btn-info" id="buy">我要买房</button>
+            </div>
+            <div>
+                <div class="line-item"></div>
+            </div>
+            <div class="house-div-title">
+                <div class="house-div-title-item house-active" data-id="0">卖房</div>
+                <div class="house-div-title-item" data-id="1">买房</div>
+            </div>
+            <div class="sell-scroll select-div-item" data-id="0">
+
+            </div>
+            <div class="buy-scroll select-div-item" data-id="1">
+
+            </div>
+        </div>
+    </div>
+    <script>
+        $("#sell").click(function () {
+            window.location.assign("/partner/bussiness/sell");
+        });
+
+        $("#buy").click(function () {
+            window.location.assign("/partner/bussiness/buy");
+        });
+
+        $(".annonce-detail").click(function () {
+            let id = $(this).attr("data-id");
+            window.location.assign("/partner/bussiness/annonceBussiness/detail/"+id);
+        });
+
+
+
+        $.get("/partner/bussiness/data/sell",function (data) {
+            if (data.status==1){
+                let annonceDiv="<div class='scroll-items'>";
+                for (let i=0;i<data.annonces.length;i++){
+                    let annonce = data.annonces[i];
+                    annonceDiv += "<div class='location-div'>"
+                    annonceDiv += "<div class='location-detail-item' data-id='"+annonce.id+"'>";
+                    annonceDiv += "<div>";
+
+                    if (annonce.cover){
+                        annonceDiv += "<img src='"+"/partners/"+annonce.pid+"/"+annonce.cover+"'/>";
+                    }else{
+                        annonceDiv += "<img src='/img/default.jpg'/>";
+                    }
+
+
+                    switch (annonce.houseLabel){
+                        case 0:
+                            annonceDiv += "<div class='cover'><div class='location-item-label'>个人</div></div>";
+                            break;
+                        case 1:
+                            annonceDiv += "<div class='cover'><div class='location-item-label'>房管</div></div>";
+
+                            break;
+                        case 2:
+                            annonceDiv += "<div class='cover'><div class='location-item-label'>中介</div></div>";
+
+                            break;
+                        case 3:
+                            annonceDiv += "<div class='cover'><div class='location-item-label'>加盟商</div></div>";
+
+                            break;
+                        case 4:
+                            annonceDiv += "<div class='cover'><div class='location-item-label'>平台自营</div></div>";
+                            break;
+                    }
+
+                    annonceDiv += "</div>";
+
+
+                    annonceDiv += "<div class='location-detail-item-desc'>";
+                    if(annonce.area){
+                        annonceDiv += "<div class='title'>地区:"+annonce.area+"</div>"
+                    }
+
+                    annonceDiv += "<div class='title'>"+data.houseType[annonce.types][annonce.houseType]+"</div>";
+
+
+                    if(annonce.size){
+                        annonceDiv += "<div class='title'>"+annonce.size+" 平米</div>";
+                    }
+
+                    if(annonce.roomType>0){
+                        annonceDiv += "<div class='title'>"+data.roomType[annonce.roomType]+"</div>";
+                    }
+
+
+                    annonceDiv += "<div class='title price'>"+annonce.price+" EURO</div>";
+
+                    annonceDiv += "</div></div>";
+
+                    annonceDiv += "<div class='button-group form-group'>" +
+                        "   <button class='btn btn-info btn-detail' data-id='"+annonce.id+"'>详情</button>" +
+                        "   <button class='btn btn-success btn-update' data-id='"+annonce.id+"'>更新</button>" +
+                        "</div>";
+                    annonceDiv += "</div>";
+                }
+
+                annonceDiv += "</div>";
+                $(".sell-scroll").append(annonceDiv);
+
+                let pageHelper = "<div class='pages-set'>" +
+                    "   <ul class='pagination'>";
+                for (let i in data.pageHelper.pages){
+                    pageHelper += "<li class='page-item'>" +
+                        "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                        "</li>";
+                }
+                pageHelper += "</ul></div>";
+
+                $(".sell-scroll").append(pageHelper);
+
+            }
+        });
+
+
+        $.get("/partner/bussiness/data/buy",function (data) {
+            console.log(data);
+            if (data.status==1){
+                let annonces = data.annonces;
+                let demandeDiv = "";
+                for (let k in annonces){
+                    let buyItem = "<div class='location-div'><div class='buy-item' data-id='"+annonces[k].id+"'>";
+                    buyItem += "<div class='form-group'>预算："+annonces[k].budget+" EURO</div>"
+                    buyItem += "<div class='form-group'>地段："+annonces[k].area+"</div>";
+                    buyItem += "<div class='form-group'>面积："+annonces[k].size+" 平米</div>";
+                    if (annonces[k].payMethod==0){
+                        buyItem += "<div class='form-group'>方式：全款</div>";
+                    }else{
+                        buyItem += "<div class='form-group'>方式：首付</div>";
+                    }
+                    buyItem += "<div class='form-group'>职业："+data.profession[annonces[k].profession]+"</div>";
+
+                    if (annonces[k].buyTime==0){
+                        buyItem += "<div class='form-group'>时间：立刻购买</div>";
+
+                    }else if (annonces[k].buyTime==1){
+                        buyItem += "<div class='form-group'>时间：3个月内购买</div>";
+
+                    }else if (annonces[k].buyTime==2){
+                        buyItem += "<div class='form-group'>时间：6个月内购买</div>";
+
+                    }else {
+                        buyItem += "<div class='form-group'>时间：将来购买</div>";
+                    }
+
+                    buyItem += "<div class='form-group'>创建时间："+annonces[k].ctime+"</div>";
+                    buyItem += "<div class='form-group'>更新时间："+annonces[k].utime+"</div>";
+
+                    buyItem +="</div>" +
+                        "<div class='button-group'>" +
+                        "   <button class='btn btn-info btn-detail' data-id='"+annonces[k].id+"'>详情</button>" +
+                        "   <button class='btn btn-success btn-update' data-id='"+annonces[k].id+"'>更新</button>" +
+                        "</div>" +
+                        "</div>";
+                    demandeDiv += buyItem;
+                }
+
+                $(".buy-scroll").append(demandeDiv);
+
+
+                let pageHelper = "<div class='pages-set'>" +
+                    "   <ul class='pagination'>";
+                for (let i in data.pageHelper.pages){
+                    pageHelper += "<li class='page-item'>" +
+                        "<a href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                        "</li>";
+                }
+                pageHelper += "</ul></div>";
+
+                $(".buy-scroll").append(pageHelper);
+            }
+        });
+
+
+        $(".house-div-title-item").click(function () {
+            let id = $(this).attr("data-id");
+            $(".house-div-title-item").each(function (key,item) {
+               if($(item).attr("data-id")==id){
+                   $(item).addClass("house-active");
+               }else{
+                   $(item).removeClass("house-active");
+               }
+            });
+
+            $(".select-div-item").each(function (key,item) {
+               if($(item).attr("data-id")==id){
+                   $(item).show();
+               }else{
+                   $(item).hide();
+               }
+            });
+        });
+
+        $(".sell-scroll").on("click",".btn-detail",function () {
+            let id = $(this).attr("data-id");
+            window.location.assign("/partner/bussiness/annonceBussiness/detail/"+id);
+        });
+
+        $(".sell-scroll").on("click",".location-detail-item",function () {
+            let id = $(this).attr("data-id");
+            window.location.assign("/partner/bussiness/annonceBussiness/detail/"+id);
+        });
+
+        $(".sell-scroll").on("click",".btn-update",function () {
+            let id = $(this).attr("data-id");
+            window.location.assign("/partner/bussiness/annonce/update/"+id+"/0");
+        });
+
+        $(".buy-scroll").on("click",".btn-detail",function () {
+           let id = $(this).attr("data-id");
+           window.location.assign("/partner/bussiness/demandeBussiness/detail/"+id);
+        });
+
+
+        $(".buy-scroll").on("click",".buy-item",function () {
+            let id = $(this).attr("data-id");
+            window.location.assign("/partner/bussiness/demandeBussiness/detail/"+id);
+        });
+
+        $(".buy-scroll").on("click",".btn-update",function () {
+           let id = $(this).attr("data-id");
+           window.location.assign("/partner/bussiness/demande/update/"+id+"/0");
+        });
+
+
+    </script>
+    <style>
+        .partner-center .content{
+            height: 100%;
+            margin: 0 25% 0 5%;
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .partner-center .content::-webkit-scrollbar {
+            display: none;
+        }
+        .button-group{
+            text-align: right;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .top-bar-div{
+            position: absolute;
+            right: 50px;
+            background-color: rgba(255,255,255,0.5);
+            top: 140px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+        }
+        .top-bar-item{
+            width: 180px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+        .top-bar-item div{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .top-bar-item:hover{
+            background: #476b72;
+            color: white;
+            cursor: pointer;
+        }
+
+        .top-bar-div .active{
+            background-color: #476b72;
+            color: white;
+        }
+
+        .top-bar-div .white>div{
+            background-color: white;
+        }
+
+        .top-bar-div .orange>div{
+            background-color: yellow;
+        }
+
+        .top-bar-div .green>div{
+            background-color: #1c7430;
+        }
+
+
+        .top-bar-div .red>div{
+            background-color: darkred;
+        }
+
+        .annonce-item{
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid whitesmoke;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 20px;
+            /*box-shadow: 0 5px 5px rgba(0,0,0,0.3);*/
+        }
+
+        .annonce-item-info{
+            width:70%;
+        }
+
+        .annonce-item-option{
+            width:25%;
+            text-align: right;
+        }
+
+        .line-item{
+            width: 100%;
+            border-bottom: 1px dashed gray;
+        }
+
+        .annonce-item-label{
+            display: inline-block;
+            width: 150px;
+        }
+
+
+        .house-div-title{
+            display: flex;
+            width: fit-content;
+            margin: 50px auto 50px;
+        }
+
+        .house-div-title-item{
+            width: 180px;
+            height: 50px;
+            line-height: 50px;
+            border-radius: 25px;
+            margin-right: 25px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .house-div-title-item:hover{
+            background-color: #1c7430;
+            color: white;
+            box-shadow: 0 5px 5px rgba(0,0,0,0.4);
+        }
+
+        .house-active{
+            background-color: #1c7430;
+            color: white;
+        }
+
+        .buy-scroll{
+            display: none;
+        }
+
+        .pages-set{
+            text-align: center;
+            display: flex;
+        }
+    </style>
+    <style>
+        .annonce-item{
+
+        }
+        .annonce-item img{
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+    <style>
+
+        @media screen and (min-width: 501px) {
+            .location-div{
+                padding: 20px;
+                background-color: whitesmoke;
+            }
+            .location-detail-item{
+                display: block;
+                width: 40%;
+                cursor: pointer;
+            }
+
+            .location-detail-item img{
+                width: 100%;
+                height: 25vh;
+                object-fit: cover;
+            }
+
+            .location-detail-item-desc{
+                padding: 20px;
+                background-color: white;
+            }
+
+            .location-detail-item:hover{
+                box-shadow: 0 10px 10px rgba(0,0,0,0.3);
+            }
+
+
+            .buy-item{
+                display:block;
+                background-color: white;
+                padding: 20px;
+                cursor: pointer;
+            }
+
+
+            .buy-item:hover{
+                box-shadow: 0 10px 10px rgba(0,0,0,0.3);
+            }
+
+
+        }
+
+        .location-detail-item-desc{
+            position: relative;
+        }
+
+        .location-detail-item{
+            position: relative;
+        }
+
+        .cover{
+            position: absolute;
+            overflow: hidden;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 25vh;
+        }
+        .location-item-label{
+            transform: rotate(-45deg);
+            background-color: #0f74a8;
+            padding: 5px;
+            text-align: center;
+            color: white;
+            position: absolute;
+            width: 100%;
+            top: 10%;
+            left: -30%;
+        }
+
+        .price{
+            font-size: 18px;
+            color: #0f6674;
+            font-weight: bold;
+        }
+
+    </style>
+</div>
+</html>

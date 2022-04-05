@@ -1,0 +1,75 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <div class="login-div">
+        <div class="login-form">
+            <div class="login-title"><h1>添加region </h1></div>
+            <div>
+                <form class="form-horizontal"   th:action="@{/region/add}"  method="post">
+                    <div class="form-group">
+                        <label for="code" class="control-label">code：</label>
+                        <div>
+                            <input type="text" class="form-control" name="code"  id="code" placeholder="code"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">name:</label>
+                        <div>
+                            <input type="text" class="form-control" name="name" id="name" placeholder="name"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lat">lat:</label>
+                        <div>
+                            <input type="text" class="form-control" name="lat" id="lat" placeholder="lat"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lng">lng:</label>
+                        <div>
+                            <input type="text" class="form-control" name="lng" id="lng" placeholder="lng"/>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-success">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <style>
+        .login-div {
+            width: 100%;
+            height: 100%;
+            background: #fcf8e3;
+            padding:50px;
+
+        }
+        .login-title{
+            text-align: center;
+        }
+
+        .login-form{
+            margin: auto;
+            width: 70vw;
+            max-width: 450px;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+            border-radius: 5px;
+        }
+        .form-group button{
+            width: 100%;
+        }
+
+        .forgot-password{
+            /*text-align: right;*/
+            display: flex;
+            justify-content: space-between;
+        }
+
+    </style>
+</div>
+</html>

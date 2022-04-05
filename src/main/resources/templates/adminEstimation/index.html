@@ -1,0 +1,268 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="estimation-admin-div">
+        <div class="estimation-title"><h3>估价列表</h3></div>
+        <div class="estiamtion-admin">
+
+            <div id="estimation-div" class="form-group">
+                <table>
+                    <thead>
+                        <form id="search-form">
+                            <tr>
+                                <th>id</th>
+                                <th>地址</th>
+                                <th>区域</th>
+                                <th>大小</th>
+                                <th>姓</th>
+                                <th>名</th>
+                                <th>微信</th>
+                                <th>电话</th>
+                                <th>email</th>
+                                <th>价格</th>
+                                <th>买卖</th>
+                                <th>状态</th>
+                                <th>option</th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <select class="form-control" name="id">
+                                        <option value="0">倒序</option>
+                                        <option value="1">正序</option>
+                                    </select>
+                                </th>
+                                <th>
+                                    <input class="form-control" name="address"/>
+                                </th>
+                                <th>
+                                    <input class="form-control" name="area" />
+                                </th>
+                                <th>
+                                    <input class="form-control" name="size" />
+                                </th>
+                                <th>
+                                    <input class="form-control" name="nom" />
+                                </th>
+                                <th>
+                                    <input class="form-control" name="prenom" />
+                                </th>
+                                <th>
+                                    <input class="form-control" name="wecaht" />
+                                </th>
+                                <th>
+                                    <input class="form-control" name="telephone" />
+                                </th>
+                                <th>
+                                    <input class="form-control" name="email" />
+                                </th>
+                                <th>
+
+                                </th>
+                                <th>
+                                    <select class="form-control" name="isSell">
+                                        <option value="0">-----请选择------</option>
+                                        <option value="1">是的尽快</option>
+                                        <option value="2">3个月内</option>
+                                        <option value="3">6个月内</option>
+                                        <option value="4">一年内</option>
+                                        <option value="5">我不打算卖</option>
+                                        <option value="6">我已经卖完</option>
+                                    </select>
+                                </th>
+                                <th>
+                                    <select class="form-control" name="uid">
+                                        <option value="-1">---全部用户---</option>
+                                        <option value="0">未登录用户</option>
+                                        <option value="1">登录用户</option>
+                                    </select>
+                                </th>
+                                <th>
+                                    <button class="btn btn-outline-primary btn-search" type="button">search</button>
+                                </th>
+                            </tr>
+                        </form>
+                    </thead>
+                    <tbody id="estimation-items">
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="pageHelper"></div>
+        </div>
+    </div>
+    <script>
+
+        $(function () {
+
+            initPage();
+
+            function initPage(url) {
+                let urlPath = url?url:"/admin/estimations/data";
+                let dataArray = $("#search-form").serializeArray();
+                let params = {};
+                for (let i in dataArray){
+                    if (dataArray[i].value){
+                        params[dataArray[i].name] = dataArray[i].value;
+                    }
+                }
+
+                $.post(urlPath,params,function (data) {
+                    if (data.status==1){
+                        console.log(data);
+                        let estimations = data.models;
+
+                        $("#estimation-items").html("");
+                        let estimationDiv = "";
+
+                        for (let i in estimations){
+                            let estimate = estimations[i];
+                            estimationDiv += "<tr>" +
+                                "   <td>"+estimate.id+"</td>" +
+                                "   <td>"+estimate.address+"</td>" +
+                                "   <td>"+estimate.area+"</td>" +
+                                "   <td>"+estimate.size+"</td>" +
+                                "   <td>"+estimate.nom+"</td>" +
+                                "   <td>"+estimate.prenom+"</td>" +
+                                "   <td>"+estimate.wechat+"</td>" +
+                                "   <td>"+estimate.telephone+"</td>" +
+                                "   <td>"+estimate.email+"</td>";
+                            if (estimate.price){
+                                estimationDiv += "<td>"+estimate.price+"</td>";
+                            }else{
+                                estimationDiv += "<td></td>";
+                            }
+
+                            switch (estimate.isSell){
+                                case 0:
+                                    estimationDiv += "<td>未选择</td>";
+                                    break;
+                                case 1:
+                                    estimationDiv += "<td>是的尽快</td>";
+                                    break;
+                                case 2:
+                                    estimationDiv += "<td>3个月内</td>";
+                                    break;
+                                case 3:
+                                    estimationDiv += "<td>6个月内</td>";
+                                    break;
+                                case 4:
+                                    estimationDiv += "<td>一年内</td>";
+                                    break;
+                                case 5:
+                                    estimationDiv += "<td>我不打算卖</td>";
+                                    break;
+                                case 6:
+                                    estimationDiv += "<td>我已经卖完</td>";
+                                    break;
+                            }
+
+
+                            if (estimate.uid==0){
+                                estimationDiv += "<td>未登录</td>";
+                            }else{
+                                estimationDiv += "<td>平台用户</td>";
+                            }
+
+                            estimationDiv +="   <td>" +
+                                "       <button class='btn btn-outline-success btn-sm btn-detail'" +
+                                " data-id='"+estimate.id+"'>详情</button>" +
+                                "       <button class='btn btn-outline-danger btn-sm btn-delete' " +
+                                " data-id='"+estimate.id+"'>删除</button>"+
+                                "   </td>" +
+                                "</tr>";
+                        }
+
+                        $("#estimation-items").html(estimationDiv);
+
+                        $("#pageHelper").html("");
+                        let pageHelper = "<div class='pages-set'>" +
+                            "   <ul class='pagination'>";
+                        for (let i in data.pageHelper.pages){
+                            if (data.pageHelper.currentPage==data.pageHelper.pages[i].key-1){
+                                pageHelper += "<li class='page-item active'>" +
+                                    "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                    "</li>";
+                            }else{
+                                pageHelper += "<li class='page-item'>" +
+                                    "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                    "</li>";
+                            }
+                        }
+                        pageHelper += "</ul></div>";
+
+                        $("#pageHelper").append(pageHelper);
+                    }
+                });
+
+            }
+            $("#pageHelper").on("click","a",function () {
+               let href = $(this).attr("data-href");
+               initPage(href);
+            });
+
+            $("#estimation-items").on("click",".btn-detail",function () {
+                let id = $(this).attr("data-id");
+                window.location.assign("/admin/estimate/detail/"+id);
+            });
+
+            $("#estimation-items").on("click",".btn-delete",function () {
+                let id = $(this).attr("data-id");
+                $.get("/admin/estimate/delete/"+id,function (data) {
+                    if (data.status==1){
+                        alert("删除成功");
+                        initPage();
+                    }else{
+                        alert("删除失败");
+                    }
+                });
+            });
+
+            $(".btn-search").click(function () {
+                initPage();
+            });
+        });
+
+    </script>
+    <style>
+        .estimation-title{
+            text-align: center;
+        }
+        .estimation-admin-div{
+            width: 90%;
+            padding: 50px;
+            margin: auto;
+            background-color: white;
+            height: 100%;
+            overflow-y: scroll;
+        }
+
+
+        tbody td,tbody th,
+        thead td,thead th{
+            text-align: center;
+            padding: 10px;
+            min-width: 60px;
+        }
+
+        thead{
+            background-color: #1e7e34;
+            color: white;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: whitesmoke;
+        }
+        tbody tr:nth-child(even) {
+            background-color: lightgray;
+        }
+
+        .button-group{
+            text-align: right;
+        }
+
+    </style>
+</div>
+</html>

@@ -1,0 +1,426 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <script th:src="@{/js/add-source.js}"></script>
+    <script th:src="@{/js/partner-upload-file.js}"></script>
+    <script th:src="@{/js/partner/partner-annonce-add-source.js}"></script>
+    <link th:href="@{/css/hwwd-image-editor-display.css}" rel="stylesheet">
+    <script th:src="@{/js/hwwd-image-editor-display.js}"></script>
+    <link th:href="@{/css/hwwd-image-update.css}" rel="stylesheet"/>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <link th:href="@{/css/partner/partner-upload-file.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+            <div class="form-group">
+                <div class="progress">
+                    <div id="step-progress" class="progress-bar bg-info" role="progressbar"  aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+            <div class="add-source">
+                <form method="post" th:action="@{/partner/admin/addSource}" id="addSource" class="form-horizontal" >
+                    <div class="steps step-1" data-id="1">
+                        <div class="form-group">
+                            <h4>第一步：上传图片</h4>
+                        </div>
+                        <div class="form-group">
+                            <label>封面</label>
+                            <div class='cover'>
+                                <img id="cover-image"/>
+                                <input name='cover'  hidden id='cover'/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class='annonce-item-imgs'>
+                                <div class='add-image'><img src='/img/add.png' /></div>
+                            </div>
+                        </div>
+                        <div class="form-group button-group">
+                            <button class="btn btn-success btn-next" type="button" data-id="1">下一步</button>
+                        </div>
+                    </div>
+                    <div class="steps step-2" data-id="2">
+                        <div class="form-group">
+                            <h4>第二步：基本信息</h4>
+                        </div>
+                        <div class="location-div form-group">
+                            <div class="location-item" id="area-div">
+                                <label for="area">地区</label>
+                                <div>
+                                    <input type="text" class="form-control search-input" name="area"  id="area" placeholder="地段"/>
+                                    <input type="text" name="location" hidden="hidden" />
+                                </div>
+                                <text class="location-error error"></text>
+                            </div>
+                            <div class="location-item">
+                                <label for="address">地址</label>
+                                <div>
+                                    <input name="address" id="address" class="form-control" placeholder="详细地址"/>
+                                </div>
+                                <text class="address-error error"></text>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="sdate">可出租日期</label>
+                            <input type="date" class="form-control datechk" name="sdate" id="sdate" />
+                            <text class="sdate-error error"></text>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rtype">房子类型</label>
+                            <select name="rtype" id="rtype" class="form-control">
+                                <view th:each="type,inter:${rtypes}">
+                                    <option th:value="${inter.index}" th:text="${type}"></option>
+                                </view>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="size">大小</label>
+                            <div>
+                                <input class="form-control" name="size" id="size" placeholder="m²" type="number"/>
+                            </div>
+                            <text class="size-error error"></text>
+                        </div>
+
+                        <div class="form-group">
+                            <h4>房租 <span class="price"></span></h4>
+                            <div class="form-group price-div">
+                                <input class="form-control" name="loyer" type="number" placeholder="房租" />
+                                <input class="form-control" name="charges" type="number" placeholder="物业费" value="0"/>
+                            </div>
+                            <text class="price-error error"></text>
+                        </div>
+                        <div class="form-group button-group">
+                            <button class="btn btn-info btn-pre" type="button" data-id="2">上一步</button>
+                            <button class="btn btn-success btn-next" type="button" data-id="2">下一步</button>
+                        </div>
+                    </div>
+                    <div class="steps step-3" data-id="3">
+                        <div class="form-group">
+                            <h4>第三步：房屋描述</h4>
+                        </div>
+
+                        <div class="form-group">
+                            <div><h5>细节描述</h5></div>
+                            <textarea  class="form-control" id="house-description" name="description" placeholder="Attention
+Inutile d’indiquer ici la date de disponible , celle-ci est systématiquement envoyee aux locataires sélectionnés .
+ Décrivez votre logement, son agencement , ses equipments (cuisine équipée ,parking cave , …… ),ses points forts ,
+ sa proximité des transports , le quartier ,etc . Et n’oubliez pas les photos!"></textarea>
+                            <text class="description-error error"></text>
+                        </div>
+                        <div class="form-group">
+                            <div><h5>DPE 能源等级</h5></div>
+                            <div class="energy-item-group">
+                                <input type="radio" name="energy" checked="checked" value="0"/>
+                                <div class="energy-item energy-item-0">
+                                    <span style="color: black">无等级</span>
+                                </div>
+                            </div>
+                            <div class="energy-item-group">
+                                <input type="radio" name="energy" value="1"/>
+                                <div class="energy-item energy-item-1" style="background-color: #478E3E;">
+                                    <span>A</span>
+                                    <div></div>
+                                </div>
+                            </div>
+                            <div class="energy-item-group">
+                                <input type="radio" name="energy" value="2"/>
+                                <div class="energy-item energy-item-2" style="background-color: #579F31;">
+                                    <span>B</span>
+                                    <div></div>
+                                </div>
+                            </div>
+                            <div class="energy-item-group">
+                                <input type="radio" name="energy" value="3"/>
+                                <div class="energy-item energy-item-3" style="background-color: #ABC524;">
+                                    <span>C</span>
+                                    <div></div>
+                                </div>
+                            </div>
+                            <div class="energy-item-group">
+                                <input type="radio" name="energy" value="4"/>
+                                <div class="energy-item energy-item-4" style="background-color: #FFEE33;">
+                                    <span>D</span>
+                                    <div></div>
+                                </div>
+                            </div>
+                            <div class="energy-item-group">
+                                <input type="radio" name="energy" value="5"/>
+                                <div class="energy-item energy-item-5" style="background-color: #EBAD30;">
+                                    <span>E</span>
+                                    <div></div>
+                                </div>
+                            </div>
+                            <div class="energy-item-group">
+                                <input type="radio" name="energy" value="6"/>
+                                <div class="energy-item energy-item-6" style="background-color: #D3702F;">
+                                    <span>F</span>
+                                    <div></div>
+                                </div>
+                            </div>
+                            <div class="energy-item-group">
+                                <input type="radio" name="energy" value="7"/>
+                                <div class="energy-item energy-item-7" style="background-color: #C74034;">
+                                    <span>G</span>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group button-group">
+                            <button class="btn btn-info btn-pre" type="button" data-id="3">上一步</button>
+                            <button class="btn btn-success btn-next" type="button" data-id="3">下一步</button>
+                        </div>
+                    </div>
+                    <div class="steps step-4" data-id="4">
+                        <div class="form-group">
+                            <h4>第四步：房屋详情</h4>
+                        </div>
+                        <div class="form-group">
+                            <label>选择标签</label>
+                            <view th:unless="${model.type==3}" th:remove="tag">
+                                <select class="form-control" name="type">
+                                    <option value="1">个人</option>
+                                    <option value="2">中介</option>
+                                    <option value="3" disabled>学生公寓</option>
+                                </select>
+                            </view>
+                            <view th:if="${model.type==3}" th:remove="tag">
+                                <select class="form-control" name="type">
+                                    <option value="3">学生公寓</option>
+                                </select>
+                            </view>
+                        </div>
+                        <div class="form-group">
+                            <label>地铁/公交</label>
+                            <div>
+                                <div class="form-group">
+                                    <input class='form-control' name='transation' />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="meuble">有无家具</label>
+                            <div id="meuble">
+                                <select name="furniture" class="form-control">
+                                    <option value="0">无家具</option>
+                                    <option value="1">家具齐全</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="bases">基本配置</label>
+                            <div id="bases">
+                                <view  th:each="base,iter:${bases}" class="base-item" th:data-id="${iter.index}">
+                                    <text th:text="${base}"></text>
+                                </view>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="envir">高级配置</label>
+                            <div id="envir">
+                                <view  th:each="imm,iter:${imms}" class="imm-item" th:data-id="${iter.index}">
+                                    <text th:text="${imm}"></text>
+                                </view>
+                            </div>
+                        </div>
+                        <div class="form-group button-group">
+                            <button class="btn btn-info btn-pre" type="button" data-id="4">上一步</button>
+                            <button class="btn btn-success submit-info" type="button">发布房源</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $('.search-input').focus(function () {
+                $('.search-input').attr("autocomplete","off")
+            });
+
+            $(".submit-info").on('click',function (){
+                $("#addSource").submit();
+            });
+
+            function stepOne(){
+                let images = $(".img-item-input");
+                if (images.length>0){
+                    let cover = $("#cover").val();
+                    if (cover){
+                        return true;
+                    }
+                    return true;
+                }
+                alert("请先上传图片");
+                return false;
+            }
+
+            function stepTwo(){
+                let $location = $("input[name=location]").val();
+                let $address = $("input[name=address]").val();
+                let $sdate = $("input[name=sdate]").val();
+                let $size = $("input[name=size]").val();
+                let $loyer = $("input[name=loyer]").val();
+
+                if (!$location){
+                    if ($("#area").val()){
+                        $(".location-error").text("你选择的区域可能不存在！");
+                    }else{
+                        $(".location-error").text("请选择房源的区域！");
+                    }
+                }else{
+                    $(".location-error").text("");
+                }
+
+                if(!$address){
+                    $(".address-error").text("请填写你的房源地址！");
+                }else{
+                    $(".address-error").text("");
+                }
+
+                if(!$sdate){
+                    $(".sdate-error").text("可出租时间不能为空!");
+                }else{
+                    $(".sdate-error").text("");
+                }
+
+                if (!$size){
+                    $(".size-error").text("请填写房屋大小！");
+                }else{
+                    $(".size-error").text("");
+                }
+
+                if(!$loyer){
+                    $(".price-error").text("请填写你的出租价格");
+                }else{
+                    $(".price-error").text();
+                }
+
+                if ($location&&$sdate&&$size&&$loyer) {
+
+                    let $charges = $("input[name=charges]").val();
+                    if (!$charges) {
+                        $("input[name=charges]").val(0);
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+
+
+            function stepThree(){
+
+                let $description = $("textarea[name=description]").val();
+
+
+                if (!$description){
+                    $(".description-error").text("您的房子的描述，你用户展示是很重要的！");
+                }else{
+                    $(".description-error").text("");
+                }
+
+                if ($description){
+                    return true;
+                }
+
+                return false;
+            }
+
+
+            $(".btn-next").click(function () {
+                let did = $(this).attr("data-id");
+                let flag = false;
+                switch (parseInt(did)){
+                    case 1:
+                        flag = stepOne();
+                        break;
+                    case 2:
+                        flag = stepTwo();
+                        break;
+                    case 3:
+                        flag = stepThree();
+                        break;
+                }
+                if (flag){
+                    $(".step-"+did).hide();
+                    $(".step-"+(parseInt(did)+1)).show();
+                    $("#step-progress").attr("aria-valuenow",25*parseInt(did));
+                    $("#step-progress").css("width",25*parseInt(did)+"%");
+                }
+            });
+
+            $(".btn-pre").click(function () {
+                let did = $(this).attr("data-id");
+                $(".step-"+did).hide();
+                $(".step-"+ (parseInt(did)-1)).show();
+                $("#step-progress").attr("aria-valuenow",25*(parseInt(did)-1));
+                $("#step-progress").css("width",25*(parseInt(did)-1)+"%");
+            });
+        });
+    </script>
+    <style>
+        .error{
+            padding: 5px;
+            font-size: 12px;
+            color: brown;
+        }
+
+        .step-2,.step-3,.step-4{
+            display: none;
+        }
+
+        .cover img{
+            width: 100%;
+            max-height: 25vh;
+            object-fit: cover;
+        }
+
+
+        .annonce-item-imgs{
+            padding-left: 2.5%;
+        }
+
+
+        .img-item{
+            width: 30%;
+            height: 30vw;
+            line-height: 30vw;
+            margin-bottom: 30px;
+            margin-right: 2.5%;
+            display: inline-block;
+        }
+
+        .img-item img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .img-item img:hover{
+            box-shadow: 5px 10px 10px rgba(0,0,0,0.5);
+        }
+
+        .add-image{
+            display: inline-block;
+            width: 22%;
+            height: 22%;
+            margin-bottom: 0 2.5% 30px;
+            border: 1px rgba(0,0,0,0.3) dashed;
+
+        }
+
+        .add-image img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+    </style>
+</div>
+</html>

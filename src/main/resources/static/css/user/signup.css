@@ -1,0 +1,85 @@
+.signup-div{
+    width:100vw;
+    height: 85vh;
+    padding-top:50px;
+    overflow-y: scroll;
+    background: whitesmoke;
+}
+.signup-title{
+    text-align: center;
+}
+.signup-from {
+    margin: auto;
+    /*width: 70vw;*/
+    max-width: 700px;
+    padding: 30px;
+    /*box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);*/
+    background: white;
+    border-radius: 5px;
+}
+
+.telephone-div{
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+.telephone-div input[type=text]{
+    min-width: 450px;
+}
+
+
+.get-code{
+    min-width: 60px;
+}
+
+input[name=telephone]{
+    width: 62%;
+}
+
+
+.button-group{
+    text-align: right;
+}
+div[class=step-2]{
+    display: none;
+}
+
+.step-register{
+    padding: 10px;
+}
+.steps{
+    margin: auto;
+    max-width: 700px;
+    color: gray;
+    margin-bottom: 20px;
+}
+.steps .active{
+    color: black;
+    border-bottom: #0c5460 3px solid;
+
+}
+
+.step-register:hover{
+    cursor: pointer;
+    border-bottom: #0c5460 3px solid;
+}
+
+input[name="telephone"]{
+    width: 75%;
+}
+
+.error{
+    padding: 5px;
+    font-size: 12px;
+    color: brown;
+}
+
+.top-buttons-div{
+    text-align: center;
+}
+
+.top-buttons-div button{
+    min-width: 230px;
+}

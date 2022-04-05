@@ -1,0 +1,96 @@
+@media screen and (max-width: 500px){
+    .detail-div{
+        height: 100%;
+        margin: auto;
+        padding: 20px;
+        background: white;
+    }
+    body{
+        background: whitesmoke;
+    }
+
+    .house-div-title{
+        display: flex;
+        width: 100%;
+        margin: 10px auto 10px;
+        justify-content: space-between;
+    }
+
+    .house-div-title-item{
+        width: 30%;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 15px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .house-div-title-item:hover{
+        background-color: #1c7430;
+        color: white;
+        box-shadow: 0 5px 5px rgba(0,0,0,0.4);
+    }
+
+    .house-active{
+        background-color: #1c7430;
+        color: white;
+    }
+
+}
+
+@media screen and (min-width: 501px){
+    .detail-div{
+        width: 60vw;
+        height: 100%;
+        margin: auto;
+        background: white;
+        padding: 50px;
+    }
+    body{
+        background: url("/img/005.jpg");
+    }
+
+    .house-div-title{
+        display: flex;
+        width: fit-content;
+        margin: 50px auto 50px;
+    }
+
+    .house-div-title-item{
+        width: 180px;
+        height: 50px;
+        line-height: 50px;
+        border-radius: 25px;
+        margin-right: 25px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .house-div-title-item:hover{
+        background-color: #1c7430;
+        color: white;
+        box-shadow: 0 5px 5px rgba(0,0,0,0.4);
+    }
+
+    .house-active{
+        background-color: #1c7430;
+        color: white;
+    }
+
+
+
+}
+
+.contact-item label{
+    width: 120px;
+}
+
+
+
+
+
+
+
+
+
+

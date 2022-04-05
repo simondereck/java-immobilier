@@ -1,0 +1,109 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <link th:href="@{/css/hwwd-image-display.css}" rel="stylesheet" />
+    <link th:href="@{/css/map/map-annonces.css}" rel="stylesheet" />
+    <script th:src="@{/js/hwwd-image-display.js}"></script>
+    <script th:src="@{/js/map/map-annonces.js}"></script>
+    <div class="location-div">
+        <form id="searchAnnonces">
+            <div id="search-div">
+                <div id="search-nav" class="search-div-item">
+                    <span data-href="/site/bussiness/map">买卖</span>
+                    <span data-href="/site/map" class="active">租赁</span>
+                    <span data-href="/">新房</span>
+                </div>
+                <div class="pays-set search-div-item">
+
+                </div>
+                <div class="select-item-div search-div-item">
+                    <input name="orderType" hidden="hidden" value="0"/>
+                    <input name="orderValue" hidden="hidden" value="1" />
+                    <div class="select-item dropdown-toggle" data-label="area">区域<text id="area-name"></text></div>
+                    <div class="area form-group location-item select-item-content" id="area-div">
+                        <input type="text" class="form-control search-input" name="area"  id="area" placeholder="地段"/>
+                        <input type="text" name="location" hidden="hidden" />
+                    </div>
+                </div>
+
+                <div class="select-item-div search-div-item">
+                    <div class="select-item dropdown-toggle" data-label="price">价格<text id="price-text"></text></div>
+                    <div class="price form-group select-item-content">
+                        <div class="form-group">
+                            <label>最小价格</label>
+                            <div>
+                                <input name="price1" class="form-control" type="number"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>最大价格</label>
+                            <div>
+                                <input name="price2" class="form-control" type="number" />
+                            </div>
+                        </div>
+                        <div class="button-group form-group">
+                            <button class="btn btn-link btn-confirm" type="button" data-label="price">确定</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="select-item-div search-div-item">
+                    <div  class="select-item dropdown-toggle" data-label="size">面积 <text id="size-text"></text></div>
+                    <div class="size form-group select-item-content">
+                        <div class="form-group">
+                            <label>最小面积</label>
+                            <div>
+                                <input class="form-control" name="size1" type="number"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>最大面积</label>
+                            <div>
+                                <input class="form-control" name="size2" type="number" />
+                            </div>
+                        </div>
+                        <div class="button-group form-group">
+                            <button class="btn btn-link btn-confirm" type="button" data-label="size">确定</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-div-item">
+                    <select name="type" class="form-control">
+                        <option value="0">全部</option>
+                        <option value="1">个人</option>
+                        <option value="2">中介</option>
+                        <option value="3">学生公寓</option>
+                    </select>
+                </div>
+                <div class="search-div-item">
+                    <select name="rtype" class="form-control">
+                        <option value="-1">--类型--</option>
+                        <option value="0">房间</option>
+                        <option value="1">studio | T1</option>
+                        <option value="2">公寓T2</option>
+                        <option value="3">公寓T3</option>
+                        <option value="4">公寓T4</option>
+                        <option value="5">别墅</option>
+                    </select>
+                </div>
+
+            </div>
+        </form>
+        <div class="search-content" id="search-content">
+            <div>
+                <div id="order">
+                    <span class="active order-item order-desc" data-id="0"  data-order="1">默认</span>
+                    <span class="order-item order-desc" data-id="1" data-order="1">价格</span>
+                    <span class="order-item order-desc" data-id="2" data-order="1">面积</span>
+                </div>
+                <div id="annonces"></div>
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
+</div>
+</html>

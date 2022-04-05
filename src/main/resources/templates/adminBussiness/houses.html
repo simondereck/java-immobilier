@@ -1,0 +1,182 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="lists-div">
+        <div class="form-group" style="text-align: center;padding: 20px;">
+            <a href="/admin" class="btn btn-info btn-lg">租赁</a>
+            <a href="/admin/bussiness/houses" class="btn btn-success btn-lg">买卖</a>
+        </div>
+        <div>
+            <table>
+                <form method="post" id="searchAnnonces">
+                    <thead>
+                        <tr>
+                            <th>房屋编号</th>
+                            <th>国家</th>
+                            <th>地区</th>
+                            <th>地址</th>
+                            <th>大小</th>
+                            <th>价格</th>
+                            <th>卖家</th>
+                            <th>创建时间</th>
+                            <th>option</th>
+                        </tr>
+                        <tr>
+                            <th><input name="serial" class="form-control"/></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th><input name="size" class="form-control"/></th>
+                            <th><input name="price" class="form-control"/></th>
+                            <th></th>
+                            <th></th>
+                            <th><button class="btn btn-search-annonce" type="button">搜索</button></th>
+                        </tr>
+                    </thead>
+                </form>
+                <tbody class="house-divs">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="page-helper">
+
+        </div>
+
+    </div>
+    <script>
+        $.get("/admin/bussiness/sell/data",function (data) {
+            console.log(data);
+            if (data.status==1){
+                let annonces = data.annonces;
+                let houseDiv = "";
+                for (let k in annonces){
+                    houseDiv += "<tr><td>"+ (annonces[k].serial + annonces[k].id) +"</td>";
+                    houseDiv += "<td>"+ data.pays[annonces[k].pay].name +"</td>";
+                    houseDiv += "<td>"+ annonces[k].area +"</td>";
+                    houseDiv += "<td>"+ annonces[k].address +"</td>";
+                    houseDiv += "<td>"+ annonces[k].size +"</td>";
+                    houseDiv += "<td>"+ annonces[k].price +"</td>";
+                    houseDiv += "<td>"+ data.partners[annonces[k].pid].prenom +","+data.partners[annonces[k].pid].nom +"</td>";
+                    houseDiv += "<td>"+ annonces[k].ctime?annonces[k].ctime:annonces[k].utime +"</td>";
+                    houseDiv += "   <td>" +
+                        "       <span><a class='btn btn-link' href='/admin/bussiness/sell/detail/"+annonces[k].id+"'>详情</a></span>" +
+                        "       <span><a class='btn btn-link' href='/admin/partner/login/"+annonces[k].pid+"'>登录用户</a></span>" +
+                        "   </td>" +
+                        "</tr>";
+                }
+                $(".house-divs").append(houseDiv);
+
+                let helper = data.pageHelper;
+                let helperDiv = "<div class='pages-set'>";
+                if(helper.totalPage>0){
+                    helperDiv += "<ul class='pagination'>"
+                    for (let i in helper.pages){
+                        helperDiv += "<li  class='page-item'><a href='"+helper.pages[i].url+"' class='page-link'>"+helper.pages[i].key+"</a></li>";
+                    }
+                    helperDiv += "</ul>";
+                }
+                helperDiv += "</div>";
+                $(".page-helper").append(helperDiv);
+            }
+        });
+
+        $(".btn-search-annonce").click(function () {
+            let keywords = $("#searchAnnonces").serializeArray();
+            let params = {};
+            for (let i in keywords) {
+                if (keywords[i].value){
+                    params[keywords[i].name] = keywords[i].value;
+                }
+            }
+
+            $.post("/admin/search/bussiness/annonces",params,function (data) {
+                console.log(data);
+                if (data.status==1){
+                    let annonces = data.annonces;
+                    let houseDiv = "";
+                    $(".house-divs").html(houseDiv);
+                    for (let k in annonces){
+                        houseDiv += "<tr><td>"+ (annonces[k].serial + annonces[k].id) +"</td>";
+                        houseDiv += "<td>"+ data.pays[annonces[k].pays] +"</td>";
+                        houseDiv += "<td>"+ annonces[k].area +"</td>";
+                        houseDiv += "<td>"+ annonces[k].address +"</td>";
+                        houseDiv += "<td>"+ annonces[k].size +"</td>";
+                        houseDiv += "<td>"+ annonces[k].price +"</td>";
+                        houseDiv += "<td>"+ data.partners[annonces[k].pid].prenom +","+data.partners[annonces[k].pid].nom +"</td>";
+                        houseDiv += "<td>"+ annonces[k].ctime?annonces[k].ctime:annonces[k].utime +"</td>";
+                        houseDiv += "   <td>" +
+                            "       <span><a class='btn btn-link' href='/admin/bussiness/sell/detail/"+annonces[k].id+"'>详情</a></span>" +
+                            "       <span><a class='btn btn-link' href='/admin/partner/login/"+annonces[k].pid+"'>登录用户</a></span>" +
+                            "   </td>" +
+                            "</tr>";
+                    }
+                    $(".house-divs").append(houseDiv);
+                    $(".page-helper").html("");
+                }else{
+                    alert("没有找到您的搜索");
+                }
+            });
+
+
+
+            $(".page-helper").on("click","a",function () {
+                let href = $(this).attr("data-href");
+                initPage(href);
+            });
+        });
+    </script>
+    <style>
+
+        .lists-div{
+            margin: auto;
+            width: 90vw;
+            height: 100%;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+            overflow:scroll;
+        }
+
+
+        .button-group button{
+            width:100%;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+        td,th{
+            text-align: center;
+            padding: 10px;
+            min-width: 120px;
+        }
+        thead{
+            background-color: #0c5460;
+            color: white;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: whitesmoke;
+        }
+        tbody tr:nth-child(even) {
+            background-color: lightgray;
+        }
+
+        .pages-set{
+            text-align: center;
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .pagination{
+            margin: auto;
+            /*display: flex;*/
+        }
+
+    </style>
+</div>
+</html>

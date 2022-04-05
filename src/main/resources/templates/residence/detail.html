@@ -1,0 +1,920 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script src="https://kit.fontawesome.com/ab6cdd5d20.js" crossorigin="anonymous"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <link th:href="@{/css/site/residence-detail.css}" rel="stylesheet" />
+
+    <div class="div-center">
+        <div class="residence-detail" th:data-id="${id}">
+
+        </div>
+    </div>
+    <script>
+        $(function () {
+           let id = $(".residence-detail").attr("data-id");
+           let imageJson;
+           let ville;
+           let residence;
+           let houseTypes;
+           let types;
+           let chargesLists;
+           let user;
+           $.get("/site/residence/data/detail/"+id,function (data) {
+              console.log(data);
+              if (data.status==1){
+                  residence = data.residence;
+                  ville = data.ville;
+                  imageJson = JSON.parse(residence.imgJson);
+                  houseTypes = data.types;
+                  types = data.resTypes;
+                  chargesLists = data.charges;
+                  user = data.user;
+                  let residenceDetail = "<div class='residence-image'>";
+
+                  if (imageJson.length){
+                      for (let i in imageJson){
+                          residenceDetail += "<div class='residence-image-item' data-id='"+i+"'><img src='/partners/"+imageJson[i]+"'/></div>";
+                      }
+                  }
+                  residenceDetail += "</div>";
+
+                  $(".residence-detail").append(residenceDetail);
+
+                  let baseInfoBox = "<div class='base-info-box'>";
+                  baseInfoBox += "<div>从 <h3 style='display: inline-flex'>"+residence.partir+"</h3> EURO 开始</div>";
+                  baseInfoBox += "<div class='box-line'></div>";
+                  baseInfoBox += "<div>"+residence.info+"</div>"
+                  baseInfoBox += "<div class='box-line'></div>";
+                  baseInfoBox += "<div>";
+                  if (residence.eligible){
+                      baseInfoBox +=  "<div class='base-info-box-item'><text>符合APL / ALS:</text><span>是</span></div>";
+                  }else{
+                      baseInfoBox +=  "<div class='base-info-box-item'><text>符合APL / ALS:</text><span>否</span></div>";
+                  }
+                  baseInfoBox += "<div class='base-info-box-item'><text>面积：</text><span>"+residence.sizeMin+"㎡ 至 "+residence.sizeMax+"㎡</span></div>";
+                  if (residence.serviceJson){
+                      baseInfoBox += "<div class='base-info-box-item'><text>包含服务:</text><span>是</span></div>";
+                  }else{
+                      baseInfoBox += "<div class='base-info-box-item'><text>包含服务:</text><span>否</span></div>";
+                  }
+                  baseInfoBox += "</div>";
+                  baseInfoBox += "<div class='box-line'></div>";
+                  baseInfoBox += "<div class='button-group form-group'>" +
+                                 "  <a class='btn btn-success btn-lg btn-types' href='#all-types'>查看住宿</a>" +
+                                 "</div>";
+                  baseInfoBox += "<div id='map'></div>";
+                  baseInfoBox += "</div>";
+
+                  let infoBoxDiv = "<div class='info-box-div'>";
+
+                  infoBoxDiv += "<div class='info-box-div-content'>";
+
+                  infoBoxDiv += "<div class='form-group info-box-title'>" +
+                      "     <h2>" + residence.brand.toUpperCase() + "  " + residence.name.toUpperCase() + "</h2>" +
+                      "     <text>编号："+residence.nid+"</text>" +
+                      "</div>";
+
+                  infoBoxDiv += "<div class='address'><i class='fas fa-map-marker-alt margin-right-10'></i><text>"+residence.address.toUpperCase()+", "+ville.postcode+", "+ville.name+"</text></div>";
+
+                  let description = residence.description.split("\n").join("<br/>");
+                  infoBoxDiv += "<div class='description form-group'>"+description+"</div>";
+
+                  infoBoxDiv += "<div class='form-group'><h4>包含服务</h4></div>"
+                  infoBoxDiv += "<div class='form-group services-includs services'>";
+                  let services = data.services;
+                  let iconns = data.iconns;
+
+                  let includeItems = "";
+                  if (residence.serviceJson){
+                      let serviceIncluds = JSON.parse(residence.serviceJson);
+                      for (let i in iconns){
+                          let flag = false;
+                          for (let s in serviceIncluds){
+                              if(s==i){
+                                  flag = true;
+                              }
+                          }
+                          if (flag){
+                              includeItems += "<div class='service-item active' data-id='"+i+"'>" +
+                                  "        <i class='"+iconns[i]+"'></i>" +
+                                  "        <text>"+services[i]+"</text>" +
+                                  "    </div>";
+                          }else{
+                              includeItems += "<div class='service-item' data-id='"+i+"'>" +
+                                  "        <i class='"+iconns[i]+"'></i>" +
+                                  "        <text>"+services[i]+"</text>" +
+                                  "    </div>";
+                          }
+                      }
+                  }
+
+                  infoBoxDiv += includeItems;
+                  infoBoxDiv += "</div>";
+                  infoBoxDiv += "<div class='form-group'><h4>付费服务</h4></div>"
+                  infoBoxDiv += "<div class='form-group services-options services'>";
+
+                  let optionItems = "";
+                  if (residence.serviceOptJson){
+                      let serviceOptions = JSON.parse(residence.serviceOptJson);
+                      for (let s in serviceOptions) {
+                          optionItems += "<div class='service-item active' data-id='"+s+"'>" +
+                              "        <i class='"+iconns[s]+"'></i>" +
+                              "        <text>"+services[s]+"</text>" +
+                              "    </div>";
+                      }
+                  }
+
+                  infoBoxDiv += optionItems;
+
+                  infoBoxDiv += "</div>";
+
+
+
+                  infoBoxDiv += "<div class='form-group'><h4>出租条件</h4></div>"
+                  infoBoxDiv += "<div class='form-group conditions'>" +
+                      "             <div class='condition-item'>" +
+                      "                 <i class='fas fa-hourglass fa-lg'></i> " +
+                      "                 <div class='condition-item-info'>" +
+                      "                     <div class='condition-item-info-title'>最少住多少个月</div>" +
+                      "                     <div><b>"+residence.duree+"</b></div>" +
+                      "                 </div>" +
+                      "             </div>" +
+                      "             <div class='condition-item'>" +
+                      "                 <i class='fas fa-money-check-edit-alt fa-lg'></i> " +
+                      "                 <div class='condition-item-info'>" +
+                      "                     <div class='condition-item-info-title'>担保人的偿付能力为</div>" +
+                      "                     <div><b>"+residence.solvabilite+" x 房租</b></div>" +
+                      "                 </div>" +
+                      "             </div>" +
+                      "          </div>";
+
+                  infoBoxDiv += "<div class='form-group conditions'>" +
+                      "             <div class='condition-item'>" +
+                      "                 <i class='fas fa-money-check-edit-alt fa-lg'></i> " +
+                      "                 <div class='condition-item-info'>" +
+                      "                     <div class='condition-item-info-title'>是否接受无担保</div>";
+
+                  if (residence.garante==1){
+                      infoBoxDiv += "<div><b>接受</b></div>";
+
+                  }else{
+                      infoBoxDiv += "<div><b>不接受</b></div>";
+                  }
+
+
+                  infoBoxDiv  +=  "    </div>" +
+                      "             </div>" +
+                      "             <div class='condition-item'>" +
+                      "                 <i class='fas fa-money-check-edit-alt fa-lg'></i> " +
+                      "                 <div class='condition-item-info'>" +
+                      "                     <div class='condition-item-info-title'>房租支付方式</div>";
+
+                  switch (residence.montant) {
+                        case 1:
+                            infoBoxDiv += "<div><b>3月一付</b></div>";
+                            break;
+                        case 2:
+                            infoBoxDiv += "<div><b>6月一付</b></div>";
+                            break;
+                        case 3:
+                            infoBoxDiv += "<div><b>一年一付</b></div>";
+                            break;
+                  }
+
+                  infoBoxDiv += "       </div>" +
+                      "             </div>" +
+                      "          </div>";
+
+                  infoBoxDiv += "<div class='form-group conditions'>" +
+                      "             <div class='condition-item'>" +
+                      "                 <i class='fas fa-user-graduate fa-lg'></i> " +
+                      "                 <div class='condition-item-info'>" +
+                      "                     <div class='condition-item-info-title'>身份要求</div>" +
+                      "                     <div><b>学生</b></div>" +
+                      "                 </div>" +
+                      "             </div>" +
+                      "          </div>";
+
+                  infoBoxDiv += "</div>";
+
+
+                  infoBoxDiv += baseInfoBox;
+                  infoBoxDiv += "</div>";
+
+
+                  $(".residence-detail").append(infoBoxDiv);
+
+
+                  let allTypesDiv = "<div class='house-all-types' id='all-types'>" +
+                      "<div class='house-types'>";
+
+                  allTypesDiv += "<div class='form-group'><h4>所有的房型</h4></div>"
+
+                  allTypesDiv += "<div class='form-group' >";
+
+                  for (let h in houseTypes){
+                      let house = houseTypes[h];
+                      let images = JSON.parse(house.imageJson);
+                      let type = types[house.type];
+                      let size = "";
+                      if (house.minSize){
+                          size += "从 "+ house.minSize +"㎡ 到 ";
+                      }
+                      if(house.maxSize){
+                          size += house.maxSize + "㎡";
+                      }
+
+                      let price = "";
+                      if (house.priceMin){
+                          price += "从 "+ house.priceMin+"EURO 到 ";
+                      }
+
+                      if (house.priceMax){
+                          price += house.priceMax+"EURO";
+                      }
+
+                      let immo = house.meuble?"带家具":"不带家具";
+                      let cusine = house.cusine?"厨房(私有)":"厨房(共享)";
+
+                      let dateDisponse = new Date(house.disponibleAt);
+                      var month = dateDisponse.getMonth()+1;
+                      var monthNow = new Date().getMonth() + 1;
+                      allTypesDiv += "<div class='house-type-item' data-month='"+month+"' id='"+house.id+"'>" +
+                          "   <div class='house-type-item-img'>" +
+                          "       <img src='/partners/"+images[0]+"' />" +
+                          "   </div>" +
+                          "   <div class='house-type-item-info'>" +
+                          "      <div class='house-type-item-title form-group'>" +
+                          "           <h4>"+type+" "+size+"</h4>" +
+                          "           <h4>"+price+"</h4>" +
+                          "      </div>" +
+                          "      <div class='house-type-item-detail form-group' data-id='"+h+"'>" +
+                          "           <div class='house-type-detail-item'><i class='fas fa-couch fa-sm margin-right-5'></i><text>"+immo+"</text></div>" +
+                          "           <div class='house-type-detail-item'><i class='fas fa-user-friends fa-sm margin-right-5' ></i><text>"+house.persons+"个人最大限度</text></div>" +
+                          "           <div class='house-type-detail-item'><i class='fas fa-hat-chef fa-sm margin-right-5'></i><text>"+cusine+"</text></div>" +
+                          "           <br/>"+
+                          "           <div class='house-type-detail-item'>可用时间："+house.disponibleAt+"</div>" +
+                          "           <br/>" +
+                          "           <div class='house-type-detail-item text-algin-right'>" +
+                          "                 <button class='btn btn-link btn-house-type-more'>查看更多</button>" +
+                          "           </div>";
+
+                      let bookingButton = "";
+                      if (user){
+                          bookingButton = "<button class='btn btn-outline-info btn-document margin-right-20'>预订</button>";
+                      }
+                      allTypesDiv += "<br/>" +
+                          "<div class='house-type-detail-item text-align-right'>" +
+                            bookingButton+
+                          "  <button class='btn btn-booking btn-success'>发送信息</button>" +
+                          "</div>";
+
+                      allTypesDiv  += "</div>" +
+                          "   </div>" +
+                          "</div>";
+
+                  }
+
+
+                  allTypesDiv += "</div></div>";
+
+                  allTypesDiv += "<div class='months'>" +
+                          "<div><h5>查看此住宅的空房情况</h5></div>" +
+                          "<div class='month-div'>" +
+                                "<div class='month-row'>" +
+                                  "<div class='month-item' data-id='1'>1月</div>" +
+                                  "<div class='month-item' data-id='2'>2月</div>" +
+                                  "<div class='month-item' data-id='3'>3月</div>" +
+                                  "<div class='month-item' data-id='4'>4月</div>" +
+                                "</div>"+
+                                "<div class='month-row'>" +
+                                    "<div class='month-item' data-id='5'>5月</div>" +
+                                    "<div class='month-item' data-id='6'>6月</div>" +
+                                    "<div class='month-item' data-id='7'>7月</div>" +
+                                    "<div class='month-item' data-id='8'>8月</div>" +
+                                    "</div>"+
+                                "<div class='month-row'>" +
+                                    "<div class='month-item' data-id='9'>9月</div>" +
+                                    "<div class='month-item' data-id='10'>10月</div>" +
+                                    "<div class='month-item' data-id='11'>11月</div>" +
+                                    "<div class='month-item' data-id='12'>12月</div>" +
+                                "</div>"+
+                                "<div class='month-button'><button class='btn btn-info btn-reset'>重置</button></div>"+
+                          "</div>" +
+                      "</div>";
+
+
+                  allTypesDiv += "</div>";
+
+                  $(".residence-detail").append(allTypesDiv);
+
+
+                  let months = {};
+
+                  $("html").on("click",".month-item",function () {
+                      let m = $(this).attr("data-id");
+                      if ($(this).hasClass("active")){
+                          $(this).removeClass("active");
+                          delete months[m];
+                      }else{
+                          $(this).addClass("active");
+                          months[m] = m;
+
+                      }
+
+                      $(".house-type-item").hide();
+                      $(".house-type-item").each(function (key,item) {
+                          for (let i in months){
+                            if ($(item).attr("data-month") == i){
+                                $(item).toggle("slow");
+                            }
+                          }
+                      });
+                  });
+
+
+                  $("html").on("click",".btn-reset",function () {
+                      months = {};
+                      $(".month-item").removeClass("active");
+                      $(".house-type-item").hide();
+                      $(".house-type-item").toggle("slow");
+                  });
+
+                  $("html").on("click",".btn-document",function () {
+                      let id = $(this).parents(".house-type-item-detail").attr("data-id");
+                      let houseType = houseTypes[id];
+                      window.location.assign("/site/residence/booking/"+residence.id+"/"+houseType.id);
+                  });
+
+                  $("html").on("click",".btn-booking",function () {
+                      let id = $(this).parents(".house-type-item-detail").attr("data-id");
+                      let houseType = houseTypes[id];
+
+                      let params = {};
+
+                      params["rid"] = houseType.rid;
+                      params["hid"] = houseType.id;
+                      params["uid"] = houseType.uid;
+
+
+                      let bookingHeader = "";
+                      let loginDiv = "";
+                      let steps2 = "";
+                      if (user){
+                          bookingHeader =  "<h5>咨询："+types[houseType.type]+"</h5>" +
+                                            "<h5 class='house-booking-close'>x</h5>";
+                      }else{
+                          bookingHeader =  "<h5>咨询："+types[houseType.type]+" 只需要两步</h5>" +
+                                            "<h5 class='house-booking-close'>x</h5>";
+                          loginDiv = "<div class='text-align-right' style='background-color: #fd7e14;padding: 20px;display: block;'>" +
+                                        "<a class='btn btn-success' href='/user/login'>去登录更少的步骤</a>" +
+                                     "</div>";
+
+                          steps2 =  "                 <div class='house-booking-step-2 booking-steps'>" +
+                              "                     <div class='form-group double-elements'>" +
+                              "                         <div class='form-group margin-right-20'>" +
+                              "                             <label>性别</label>" +
+                              "                             <div>" +
+                              "                                 <select class='form-control booking-input' name='sex'>" +
+                              "                                     <option value='0'>男</option>" +
+                              "                                     <option value='1'>女</option>" +
+                              "                                 </select>" +
+                              "                             </div>" +
+                              "                         </div>" +
+                              "                         <div class='form-group'>" +
+                              "                             <label>姓</label>" +
+                              "                             <div>" +
+                              "                                 <input name='nom' class='form-control booking-input'/>" +
+                              "                             </div>" +
+                              "                         </div>" +
+                              "                     </div>" +
+                              "                     <div class='form-group double-elements'>" +
+                              "                         <div class='form-group margin-right-20'>" +
+                              "                             <label>名</label>" +
+                              "                             <div>" +
+                              "                                 <input name='prenom' class='form-control booking-input'/>" +
+                              "                             </div>" +
+                              "                         </div>" +
+                              "                         <div class='form-group'>" +
+                              "                             <label>邮箱</label>" +
+                              "                             <div>" +
+                              "                                 <input name='email' class='form-control booking-input'/>" +
+                              "                             </div>" +
+                              "                         </div>" +
+                              "                     </div>" +
+                              "                     <div class='form-group double-elements'>" +
+                              "                         <div class='form-group margin-right-20'>" +
+                              "                             <label>电话</label>" +
+                              "                             <div>" +
+                              "                                 <input name='telephone' class='form-control booking-input'/>" +
+                              "                             </div>" +
+                              "                         </div>" +
+                              "                         <div class='form-group'>" +
+                              "                             <label>密码</label>" +
+                              "                             <div>" +
+                              "                                 <input name='password' class='form-control booking-input'/>" +
+                              "                             </div>" +
+                              "                         </div>" +
+                              "                     </div>" +
+                              "                     <div class='form-group text-align-right'>" +
+                              "                         <button class='btn btn-outline-info btn-booking-before' type='button'>上一步</button>" +
+                              "                         <button class='btn btn-success btn-booking-submit' type='button'>下一步</button>" +
+                              "                     </div>" +
+                              "                 </div>" ;
+                      }
+
+
+                      let bookingDiv = "<div class='house-booking-background'>" +
+                          "     <div class='house-booking-detail'>" +
+                          "         <div class='house-booking-detail-header'>" +
+                                    bookingHeader +
+                          "         </div>" +
+                                    loginDiv +
+                          "         <div class='house-booking-detail-info'>" +
+                          "             <form id='house-booking-form'>" +
+                          "                 <div class='house-booking-step-1 booking-steps'>" +
+                          "                     <div class='form-group double-elements'>" +
+                          "                         <div class='form-group margin-right-20'>" +
+                          "                             <label>类型</label>" +
+                          "                             <div>" +
+                          "                                 <select name='type' class='form-control booking-input'>";
+
+                      if(houseType.maxSize){
+                          bookingDiv += "<option value='"+houseType.maxSize+"'>"+houseType.maxSize+" ㎡</option>";
+                      }
+
+                      if (houseType.minSize){
+                          bookingDiv += "<option value='"+houseType.minSize+"'>"+houseType.minSize+" ㎡</option>";
+                      }
+
+                      bookingDiv += "                       </select>"+
+                          "                             </div>" +
+                          "                         </div>" +
+                          "                         <div class='form-group'>" +
+                          "                             <label>入住时间：</label>" +
+                          "                             <div><input class='form-control booking-input datechk' name='entree' type='date' /></div>"+
+                          "                         </div>" +
+                          "                     </div>" +
+                          "                     <div class='form-group'>" +
+                          "                         <label>入住多久</label>" +
+                          "                         <div class='input-group'>" +
+                          "                             <input type='number' class='form-control duree booking-input' name='month' aria-describedby='basic-addon2' value='"+residence.duree+"'>" +
+                          "                             <div class='input-group-append'>" +
+                          "                                 <span class='input-group-text' >月</span>" +
+                          "                                 <button class='btn btn-info duree-add' type='button'>+</button>" +
+                          "                                 <button class='btn btn-warning duree-mins' type='button'>-</button>" +
+                          "                             </div>" +
+                          "                         </div>" +
+                          "                     </div>" +
+                          "                     <div class='form-group'>" +
+                          "                         <label>信息</label>" +
+                          "                         <div>" +
+                          "                             <textarea name='message' class='form-control message'></textarea>" +
+                          "                         </div>" +
+                          "                     </div>" +
+                          "                     <div class='form-group text-align-right'>" +
+                          "                         <button class='btn btn-success btn-booking-next' type='button'>下一步</button>" +
+                          "                     </div>" +
+                          "                 </div>" +
+                                            steps2 +
+                          "             </form>" +
+                          "         </div>" +
+                          "     </div>" +
+                          "</div>";
+
+                      $("html").addClass("swiper-active");
+                      $("body").addClass("swiper-active");
+                      $("html").append(bookingDiv);
+
+                      $("html").on("click",".house-booking-close",function () {
+                         $(".house-booking-background").remove();
+                          $("html").removeClass("swiper-active");
+                          $("body").removeClass("swiper-active");
+                      });
+
+                      $("html").on("change",".duree",function () {
+                          let month = $(this).val();
+                          if (month<residence.duree){
+                              alert("公寓规定不能住少于"+residence.duree+"个月");
+                              $(this).val(residence.duree);
+                          }
+                      });
+
+                      $("html").on("click",".duree-add",function () {
+                          let month = $(".duree").val();
+                          $(".duree").val(parseInt(month)+1);
+                      });
+
+                      $("html").on("click",".duree-mins",function () {
+                          let month = $(".duree").val();
+                          if (month -1 >= residence.duree) {
+                              $(".duree").val(parseInt(month) - 1);
+                          }
+                      });
+
+                      function loginPost(){
+                          let entree = $("input[name=entree]").val();
+                          let message = $(".message").val();
+                          if (!entree){
+                              alert("入住时间必须填");
+                              return false;
+                          }
+
+
+                          if (!message){
+                              alert("请填写信息");
+                              return false;
+                          }
+
+                          params["entree"] = entree;
+                          params["pid"] = residence.uid;
+
+                          let month = $("input[name=month]").val();
+                          params["month"] = month;
+
+                          let type = $("input[name=type]").val();
+                          params["type"] = type;
+
+                          params["message"] = message;
+
+                          $.post("/site/residence/booking/message",params,function (data) {
+                              if (data.status==1){
+                                  alert("消息发送成功，请等待回信");
+                                  $(".house-type-close").click();
+                                  return;
+                              }
+                              alert("消息发送失败，刷新后再试");
+                          });
+
+                      }
+
+
+                      function nonloginPost(){
+                          let entree = $("input[name=entree]").val();
+                          let message = $(".message").val();
+                          if (!entree){
+                              alert("入住时间必须填");
+                              return false;
+                          }
+
+
+                          if (!message){
+                              alert("请填写信息");
+                              return false;
+                          }
+
+                          params["entree"] = entree;
+
+                          let month = $("input[name=month]").val();
+                          params["month"] = month;
+
+                          let type = $("input[name=type]").val();
+                          params["type"] = type;
+
+                          params["message"] = message;
+
+                          params["sex"] = $("input[name=sex]").val();
+
+                          let nom = $("input[name=nom]").val();
+
+                          if (!nom){
+                              alert("姓必须填写");
+                              return false;
+                          }
+
+                          params["nom"] = nom;
+
+                          let prenom = $("input[name=prenom]").val();
+
+                          if (!prenom){
+                              alert("名字必须填写");
+                              return false;
+                          }
+
+                          params["prenom"] = prenom;
+
+                          let email = $("input[name=email]").val();
+
+                          if (!email){
+                              alert("邮箱必填");
+                              return false;
+                          }
+
+                          params["email"] = email;
+
+                          let telephone = $("input[name=telephone]").val();
+
+                          if (!telephone){
+                              alert("电话必填");
+                              return false;
+                          }
+
+                          params["telephone"] = telephone;
+
+                          let password = $("input[name=password]").val();
+
+                          if (!password){
+                              alert("密码必须填写");
+                              return false;
+                          }
+
+                          params["password"] = password;
+
+                          $.post("/site/residence/booking/message",params,function (data) {
+                              if (data.status==1){
+                                  alert("消息发送成功，请等待回信");
+                                  $(".house-type-close").click();
+                                  return;
+                              }
+                              alert("消息发送失败，刷新后再试");
+                          });
+                      }
+
+                      $("html").on("click",".btn-booking-next",function () {
+                          if (user){
+                              loginPost();
+                          }else{
+                              //vaild
+                              $(".house-booking-step-1").hide();
+                              $(".house-booking-step-2").show();
+
+                              $("html").on("click",".btn-booking-before",function () {
+                                  $(".house-booking-step-2").hide();
+                                  $(".house-booking-step-1").show();
+                              });
+
+                              $("html").on("click",".btn-booking-submit",function () {
+                                  nonloginPost();
+                              });
+                          }
+                      });
+
+                      let dateClass = ".datechk";
+                      if (document.querySelector(dateClass)){
+                          if (document.querySelector(dateClass).type !== 'date')
+                          {
+                              var oCSS = document.createElement('link');
+                              oCSS.type='text/css'; oCSS.rel='stylesheet';
+                              oCSS.href='//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css';
+                              oCSS.onload=function()
+                              {
+                                  var oJS = document.createElement('script');
+                                  oJS.type='text/javascript';
+                                  oJS.src='//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js';
+                                  oJS.onload=function()
+                                  {
+                                      $(dateClass).datepicker({ dateFormat: 'yy-mm-dd' });
+                                  }
+                                  document.body.appendChild(oJS);
+                              }
+                              document.body.appendChild(oCSS);
+                          }
+                      }
+
+                  });
+
+
+                  $("html").on("click",".btn-house-type-more",function () {
+                      let id = $(this).parents(".house-type-item-detail").attr("data-id");
+                      let house = houseTypes[id];
+                      let images = JSON.parse(house.imageJson);
+
+                      let size = "";
+                      if (house.minSize){
+                          size += "从 "+ house.minSize +"㎡ 到 ";
+                      }
+                      if(house.maxSize){
+                          size += house.maxSize + "㎡";
+                      }
+
+                      let price = "";
+                      if (house.priceMin){
+                          price += "介于 "+ house.priceMin+"EURO/每月 和 ";
+                      }
+
+                      if (house.priceMax){
+                          price += house.priceMax+"EURO/每月";
+                          if (house.priceMin){
+                              price += " 之间";
+                          }
+                      }
+                      let immo = house.meuble?"带家具":"不带家具";
+                      let cusine = house.cusine?"厨房(私有)":"厨房(共享)";
+                      let bains = house.bains?"浴室(私有)":"浴室(共享)";
+
+                      let houseDesItemsDiv = "<div class='house-type-detail-item margin-right-20'><i class='fas fa-couch fa-sm margin-right-5'></i><text>"+immo+"</text></div>" +
+                                             "<div class='house-type-detail-item margin-right-20'><i class='fas fa-couch fa-sm margin-right-5'></i><text>"+bains+"</text></div>" +
+                                             "<div class='house-type-detail-item margin-right-20'><i class='fas fa-user-friends fa-sm margin-right-5' ></i><text>"+house.persons+"个人最大限度</text></div>" +
+                                             "<div class='house-type-detail-item margin-right-20'><i class='fas fa-hat-chef fa-sm margin-right-5'></i><text>"+cusine+"</text></div>" +
+                                             "<div class='house-type-detail-item margin-right-20'><i class='fas fa-ruler fa-sm margin-right-5'></i><text>"+size+"</text></div>"+
+                                             "<div class='house-type-detail-item margin-right-20'><i class='fas fa-pencil-ruler fa-sm margin-right-5'></i><text>"+house.salle+"间</text></div>";
+
+                      let services = data.services;
+                      let iconns = data.iconns;
+
+                      let includeItems = "";
+                      if (residence.serviceJson){
+                          let serviceIncluds = JSON.parse(residence.serviceJson);
+                          for (let i in iconns){
+                              let flag = false;
+                              for (let s in serviceIncluds){
+                                  if(s==i){
+                                      flag = true;
+                                  }
+                              }
+                              if (flag){
+                                  includeItems += "<div class='house-type-detail-item margin-right-20' data-id='"+i+"'>" +
+                                      "        <i class='"+iconns[i]+" margin-right-5'></i>" +
+                                      "        <text>"+services[i]+"</text>" +
+                                      "    </div>";
+                              }
+                          }
+                      }
+
+                      let charges = "";
+                      let chargesOption = "";
+
+                      if (residence.chargesJson){
+                          let chargesJson = JSON.parse(residence.chargesJson);
+                          for(let i in chargesJson){
+                              charges += "<div><i class='fas fa-check fa-xs margin-right-5'></i><text>"+chargesLists[parseInt(i)]+"</text></div>";
+                          }
+                      }
+
+                      if(residence.chargesOptionJson){
+                          let chargesOptionJson = JSON.parse(residence.chargesOptionJson);
+                          for(let i in chargesOptionJson){
+                              chargesOption += "<div><i class='fas fa-times fa-xs margin-right-5'></i><text>"+chargesLists[parseInt(i)]+"</text></div>";
+                          }
+                      }
+
+                      let imageDetail = "";
+                      for(let i in images){
+                          imageDetail += "<div class='detail-image-item' data-id='"+i+"'><img src='/partners/"+images[i]+"' /></div>";
+                      }
+
+                      let houseTypeDetailDiv = "<div class='house-type-detail-background'>" +
+                                                    "<div class='house-type-detail'>" +
+                                                        "<div class='hosue-type-detail-header'>" +
+                                                        "   <h5 style='color: #1b6997;'>"+size+"</h5>" +
+                                                        "   <div style='display: flex;' ><h5 class='margin-right-20'>"+price+"</h5><h5 class='house-type-close'>x</h5></div>" +
+                                                        "</div>" +
+                                                        "<div class='line-box'></div>" +
+                                                        "<div class='house-type-detail-info'>" +
+                                                            "<div class='house-images-content'>" +
+                                                                "<div class='house-image-display'><img src='/partners/"+images[0]+"' class='house-image-display-img'/></div>" +
+                                                                "<div class='house-image-sets'>"+imageDetail+"</div>" +
+                                                            "</div>" +
+                                                            "<div class='house-type-detail-desc'>" +
+                                                                "<h4>概括</h4>" +
+                                                                "<div class='type-detail-desc'>" +
+                                                                    "<div class='des-item'>" +
+                                                                        "<h5>一般说明</h5>" +
+                                                                        "<div class='house-des-items'>"+houseDesItemsDiv+"</div>" +
+                                                                    "</div>" +
+                                                                    "<div class='des-item'>" +
+                                                                        "<h5>包含的服务</h5>" +
+                                                                        "<div class='house-des-service'>"+includeItems+"</div>" +
+                                                                    "</div>" +
+                                                                "</div>" +
+                                                                "<div class='form-group margin-top-10'><h4>收费标准</h4></div>"+
+                                                                "<div class='box-line'></div>"+
+                                                                "<div class='type-detail-price'>" +
+                                                                    "<div class='price-item price-item-include'>" +
+                                                                        "<h5>包含在收费中</h5>" +
+                                                                        "<div class='price-include'>"+charges+"</div>" +
+                                                                    "</div>" +
+                                                                    "<div class='price-item price-item-option'>" +
+                                                                        "<h5>不包含在费用中</h5>" +
+                                                                        "<div class='price-option'>"+chargesOption+"</div>" +
+                                                                    "</div>" +
+                                                                "</div>"+
+                                                                "<div class='form-group prices-rent margin-top-10'>" +
+                                                                    "<h5>合计</h5>" +
+                                                                    "<h5>"+price+"</h5>" +
+                                                                "</div>" +
+                                                                "<div class='form-group margin-top-10 detail-description'>"+house.description+"</div>" +
+                                                            "</div>" +
+                                                        "</div>" +
+                                                    "</div>" +
+                                               "</div>";
+
+                      $("html").addClass("swiper-active");
+                      $("body").addClass("swiper-active");
+                      $("html").append(houseTypeDetailDiv);
+
+
+                      $("html").on("click",".house-type-close",function () {
+                          $(".house-type-detail-background").remove();
+                          $("html").removeClass("swiper-active");
+                          $("body").removeClass("swiper-active");
+                      });
+
+                      $("html").on("click",".detail-image-item",function () {
+                          let src = $(this).find("img").attr("src");
+                          $(".house-image-display-img").attr("src",src);
+                      });
+
+                  });
+
+
+
+                  mapboxgl.accessToken = 'pk.eyJ1IjoiaGFpd2FpaHVhbmdkaSIsImEiOiJja2huZGpmZmUyZW5pMnJxcXA0bHlycmc0In0.Wh2Kzu-CfQYA0D91x5YyNg';
+                  let map;
+                  function setMap(){
+
+                      map = new mapboxgl.Map({
+                          container: 'map',
+                          style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+                          center: [2.2770199, 48.8589507], // starting position [lng, lat]
+                          zoom:13
+                      });
+
+                      var nav = new mapboxgl.NavigationControl();
+                      map.addControl(nav, 'top-left');
+
+                  }
+
+                  setMap();
+
+                  let href = window.location.href;
+                  if (href.indexOf('#') !== -1){
+                      window.location.assign(href);
+                  }
+
+              }else{
+                  alert("你要查找的数据不存在");
+              }
+           });
+
+
+
+           $("html").on("click",".residence-image-item",function () {
+               let imageId = $(this).attr("data-id");
+
+               let imageSets = "";
+
+               if (imageJson.length){
+                   for (let i in imageJson){
+                       imageSets += "<div class='hwwd-iamge-swiper-image-item' data-id='"+i+"'><img src='/partners/"+imageJson[i]+"'/></div>";
+                   }
+               }
+
+               let swiperDiv = "<div class='hwwd-image-swiper-background'>" +
+                               "    <div class='hwwd-image-swiper'>" +
+                               "        <div class='hwwd-image-swiper-header'>" +
+                               "            <h3>"+residence.brand.toUpperCase()+ " "+ residence.name.toUpperCase() +"</h3>" +
+                               "            <h4 class='hwwd-image-swiper-close'>x</h4>" +
+                               "        </div>" +
+                               "        <div class='hwwd-image-swiper-content'>" +
+                               "            <div class='hwwd-image-swiper-display'>" +
+                               "                <div class='hwwd-image-swiper-pre hwwd-image-swiper-button-control'><</div>" +
+                               "                <div class='hwwd-image-swiper-show'><img src='/partners/"+imageJson[imageId]+"' id='hwwd-swiper-show-img'/></div>" +
+                               "                <div class='hwwd-image-swiper-next hwwd-image-swiper-button-control'>></div>" +
+                               "            </div>" +
+                               "            <div class='hwwd-iamge-swiper-image-sets'>"+imageSets+"</div>" +
+                               "        </div>" +
+                               "    </div>" +
+                               "</div>";
+
+
+               $("html").append(swiperDiv);
+               $("html").addClass("swiper-active");
+               $("body").addClass("swiper-active");
+
+               $("html").on("click",".hwwd-image-swiper-close",function () {
+                   $(".hwwd-image-swiper-background").toggle("slow");
+                   $(".hwwd-image-swiper-background").remove();
+                   $("html").removeClass("swiper-active");
+                   $("body").removeClass("swiper-active");
+               });
+
+
+               $("html").on("click",".hwwd-image-swiper-next",function () {
+                   imageId = (imageId + 1) %imageJson.length
+                   $("#hwwd-swiper-show-img").attr("src","/partners/"+imageJson[imageId]);
+               });
+
+               $("html").on("click",".hwwd-image-swiper-pre",function () {
+                   if (imageId - 1>0) {
+                       imageId = (imageId - 1) %imageJson.length;
+                   }else{
+                       imageId = imageJson.length -1;
+                   }
+                   $("#hwwd-swiper-show-img").attr("src","/partners/"+imageJson[imageId]);
+               });
+
+               $("html").on("click",".hwwd-iamge-swiper-image-item",function () {
+                   let imageId = $(this).attr("data-id");
+                   $("#hwwd-swiper-show-img").attr("src","/partners/"+imageJson[imageId]);
+               });
+           });
+        });
+    </script>
+
+</div>
+</html>

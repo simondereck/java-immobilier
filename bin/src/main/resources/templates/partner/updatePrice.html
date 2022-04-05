@@ -1,0 +1,37 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <script th:src="@{/js/add-source.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+            <form method="post" th:action="@{/partner/admin/house/detail/update/price/}+${annonce.id}">
+                <div class="form-group"><h3>更新房租</h3></div>
+
+                <div class="form-group">
+                    <h4>房租 <span class="price"></span></h4>
+                    <div class="form-group price-div">
+                        <input class="form-control" name="loyer" type="number" placeholder="房租" th:value="${annonce.loyer}"/>
+                        <input class="form-control" name="charges" type="number" placeholder="物业费" th:value="${annonce.charges}"/>
+                    </div>
+                </div>
+                <div class="form-group button-group">
+                    <button class="btn btn-success">更新房租</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <style>
+        .partner-center .content{
+            height: 100%;
+        }
+        .button-group{
+            text-align: right;
+        }
+    </style>
+</div>
+</html>

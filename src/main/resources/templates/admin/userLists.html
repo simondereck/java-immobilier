@@ -1,0 +1,151 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="admin-user-div">
+        <div class="admin-user-title"><h3>用户列表</h3></div>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>姓</th>
+                        <th>名</th>
+                        <th>身份</th>
+                        <th>地址</th>
+                        <th>电话</th>
+                        <th>邮箱</th>
+                        <th>微信</th>
+                        <th>生日</th>
+                        <th>状态</th>
+                        <th>收入</th>
+                        <th>更新时间</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <view th:if="${users}" th:remove="tag">
+                        <view th:each="user:${users}" th:remove="tag">
+                            <tr>
+                                <td th:text="${user.id}"></td>
+                                <td th:text="${user.nom}"></td>
+                                <td th:text="${user.prenom}"></td>
+                                <td th:text="${user.identity}"></td>
+                                <td th:text="${user.address}"></td>
+                                <td th:text="${user.telephone}"></td>
+                                <td th:text="${user.email}"></td>
+                                <td th:text="${user.wechat}"></td>
+                                <td th:text="${user.birthday}"></td>
+                                <td th:text="${user.status}"></td>
+                                <td th:text="${user.salary}"></td>
+                                <td th:text="${user.utime}"></td>
+                                <td th:text="${user.ctime}"></td>
+                                <td>
+                                    <span><a th:href="@{/admin/user/update/}+${user.id}">更新</a></span>
+                                    <span><a th:href="@{/admin/user/login/}+${user.id}">登录</a></span>
+                                </td>
+                            </tr>
+                        </view>
+                    </view>
+                </tbody>
+            </table>
+            <div th:if="${pageHelper}" class="pages-set">
+                <div th:if="${pageHelper.totalPage>0}" th:remove="tag">
+                    <ul class="pagination">
+                        <div th:each="page,iter:${pageHelper.pages}" th:remove="tag">
+                            <li  class="page-item"><a th:text="${page.key}" th:href="${page.url}" class="page-link"></a></li>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .admin-user-title{
+            text-align: center;
+        }
+        .admin-user-div{
+            width: 94%;
+            padding: 50px;
+            margin: auto;
+            background-color: white;
+        }
+
+        .button-group{
+            text-align: right;
+        }
+
+
+
+
+
+        td,th{
+            padding: 10px;
+        }
+
+        th{
+            background: #0c5460;
+            color: white;
+            text-align: center;
+        }
+
+        td:nth-child(odd){
+            background-color: #80bdff;
+            text-align: center;
+        }
+        td:nth-child(even){
+            background-color: whitesmoke;
+        }
+
+        tr:nth-child(odd){
+            border: 1px solid lightgray;
+        }
+        tr:nth-child(even){
+            border-right: 1px solid lightgray;
+            border-left: 1px solid lightgray;
+        }
+
+
+        .anonces{
+            margin-top: 50px;
+        }
+
+
+        tr .red>div,
+        tr .orange>div,
+        tr .green>div{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        tr .red>div{
+            background-color: darkred;
+        }
+
+        tr .green>div{
+            background-color: #1c7430;
+        }
+
+        tr .orange>div{
+            background-color: yellow;
+        }
+
+
+        .pages-set{
+            text-align: center;
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .pagination{
+            margin: auto;
+            /*display: flex;*/
+        }
+
+
+    </style>
+</div>
+</html>

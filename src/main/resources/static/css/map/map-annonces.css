@@ -1,0 +1,378 @@
+body{
+    background: cadetblue;
+    overflow: hidden;
+    height: 100vh;
+}
+
+@media screen and (min-width: 501px){
+
+    #search-nav{
+        top: 50px;
+        line-height: 50px;
+        width: fit-content;
+        color: black;
+        text-align: center;
+    }
+
+    #search-nav span{
+        padding: 10px;
+        height: 50px;
+        width: 40px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    #search-nav .active{
+        color: white;
+        border-bottom: 2px solid white;
+        background-color: rgba(0,0,0,0.3);
+    }
+
+    #search-nav span:hover{
+        color: white;
+        border-bottom: 2px solid white;
+        background-color: rgba(0,0,0,0.3);
+    }
+
+    #search-div{
+        display: flex;
+        align-items: center;
+        color: black;
+        background-color: white;
+        padding: 10px;
+    }
+
+    .search-div-item{
+        margin-right: 20px;
+    }
+
+    .search-content{
+        display: flex;
+    }
+
+    #map{
+        width: 75vw;
+        height: calc( 100vh - 106px);
+        background: whitesmoke;
+    }
+
+    #annonces{
+        width: 25vw;
+        height: calc( 100vh - 150px );
+        overflow-y: scroll;
+    }
+
+
+    #search-nav span{
+
+    }
+
+    #annonces{
+        padding: 20px;
+    }
+
+    #annonces .location-detail-item-desc{
+        padding: 20px;
+    }
+
+    #annonces .location-detail-item:hover{
+        box-shadow: 0 10px 10px rgba(0,0,0,0.4);
+    }
+
+    .location-detail-item{
+        width: 22vw;
+        /*width: 100%;*/
+        /*height: 20vh;*/
+        background: white;
+        /*margin: 20px 0px 20px 0px;*/
+        color: darkslategray;
+        /*text-align: center;*/
+        border-radius: 5px;
+        /*padding: 20px;*/
+        margin-bottom: 20px;
+
+    }
+
+    .location-detail-item img{
+        width: 100%;
+        height: 14vw;
+        object-fit: cover;
+    }
+
+    .location-detail-item:hover{
+        cursor: pointer;
+    }
+
+
+    #search-table {
+        border-collapse: collapse;
+        width: 100%;
+        border: 1px solid #ddd;
+        font-size: 18px;
+    }
+
+    #search-table th, #search-table td {
+        text-align: center;
+        padding: 5px;
+    }
+
+    #search-table tr {
+        border-bottom: 1px solid #ddd;
+    }
+
+    #search-table tr.header, #search-table tr:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+
+    .select-item-div{
+        position: relative;
+    }
+
+    .select-item-content{
+        width: 300px;
+        display: none;
+        position: absolute;
+        z-index: 50000;
+        background-color: white;
+        top:40px;
+        padding: 20px;
+    }
+
+    #order{
+        display: flex;
+        background-color: white;
+        border-top: 1px whitesmoke solid;
+        height: 44px;
+    }
+
+    #order span{
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    #order span:hover{
+        color: #c69500;
+        background-color:whitesmoke;
+    }
+
+    #order .active{
+        color: #c69500;
+        background-color: whitesmoke;
+    }
+
+    #order .order-desc::after{
+        content: " ↓";
+    }
+
+    #order .order-asc::after{
+        content: " ↑";
+    }
+
+}
+
+@media screen and (max-width: 500px){
+
+
+    #search-nav{
+        top: 50px;
+        line-height: 50px;
+        width: fit-content;
+        z-index: 5000;
+        color: black;
+        text-align: center;
+        background-color: #c69500;
+    }
+
+    #search-nav span{
+        padding: 10px;
+        height: 50px;
+        width: 40px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    #search-nav .active{
+        color: white;
+        border-bottom: 2px solid white;
+        background-color: rgba(0,0,0,0.3);
+    }
+
+    #search-nav span:hover{
+        color: white;
+        border-bottom: 2px solid white;
+        background-color: rgba(0,0,0,0.3);
+    }
+
+    #search-div{
+        color: black;
+        background-color: rgba(0,0,0,0.8);
+        padding: 10px;
+        width: 100vw;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 50000;
+        display: none;
+    }
+
+    .search-div-item{
+        margin-right: 20px;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    #map{
+        width: 100vw;
+        height: 50vh;
+        background: whitesmoke;
+    }
+
+    #annonces{
+        width: 100vw;
+        height: calc( 50vh - 100px );
+        overflow-x: scroll;
+        overflow-y: hidden;
+        display: flex;
+        padding: 20px;
+
+    }
+
+    #annonces .location-detail-item-desc{
+        padding: 20px;
+
+    }
+
+    #annonces .location-detail-item:hover{
+        box-shadow: 0 10px 10px rgba(0,0,0,0.4);
+    }
+
+    .location-detail-item{
+        width: 60vw;
+        height: calc( 50vh - 190px );
+        background: white;
+        color: darkslategray;
+        text-align: center;
+        border-radius: 5px;
+        margin-right: 20px;
+        display: inline-table;
+
+    }
+
+    .location-detail-item img{
+        width: 100%;
+        height: calc( 25vh - 100px );
+        object-fit: cover;
+    }
+
+    .location-detail-item:hover{
+        cursor: pointer;
+    }
+
+
+
+
+    #search-table {
+        border-collapse: collapse;
+        width: 100%;
+        border: 1px solid #ddd;
+        font-size: 18px;
+    }
+
+    #search-table th, #search-table td {
+        text-align: center;
+        padding: 5px;
+    }
+
+    #search-table tr {
+        border-bottom: 1px solid #ddd;
+    }
+
+    #search-table tr.header, #search-table tr:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+
+    .select-item-content{
+        width: 300px;
+        display: none;
+        position: absolute;
+        z-index: 50000;
+        background-color: white;
+        top: 30%;
+        left: 10%;
+        padding: 20px;
+    }
+
+    #order{
+        display: flex;
+        background-color: white;
+        border-top: 1px whitesmoke solid;
+        height: 44px;
+    }
+
+    #order span{
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    #order span:hover{
+        color: #c69500;
+        background-color:whitesmoke;
+    }
+
+    #order .active{
+        color: #c69500;
+        background-color: whitesmoke;
+    }
+
+    #order .order-desc::after{
+        content: " ↓";
+    }
+
+    #order .order-asc::after{
+        content: " ↑";
+    }
+
+    #hwwd-search-icon{
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-color: darkred;
+        line-height: 50px;
+        font-size: 30px;
+        bottom: 60px;
+        right: 0;
+        z-index: 50000;
+        text-align: center;
+        border-radius: 50px;
+        box-shadow: 0 10px 10px rgba(0,0,0,0.4);
+    }
+
+    .search-icon-show{
+        overflow: hidden;
+    }
+}
+
+
+.price{
+    color: #0c5460;
+}
+
+.select-item{
+    cursor: pointer;
+    color: #c69500;
+}
+
+
+
+.button-group{
+    text-align: right;
+}
+
+.footer{
+    display: none;
+}
+

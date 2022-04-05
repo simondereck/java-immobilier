@@ -1,0 +1,45 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/partner/login.css}" />
+    <div class="login-div">
+        <div class="login-form">
+            <div class="login-title"><h2>业 主 登 录</h2></div>
+            <div>
+                <form class="form-horizontal"   th:action="@{/partner/login}"  method="post">
+                    <div class="form-group">
+                        <label for="email" class="control-label">邮箱或电话：</label>
+                        <div>
+                            <input type="text" class="form-control" name="email"  id="email" placeholder="Email ou telephone" th:value="${partner.email}"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="control-label" >密码</label>
+                        <div>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="Password" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div th:if="${partner.error==0}" th:remove="tag">
+                            <span th:text="${partner.message}" style="color: #e4606d;"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" id="remember-me" name="remember"/>
+                        <label for="remember-me">记住我</label>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success" >登 录</button>
+                    </div>
+                    <div class="form-group forgot-password">
+                        <a class="btn btn-link" th:href="@{/partner/forgotPassword}">忘记密码</a>
+                        <a class="btn btn-link" th:href="@{/partner/signup}">注册</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

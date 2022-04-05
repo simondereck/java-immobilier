@@ -1,0 +1,343 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/site/more.css}" />
+    <link th:href="@{/css/map/map-annonces.css}" rel="stylesheet" />
+    <link th:href="@{/css/hwwd-image-display.css}" rel="stylesheet" />
+    <script th:src="@{/js/hwwd-image-display.js}"></script>
+
+    <div class="more-div">
+        <div class="more-div-title"><h3>所有房源</h3></div>
+        <form id="searchAnnonces">
+            <div id="search-div">
+                <div id="search-nav" class="search-div-item">
+                    <span data-href="/site/bussiness/map">买卖</span>
+                    <span data-href="/site/map" class="active">租赁</span>
+                    <span data-href="/">新房</span>
+                </div>
+                <div class="pays-set search-div-item">
+
+                </div>
+                <div class="select-item-div search-div-item">
+                    <input name="orderType" hidden="hidden" value="0"/>
+                    <input name="orderValue" hidden="hidden" value="1" />
+                    <div class="select-item dropdown-toggle" data-label="area">区域<text id="area-name"></text></div>
+                    <div class="area form-group location-item select-item-content" id="area-div">
+                        <input type="text" class="form-control search-input" name="area"  id="area" placeholder="地段"/>
+                        <input type="text" name="location" hidden="hidden" />
+                    </div>
+                </div>
+                <div class="search-div-item">
+                    <select name="type" class="form-control">
+                        <option value="0">全部</option>
+                        <option value="1">个人</option>
+                        <option value="2">中介</option>
+                        <option value="3">学生公寓</option>
+                    </select>
+                </div>
+                <div class="search-div-item">
+                    <select name="rtype" class="form-control rtype">
+                        <option value="-1">--类型--</option>
+                        <option value="0">房间</option>
+                        <option value="1">studio | T1</option>
+                        <option value="2">公寓T2</option>
+                        <option value="3">公寓T3</option>
+                        <option value="4">公寓T4</option>
+                        <option value="5">别墅</option>
+                    </select>
+                </div>
+                <div class="select-item-div search-div-item">
+                    <div class="select-item dropdown-toggle" data-label="price">价格<text id="price-text"></text></div>
+                    <div class="price form-group select-item-content">
+                        <div class="form-group">
+                            <label>最小价格</label>
+                            <div>
+                                <input name="price1" class="form-control" type="number"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>最大价格</label>
+                            <div>
+                                <input name="price2" class="form-control" type="number" />
+                            </div>
+                        </div>
+                        <div class="button-group form-group">
+                            <button class="btn btn-link btn-confirm" type="button" data-label="price">确定</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="select-item-div search-div-item">
+                    <div  class="select-item dropdown-toggle" data-label="size">面积 <text id="size-text"></text></div>
+                    <div class="size form-group select-item-content">
+                        <div class="form-group">
+                            <label>最小面积</label>
+                            <div>
+                                <input class="form-control" name="size1" type="number"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>最大面积</label>
+                            <div>
+                                <input class="form-control" name="size2" type="number" />
+                            </div>
+                        </div>
+                        <div class="button-group form-group">
+                            <button class="btn btn-link btn-confirm" type="button" data-label="size">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div>
+            <div class="location-details" id="location-details">
+
+            </div>
+            <div id="pageHelper">
+
+            </div>
+
+        </div>
+    </div>
+    <script>
+
+        $(".location-details").on("click",".location-detail-item",function (){
+            let id = $(this).attr("data-id");
+            window.location.assign("/location/house/detail/"+id+".html");
+        });
+
+
+        $.get("/data/pays",function (data) {
+            if (data){
+                let dataString = '<select name="pays" id="pays" class="form-control">';
+                data.forEach(function (item,key) {
+                    dataString += '<option value="'+item.id+'">'+item.name+'</option>';
+                })
+                dataString += '</select>';
+                $(".pays-set").html(dataString);
+            }
+        });
+
+        $("#area").keyup(function (){
+            let val = $(this).val();
+            var data = {keyword:val};
+            $.get("/user/location/keywords",data,function (result){
+                if (result) {
+                    villes = result;
+                    var $table = "<table id='search-table'>" +
+                        " <tr class='header'>" +
+                        "<th style='width:30%' >邮编</th>" +
+                        "<th style='width:30%' >城市</th>" +
+                        "<th style='width:30%' >省</th></tr>";
+
+                    villes.forEach(function (ville, key) {
+                        $table += "<tr class='select-ville' data-id='"+ville.id+"' data-key='"+key+"'>" +
+                            "<td>"+ville.postcode+"</td>"+
+                            "<td>"+ville.name+"</td>"+
+                            "<td>"+ville.code+"</td>"+
+                            "</tr>"
+                    });
+                    $table += "</table>";
+                    let old = $("#search-table");
+                    if (old){
+                        old.remove();
+                    }
+                    $("#area-div").append($table);
+                }
+            });
+        });
+
+
+        $(".location-item").on('click',".select-ville",function (){
+            let key = $(this).attr("data-key");
+            let id = $(this).attr("data-id");
+            $("input[name=location]").val(id);
+            let value = villes[key].postcode + " -- " + villes[key].name + " -- " + villes[key].code;
+            $("input[name=area]").val(value);
+            $("#search-table").remove();
+            $("#area-div").hide();
+            $("#area-name").text(" : "+villes[key].name);
+            vkey = key;
+            initPage();
+        });
+
+
+        $(".select-item").click(function () {
+            let label = $(this).attr("data-label");
+            $(".select-item-content").each(function (key,item) {
+                if($(item).hasClass(label)){
+                    $(item).toggle();
+                }else{
+                    $(item).hide();
+                }
+            });
+        });
+
+        $(".btn-confirm").click(function () {
+            let label = $(this).attr("data-label");
+            $("."+label).toggle();
+            if(label=="price"){
+                let price1 = $("input[name=price1]").val();
+                let price2 = $("input[name=price2]").val();
+
+                if (price1&&price2){
+                    $("#price-text").text(" : "+price1 + " ~ " +price2 );
+                }else if (price1){
+                    $("#price-text").text(" : > "+price1);
+                }else if (price2){
+                    $("#price-text").text(" : < "+price2);
+                }else{
+                    $("#price-text").text("");
+                }
+            }else if (label=="size"){
+                let size1 = $("input[name=size1]").val();
+                let size2 = $("input[name=size2]").val();
+
+                if (size1&&size2){
+                    $("#size-text").text(" : "+size1 + " ~ " +size2 );
+                }else if (size1){
+                    $("#size-text").text(" : > "+size1);
+                }else if (size2){
+                    $("#size-text").text(" : < "+size2);
+                }else{
+                    $("#size-text").text("");
+                }
+            }
+
+            initPage();
+        });
+
+
+        $(function () {
+            initPage();
+        });
+
+        function initPage(url){
+            let urlPath = url ? url:"/site/new/more/data";
+            let dataParams = $("#searchAnnonces").serializeArray();
+            let params = {};
+            Loadding();
+            dataParams.forEach(function (item,key) {
+                if (item.value){
+                    params[item.name] = item.value;
+                }
+            });
+
+            $.post(urlPath,params,function (data) {
+                if (data.status===1){
+                    if (data.annonces){
+                        let annonces = data.annonces;
+                        let villes = data.villes;
+                        let annonceDiv = "";
+                        $("#location-details").html("");
+                        for (let i in annonces){
+                            if (i%4===0){
+                                annonceDiv += "<div class='location-row'>";
+                                for (let j=0;j<4;j++){
+                                    let m = parseInt(i) + parseInt(j);
+                                    if (annonces[m]){
+                                        annonceDiv += "<div  class='location-detail-item' data-id='"+annonces[m].id+"'>";
+
+                                        if (annonces[m].cover){
+                                            annonceDiv += "<div>" +
+                                                "   <img src='/partners/"+ annonces[m].pid +"/"+annonces[m].cover+"' />"
+                                        }else{
+                                            annonceDiv += "<div><img src='/img/default.jpg' />"
+                                        }
+
+                                        annonceDiv += "   <div class='cover'>";
+
+                                        switch (annonces[m].type) {
+                                            case 1:
+                                                annonceDiv +=  "<label class='location-item-label'>房东直租</label>";
+                                                break;
+                                            case 2:
+                                                annonceDiv +=  "<label class='location-item-label'>中介</label>";
+                                                break;
+                                            case 3:
+                                                annonceDiv +=  "<label class='location-item-label'>学生公寓</label>";
+                                                break;
+
+                                            default:
+                                                annonceDiv +=  "<label class='location-item-label'>房东直租</label>";
+                                                break;
+                                        }
+
+                                        annonceDiv += "</div></div>";
+
+                                        annonceDiv += "<div class='location-detail-item-desc'>";
+
+                                        if (annonces[m].location){
+                                            annonceDiv += "<div class='title'>"+villes[annonces[m].location+''].name+"</div>";
+                                        }
+
+                                        if (annonces[m].furniture){
+                                            annonceDiv += "<div class='title'>家具齐全 "+ annonces[m].size + " 平</div>";
+                                        }else{
+                                            annonceDiv += "<div class='title'>不带家具 "+ annonces[m].size + " 平</div>";
+                                        }
+
+                                        annonceDiv += "<div>起租时间：" + annonces[m].sdate + "</div>";
+                                        annonceDiv += "<div>价格：" + annonces[m].price + "</div>";
+
+                                        annonceDiv += "</div></div>";
+                                    }
+
+                                }
+                                annonceDiv += "</div>";
+                            }
+                        }
+                        $("#location-details").append(annonceDiv);
+                    }
+
+
+                    if (data.pageHelper){
+                        console.log(data.pageHelper);
+                        $("#pageHelper").html("");
+                        let pageHelper = "<div class='pages-set'>\n" +
+                            "<ul class='pagination'>";
+                        let pages = data.pageHelper.pages;
+                        if (pages){
+                            for (let k in pages){
+                                let current = data.pageHelper.currentPage + 1 ;
+                                if (current==pages[k].key){
+                                    pageHelper +=   "<li  class='page-item active'>" +
+                                        "   <a data-href='"+pages[k].url+"' class='page-link'>"+pages[k].key+"</a>" +
+                                        "</li>";
+                                }else{
+                                    pageHelper +=   "<li  class='page-item'>" +
+                                        "   <a data-href='"+pages[k].url+"' class='page-link'>"+pages[k].key+"</a>" +
+                                        "</li>";
+                                }
+
+                            }
+                        }
+                        pageHelper += "</ul></div>";
+                        $("#pageHelper").append(pageHelper);
+                    }
+                }else{
+                    $("#location-details").html("");
+                    $("#pageHelper").html("");
+                }
+            });
+            stopLoadding();
+        }
+
+        $("#pageHelper").on("click","a",function () {
+            let href = $(this).attr("data-href");
+            initPage(href);
+        });
+
+        $(".rtype").change(function () {
+            initPage();
+        });
+
+    </script>
+    <style>
+        .more-div{
+            margin-bottom: 50px;
+        }
+    </style>
+</div>
+</html>

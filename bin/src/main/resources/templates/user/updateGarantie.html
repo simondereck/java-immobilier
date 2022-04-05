@@ -1,0 +1,119 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/user-nav.js}"></script>
+    <link th:href="@{/css/user-center.css}" rel="stylesheet" />
+    <link th:href="@{/css/user-needs.css}" rel="stylesheet" />
+    <div class="user-center">
+        <div th:replace="layout/user-nav"></div>
+        <div class="content">
+            <div class="center-div">
+                <form method="post" th:action="@{/user/needs/update/garantie/}+${garantie.id}">
+                    <div class="form-group"><h3>更新我的担保 / 提前付房租</h3></div>
+                    <div class="form-group">
+                        <label for="garantie" class="control-label">担保：</label>
+                        <div>
+                            <select name="garantie" class="form-control" id="garantie">
+                                <view th:each="item,iter:${garanties}">
+                                    <view th:if="${garantie.garantie == iter.index}">
+                                        <option th:value="${iter.index}" th:text="${item}" selected ></option>
+                                    </view>
+                                    <view th:if="${garantie.garantie != iter.index}">
+                                        <option th:value="${iter.index}" th:text="${item}" ></option>
+                                    </view>
+                                </view>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group garantie-0" >
+                        <label for="job">工作</label>
+                        <select class="form-control" name="job" id="job">
+                            <view th:each="profess,iter:${professions}" >
+                                <option th:value="${iter.index}" th:text="${profess}"></option>
+                            </view>
+                        </select>
+                        <div class="form-group">
+                            <label for="salary">收入</label>
+                            <input name="salary" id="salary" class="form-control" type="number" placeholder="收入" th:value="${garantie.salary}"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group garantie-1">
+                        <label for="document">担保文件</label>
+                        <input name="document" id="document"  placeholder="提供政府或公司文件链接" type="text" class="form-control" th:value="${garantie.document}"/>
+                    </div>
+                    <div class="form-group garantie-2">
+                        <label for="payMethod">提前付房租</label>
+                        <select name="payMethod" id="payMethod" class="form-control">
+                            <view th:each="item,iter:${payMethods}" >
+                                <view th:if="${garantie.payMethod==iter.index}">
+                                    <option th:value="${iter.index}" th:text="${item}" selected></option>
+                                </view>
+                                <view th:if="${garantie.payMethod!=iter.index}">
+                                    <option th:value="${iter.index}" th:text="${item}"></option>
+                                </view>
+                            </view>
+                        </select>
+                    </div>
+
+                    <div class="form-group button-group">
+                        <button class="btn btn-success">更新</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script th:if="${garantie.garantie==0}">
+        $(function (){
+            $(".garantie-1").hide();
+            $(".garantie-2").hide();
+        });
+    </script>
+    <script th:if="${garantie.garantie==1}">
+        $(function (){
+            $(".garantie-0").hide();
+            $(".garantie-2").hide();
+        });
+    </script>
+    <script th:if="${garantie.garantie==2}">
+        $(function (){
+            $(".garantie-0").hide();
+            $(".garantie-1").hide();
+        });
+    </script>
+    <script>
+        $(function (){
+            $("#garantie").change(function (){
+                let val = $(this).val();
+                for (i=0;i<3;i++){
+                    let name = ".garantie-" + i;
+                    if (val==i){
+                        $(name).show()
+                    }else{
+                        $(name).hide();
+                    }
+                }
+            });
+        })
+    </script>
+    <style>
+        .user-center .content{
+            height: 100%;
+
+        }
+        .button-group{
+            text-align: right;
+        }
+
+        .center-div{
+            width: 70%;
+            height: 100%;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+        }
+    </style>
+</div>
+</html>

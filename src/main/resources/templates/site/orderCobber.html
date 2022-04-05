@@ -1,0 +1,96 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/cobber/order-cobber.css}"/>
+    <div class="cobber-div">
+        <view th:unless="${session.user}" th:remove="tag">
+            <div class="form-group cobber-title"><h3>请先登录</h3></div>
+            <div class="form-group cobber-info bg-warning">
+                <p>
+                    为了方便您追踪您的订单和保障您的权益，在我们平台上订购服务，请先成为注册我们的用户，<a th:href="@{/user/signup}">去注册</a>
+                </p>
+                <p>
+                    我已经有了账号，<a th:href="@{/user/login}">去登录</a>
+                </p>
+            </div>
+        </view>
+        <view th:remove="tag" th:if="${shop.type==3}">
+            <div th:replace="recommond/power-order" th:remove="tag"></div>
+        </view>
+    </div>
+    <script>
+        $(function () {
+            var progressDiv = "<div id='hwwd-upload-progress'><progress max='100' value='0' id='hwwd-progress'>0</progress></div>";
+            $("input[type=file]").change(function () {
+                let id = $(this).attr("id");
+                console.log(id);
+                let length = $(this).get(0).files.length;
+                if (length > 0) {
+                    let file = $(this).get(0).files[0];
+                    let id = $(this).attr("id");
+                    let fileType = file.type.split("/");
+                    console.log(fileType);
+                    if (fileType[1]) {
+                        if (!fileType[1].match(/jpg|gif|png|jpeg/i)) {
+                            alert("您只能上传图片格式或pdf格式");
+                            return;
+                        }
+                    } else {
+                        alert("您只能上传图片格式");
+                        return;
+                    }
+
+                    if (file.size > (3 * 1024 * 1024)) {
+                        //todo 压缩 大于2M的需要压缩
+                        alert("上传文件不能超过3M");
+                        return;
+                    }
+
+                    var formdata = new FormData();
+                    formdata.append("file", file);
+                    formdata.append("type", id);
+                    $('html').append(progressDiv);
+                    $.ajax({
+                        xhr: function () {
+                            var xhr = new window.XMLHttpRequest();
+                            xhr.upload.addEventListener("progress", function (evt) {
+                                if (evt.lengthComputable) {
+                                    var percentComplete = evt.loaded / evt.total;
+                                    percentComplete = parseInt(percentComplete * 100);
+                                    $("#hwwd-progress").val(percentComplete);
+                                    if (percentComplete === 100) {
+                                        $("#hwwd-upload-progress").remove();
+                                    }
+                                }
+                            }, false);
+                            return xhr;
+                        },
+                        url: '/site/cobber/upload/file',
+                        type: 'post',
+                        data: formdata,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            if (data.status == 1) {
+                                alert(data.message);
+                                // uploadData[id] = data.path;
+                                console.log(data);
+                                $("input[name="+id+"]").val(data.path);
+
+                            } else if (data.status == 0) {
+                                alert(data.message);
+                            }
+                        },
+                        error: function (err) {
+                            $("#hwwd-upload-progress").remove();
+                            alert("图片上传失败");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</div>
+</html>

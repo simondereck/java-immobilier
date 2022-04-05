@@ -1,0 +1,87 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/user-nav.js}"></script>
+    <link th:href="@{/css/user-center.css}" rel="stylesheet" />
+    <link th:href="@{/css/user-needs.css}" rel="stylesheet" />
+    <div class="user-center">
+        <div th:replace="layout/user-nav"></div>
+        <div class="content">
+            <div class="center-div">
+                <form method="post" th:action="@{/user/needs/update/location/}+${needs.id}" class="form-horizontal">
+                    <div class="form-group"><h3>更新地段</h3></div>
+                    <div class="form-group">
+                        <label for="area" class=" control-label">地段：</label>
+                        <div id="area-div">
+                            <input type="text" class="form-control search-input" name="area"  id="area" placeholder="地段" th:value="${ville.postcode + ' --- ' + ville.name + ' ---- '+ ville.code}"/>
+                            <input type="text" name="location" hidden="hidden" th:value="${needs.location}"/>
+                        </div>
+                    </div>
+                    <div class="form-group button-group">
+                        <button class="btn btn-success">更新地段</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        $("#area").keyup(function (){
+            let val = $(this).val();
+            var data = {keyword:val};
+            $.get("/user/location/keywords",data,function (result){
+                if (result) {
+                    villes = result;
+                    var $table = "<table id='search-table'>" +
+                        " <tr class='header'>" +
+                        "<th style='width:30%' >邮编</th>" +
+                        "<th style='width:30%' >城市</th>" +
+                        "<th style='width:30%' >省</th></tr>";
+
+                    villes.forEach(function (ville, key) {
+                        $table += "<tr class='select-ville' data-id='"+ville.id+"' data-key='"+key+"'>" +
+                            "<td>"+ville.postcode+"</td>"+
+                            "<td>"+ville.name+"</td>"+
+                            "<td>"+ville.code+"</td>"+
+                            "</tr>"
+                    });
+                    $table += "</table>";
+                    let old = $("#search-table");
+                    if (old){
+                        old.remove();
+                    }
+                    $("#area-div").append($table);
+                }
+            });
+        });
+
+        $(".form-horizontal").on('click',".select-ville",function (){
+            let key = $(this).attr("data-key");
+            let id = $(this).attr("data-id");
+            $("input[name=location]").val(id);
+            let value = villes[key].postcode + " -- " + villes[key].name + " -- " + villes[key].code;
+            $("input[name=area]").val(value);
+            $("#search-table").remove();
+        });
+
+    </script>
+    <style>
+        .user-center .content{
+            height: 100%;
+
+        }
+        .button-group{
+            text-align: right;
+        }
+
+        .center-div{
+            width: 70%;
+            height: 100%;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+        }
+    </style>
+</div>
+</html>

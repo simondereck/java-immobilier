@@ -1,0 +1,98 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="lists-div">
+        <div th:if="${admins}" th:remove="tag">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名字</th>
+                        <th>邮箱</th>
+                        <th>电话</th>
+                        <th>权限</th>
+                        <th>状态</th>
+                        <th>更新时间</th>
+                        <th>创建时间</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <div th:each="admin,iter:${admins}" th:remove="tag">
+                        <tr class="admin-item">
+                            <td th:text="${admin.id}"></td>
+                            <td th:text="${admin.username}"></td>
+                            <td th:text="${admin.email}"></td>
+                            <td th:text="${admin.telephone}"></td>
+                            <view th:if="${admin.permission==6}" th:remove="tag">
+                                <td>实习生</td>
+                            </view>
+                            <view th:if="${admin.permission==7}" th:remove="tag">
+                                <td>普通管理员</td>
+                            </view>
+                            <view th:if="${admin.permission==8}" th:remove="tag">
+                                <td>金牌管理员</td>
+                            </view>
+                            <view th:if="${admin.permission==9}" th:remove="tag">
+                                <td>超级管理员</td>
+                            </view>
+                            <view th:if="${admin.astatus==0}" th:remove="tag">
+                                <td style="background-color: gray;">屏蔽</td>
+                            </view>
+                            <view th:if="${admin.astatus==1}" th:remove="tag">
+                                <td style="background-color: darkgreen;color: white;">激活</td>
+                            </view>
+                            <view th:if="${admin.astatus==2}" th:remove="tag">
+                                <td style="background-color: darkred;color: white;">离职</td>
+                            </view>
+                            <td th:text="${admin.utime}"></td>
+                            <td th:text="${admin.ctime}"></td>
+                            <td><a th:href="@{'/admin/update/'}+${admin.id}">更新</a></td>
+                        </tr>
+                    </div>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <style>
+
+        .lists-div{
+            margin: auto;
+            width: 90vw;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+            overflow-y: scroll;
+        }
+
+
+        .button-group button{
+            width:100%;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+        td,th{
+            text-align: center;
+            padding: 10px;
+            min-width: 120px;
+        }
+        thead{
+            background-color: #0c5460;
+            color: white;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: whitesmoke;
+        }
+        tbody tr:nth-child(even) {
+            background-color: lightgray;
+        }
+
+    </style>
+</div>
+</html>

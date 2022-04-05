@@ -1,0 +1,151 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/hwwd-image-display.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/site/more.css}" />
+    <link th:href="@{/css/hwwd-image-display.css}" rel="stylesheet" />
+    <div class="more-div">
+        <div class="more-div-title"><h3>所有需求</h3></div>
+
+        <div class="location-details" id="location-details">
+
+        </div>
+        <div id="pageHelper">
+
+        </div>
+
+    </div>
+    <script>
+        $(function () {
+            function initPage(url){
+                let urlPath = url ? url:"/site/needs/more/data";
+                $.get(urlPath,function (data) {
+                    console.log(data);
+                    if (data.status===1){
+                        if (data.needs){
+                            let needs = data.needs;
+                            let villes = data.villes;
+                            let users = data.users;
+                            let needsDiv = "";
+                            $("#location-details").html("");
+                            for (let i in needs){
+                                if (i%4===0){
+                                    needsDiv += "<div class='location-row'>";
+                                    for (let j=0;j<4;j++){
+                                        let m = parseInt(i) + parseInt(j);
+                                        let need = needs[m];
+                                        if (need){
+                                            let user = users[need.uid];
+
+                                            needsDiv += "<div  class='location-detail-item' data-id='"+needs[m].id+"'>";
+                                            if (user&&user.cover){
+                                                needsDiv += "<div class='user-img'><img src='/users/"+user.id+ "/" +user.cover+"' /></div>"
+                                            }else{
+                                                needsDiv += "<div class='user-img'><img src='/img/homme.png' /></div>"
+                                            }
+
+
+                                            needsDiv += "<div class='location-detail-item-desc'>";
+
+
+                                            if (user && user.sex && user.sex==0){
+                                                needsDiv += "<div class='title'>性别：男</div>";
+                                            }else{
+                                                needsDiv += "<div class='title'>性别：女</div>";
+                                            }
+                                            
+                                            if (data.rtypes[need.rtype]){
+                                                needsDiv += "<div class='title'>我需要的房型："+data.rtypes[need.rtype]+"</div>";
+                                            }
+
+                                            if (villes[need.location]){
+                                                needsDiv += "<div class='title'>我需要的方位："+ villes[need.location].name+"</div>";
+                                            }
+
+                                            needsDiv += "<div class='title'>希望入住时间："+need.sdate+"</div>";
+                                            needsDiv += "<div class='title'>我的预算："+need.budget+" EURO</div>";
+
+                                            needsDiv += "</div></div>";
+                                        }
+
+                                    }
+                                    needsDiv += "</div>";
+                                }
+                            }
+                            $("#location-details").append(needsDiv);
+                        }
+
+
+                        if (data.pageHelper){
+                            $("#pageHelper").html("");
+                            let pageHelper = "<div class='pages-set'>\n" +
+                                "<ul class='pagination'>";
+                            let pages = data.pageHelper.pages;
+                            if (pages){
+                                for (let k in pages){
+                                    let current = data.pageHelper.currentPage + 1 ;
+                                    if (current==pages[k].key){
+                                        pageHelper +=   "<li  class='page-item active'>" +
+                                            "   <a data-href='"+pages[k].url+"' class='page-link'>"+pages[k].key+"</a>" +
+                                            "</li>";
+                                    }else{
+                                        pageHelper +=   "<li  class='page-item'>" +
+                                            "   <a data-href='"+pages[k].url+"' class='page-link'>"+pages[k].key+"</a>" +
+                                            "</li>";
+                                    }
+
+                                }
+                            }
+                            pageHelper += "</ul></div>";
+                            $("#pageHelper").append(pageHelper);
+                        }
+                    }else{
+                        $("#location-details").html("");
+                        $("#pageHelper").html("");
+                    }
+                });
+                stopLoadding();
+
+            }
+
+
+            initPage();
+
+
+            $("#pageHelper").on("click","a",function () {
+                let href = $(this).attr("data-href");
+                initPage(href);
+            });
+        });
+    </script>
+    <style>
+        .more-div{
+            margin-bottom: 50px;
+        }
+        .location-detail-item{
+            padding-top: 30px;
+        }
+        .user-img{
+            background: white;
+            width: 90px;
+            height: 90px;
+            line-height: 90px;
+            text-align: center;
+            border-radius: 50%;
+            margin: auto;
+            border: 4px solid lightblue;
+        }
+
+        .user-img img{
+            height: 65px;
+            object-fit: cover;
+        }
+
+        .location-detail-item img{
+            width: auto;
+        }
+    </style>
+</div>
+</html>

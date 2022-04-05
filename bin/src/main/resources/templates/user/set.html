@@ -1,0 +1,80 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/user-nav.js}"></script>
+    <link th:href="@{/css/user-center.css}" rel="stylesheet" />
+    <div class="user-center">
+        <div th:replace="layout/user-nav"></div>
+        <div class="content">
+            <div class="user-info">
+                <div class="user-info-title"><h3>设置</h3></div>
+                <form method="post" th:action="@{/user/set}">
+                    <div class="form-group">
+                        <label for="prenom" class="control-label" >姓</label>
+                        <div>
+                            <input type="text" class="form-control" name="prenom" id="prenom" th:value="${user.prenom}" placeholder="姓"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="nom" class="control-label" >名</label>
+                        <div>
+                            <input type="text" class="form-control" name="nom" id="nom" th:value="${user.nom}" placeholder="名"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="control-label" >email</label>
+                        <div>
+                            <input type="text" class="form-control" name="email" id="email" th:value="${user.email}" placeholder="邮箱"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="telephone" class="control-label" >电话</label>
+                        <div>
+                            <input type="text" class="form-control" name="telephone" id="telephone" th:value="${user.telephone}" placeholder="电话"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="control-label" >密码</label>
+                        <div>
+                            <input type="password" class="form-control" name="password" id="password" th:value="${user.password}" placeholder="密码"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="repassword" class="control-label" >确认密码</label>
+                        <div>
+                            <input type="password" class="form-control" name="repassword" id="repassword" th:value="${user.password}" placeholder="密码"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-success">更新</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <style>
+        /*body{*/
+        /*    background-image: url("/img/007.jpg");*/
+        /*    !*width: 100%;*!*/
+        /*    !*height: 100%;*!*/
+        /*}*/
+        .user-info{
+            width: 70%;
+            margin: auto;
+            padding: 50px;
+            background: white;
+        }
+        .user-info-title{
+            text-align: center;
+        }
+        .button-group{
+            text-align: right;
+        }
+    </style>
+</div>
+</html>

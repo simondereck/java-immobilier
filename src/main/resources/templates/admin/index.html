@@ -1,0 +1,532 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+    <div layout:fragment="content">
+        <div class="admin-center">
+            <div class="admin-center-item">
+                <div class="admin-div-left float-bar">
+                    <div class="partner-div">
+                    </div>
+                    <div>租客</div>
+                </div>
+                <div class="click-left click click-hidden"><<</div>
+            </div>
+
+            <div class="admin-div-center ">
+                <div class="admin-div-title">
+                    <h3 th:text="${session.user.name}"></h3>
+                    <view th:if="${session.user.permission==6}" th:remove="tag">
+                        <div>实习生</div>
+                    </view>
+                    <view th:if="${session.user.permission==7}" th:remove="tag">
+                        <div>普通管理员</div>
+                    </view>
+                    <view th:if="${session.user.permission==8}" th:remove="tag">
+                        <div>金牌管理员</div>
+                    </view>
+                    <view th:if="${session.user.permission==9}" th:remove="tag">
+                        <div>超级管理员</div>
+                    </view>
+                </div>
+                <div><input name="keywords" class="form-control" id="search"/></div>
+
+                <div class="form-group" style="text-align: center;padding: 20px;">
+                    <a href="/admin" class="btn btn-info btn-lg">租赁</a>
+                    <a href="/admin/bussiness/houses" class="btn btn-success btn-lg">买卖</a>
+                </div>
+                <div class="class-annonces">
+                    <table>
+                        <thead>
+                            <form method="post" id="searchAnnonces">
+                                <tr>
+                                    <th>状态</th>
+                                    <th>房屋编号</th>
+                                    <th>起租日期</th>
+                                    <th>房租</th>
+                                    <th>城市</th>
+                                    <th>地址</th>
+                                    <th>邮编</th>
+                                    <th>推广码</th>
+                                    <th>业主</th>
+                                    <th>学生公寓</th>
+                                    <th>ID</th>
+                                    <th>options</th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th><input name="serial" class="form-control"/></th>
+                                    <th></th>
+                                    <th><input name="price" class="form-control" /></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th><input name="id" class="form-control"/></th>
+                                    <th><button class="btn btn-search-annonce" type="button">搜索</button></th>
+                                </tr>
+                            </form>
+                        </thead>
+                        <tbody id="search-result">
+
+                        </tbody>
+
+                    </table>
+                    <div id="annonce-more"></div>
+                </div>
+                <div>
+                    无匹配房源
+                </div>
+                <div>
+                    广告商房源
+                </div>
+            </div>
+            <div class="admin-center-item">
+                <div class="click-right click">>></div>
+                <div class="admin-div-right float-bar">
+                    <div>员工</div>
+                </div>
+            </div>
+
+        </div>
+        <script>
+            $(function () {
+               $.get("/admin/WebMessage/getCount",function (result){
+                   console.log(result);
+               });
+               $(".click").click(function (){
+                   if ($(this).text()=="<<"){
+                       $(this).text(">>");
+                   }else{
+                       $(this).text("<<");
+                   }
+                   $(this).parent(".admin-center-item").children(".float-bar").toggle();
+                   let visble1 = $(".admin-div-left").is(":visible");
+                   let visble2 = $(".admin-div-right").is(":visible");
+                   if (visble1&&visble2){
+                       $(".admin-div-center").css("width","56vw");
+                       $(".class-annonces").css("width","52vw");
+                   }else if(!visble1&&!visble2){
+                       $(".admin-div-center").css("width","92vw");
+                       $(".class-annonces").css("width","88vw");
+                   }else{
+                       $(".admin-div-center").css("width","74vw");
+                       $(".class-annonces").css("width","70vw");
+                   }
+               });
+               $("tbody").on("click","tr",function (){
+                   let url = $(this).attr("data-href");
+                   $.get(url,function (result){
+                      if (result.status==1){
+                          let $partner = "<div>"+
+                              "<div class='parnter-title'><h4>业主详情</h4></div>"+
+                                  "<div class='partner-info'>" +
+                                    "<div class='partner-info-item'>姓 名： "+result.partner.prenom+" "+result.partner.nom+"</div>"+
+                                    "<div class='partner-info-item'>邮 箱： "+result.partner.email+"</div>"+
+                                    "<div class='partner-info-item'>电 话： "+result.partner.telephone+"</div>"+
+                                    "<div class='partner-info-item'><a class='btn btn-link' href='/admin/partner/detail/"+result.partner.id+"'>详情</a></div>"+
+                                  "</div>"+
+                              "</div>";
+                          $(".partner-div").html($partner);
+                      }
+                   });
+               })
+            });
+
+            $("#search").keyup(function () {
+                let val = $(this).val();
+                var data = {keyword:val};
+                $.get("/admin/search",data,function (result){
+                    if (result) {
+                        console.log(result);
+                        // villes = result;
+                        // var $table = "<table id='search-table'>" +
+                        //     " <tr class='header'>" +
+                        //     "<th style='width:30%' >邮编</th>" +
+                        //     "<th style='width:30%' >城市</th>" +
+                        //     "<th style='width:30%' >省</th></tr>";
+                        //
+                        // villes.forEach(function (ville, key) {
+                        //     $table += "<tr class='select-ville' data-id='"+ville.id+"' data-key='"+key+"'>" +
+                        //         "<td>"+ville.postcode+"</td>"+
+                        //         "<td>"+ville.name+"</td>"+
+                        //         "<td>"+ville.code+"</td>"+
+                        //         "</tr>"
+                        // });
+                        // $table += "</table>";
+                        // let old = $("#search-table");
+                        // if (old){
+                        //     old.remove();
+                        // }
+                        // $("#area-div").append($table);
+                    }
+                });
+            });
+
+
+
+            function initPage(url) {
+                let urlPath = url?url:"/admin/data/annonces"
+                $.get(urlPath,function (data) {
+                    if (data.status==1){
+                        let annonces = data.annonces;
+                        let annonceDiv = "";
+                        for(let i in annonces){
+                            annonceDiv += "<tr data-href='/admin/detail/annonce/"+annonces[i].id+"'>";
+
+                            switch (annonces[i].status) {
+                                case 0:
+                                    annonceDiv +="<td class='white'><div></div>隐藏</td>";
+                                    break;
+                                case 1:
+                                    annonceDiv += "<td class='green'><div></div>已租</td>";
+                                    break;
+                                case 2:
+                                    annonceDiv += "<td class='orange'><div></div>合约</td>";
+                                    break;
+                                case 3:
+                                    annonceDiv += "<td class='red'><div></div>空房</td>";
+                                    break;
+                                default:
+                                    annonceDiv += "<td><div>未知</div></td>";
+                                    break;
+
+                            }
+
+                            annonceDiv += "<td>"+(annonces[i].id + annonces[i].serial)+"</td>";
+                            annonceDiv += "<td>"+annonces[i].sdate+"</td>" +
+                                "<td>"+annonces[i].price+"</td>" +
+                                "<td>"+data.villes[annonces[i].location].name+"</td>" +
+                                "<td>"+annonces[i].address+"</td>"+
+                                "<td>"+data.villes[annonces[i].location].postcode+"</td>" +
+                                "<td></td>" +
+                                "<td>"+data.partners[annonces[i].pid].nom +  " " +data.partners[annonces[i].pid].prenom +"</td>" +
+                                "<td></td>";
+                            annonceDiv += "<td>"+annonces[i].id+"</td>";
+                            annonceDiv += "<td>" +
+                                "   <span><a href='/admin/annonce/detail/"+annonces[i].id+"'>详情</a></span>" +
+                                "   <span><button class='form-control annonce-status' data-id='"+annonces[i].id+"'>状态</button></span>"+
+                                "</td>";
+                            annonceDiv += "</tr>";
+                            $("#search-result").html(annonceDiv);
+
+
+                        }
+
+                        let pageHelper = "<div class='pages-set'>" +
+                            "   <ul class='pagination'>";
+                        for (let i in data.pageHelper.pages){
+                            if (data.pageHelper.currentPage == data.pageHelper.pages[i].key-1){
+                                pageHelper += "<li class='page-item active'>" +
+                                    "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                    "</li>";
+                            }else{
+                                pageHelper += "<li class='page-item'>" +
+                                    "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                    "</li>";
+                            }
+
+                        }
+                        pageHelper += "</ul></div>";
+                        $("#annonce-more").html(pageHelper);
+
+                    }else{
+                        alert("没有找到您搜索的");
+                    }
+                });
+            }
+            initPage();
+
+            $("#annonce-more").on("click","a",function () {
+                let href = $(this).attr("data-href");
+                initPage(href);
+            });
+
+            $("#search-result").on("click",".annonce-status",function () {
+                let id = $(this).attr("data-id");
+                let confirmDiv = "<div class='hwwd-alart-background'>" +
+                    "   <div class='hwwd-alart-div'>" +
+                    "       <div class='form-group'><h3>请选择状态</h3></div>" +
+                    "       <div class='form-group'>" +
+                    "           <select  class='form-control annonce-status-alert' data-id='"+id+"'>" +
+                    "               <option value='0'>隐藏</option>" +
+                    "               <option value='1'>已出租</option>" +
+                    "               <option value='2'>正在签约</option>" +
+                    "               <option value='3'>空房</option>" +
+                    "               <option value='4'>删除</option>" +
+                    "           </select>" +
+                    "       </div>" +
+                    "       <div class='form-group button-group'>" +
+                    "           <button class='btn btn-info alert-cancel'>取消</button>" +
+                    "           <button class='btn btn-success alert-confirm'>确认</button>" +
+                    "       </div>" +
+                    "   </div>" +
+                    "</div>";
+
+                $("html").append(confirmDiv);
+                $("body").addClass("hwwd-alert-div-show");
+                $("html").on("click",".alert-cancel",function () {
+                    $("body").removeClass("hwwd-alert-div-show");
+                    $(".hwwd-alart-background").remove().toggle();
+                });
+                
+                $("html").on("click",".alert-confirm",function () {
+                    let val = $(".annonce-status-alert").children("option:selected").val();
+                    let id = $(".annonce-status-alert").attr("data-id");
+                    $.get("/admin/house/status/update/"+id+"/"+val,function (data) {
+                        if (data.status===1){
+                            $("body").removeClass("hwwd-alert-div-show");
+                            $(".hwwd-alart-background").remove().toggle();
+                            alert("更新成功");
+                            location.assign(window.location.href);
+                        }else{
+                            alert("更新失败");
+                        }
+                    });
+                });
+            });
+
+            $(".btn-search-annonce").click(function () {
+                let keywords = $("#searchAnnonces").serializeArray();
+                let params = {};
+                for (let i in keywords) {
+                    if (keywords[i].value){
+                        params[keywords[i].name] = keywords[i].value;
+                    }
+                }
+                $.post("/admin/search/annonces",params,function (data) {
+                    if (data.status==1) {
+                        let annonces = data.annonces;
+                        let annonceDiv = "";
+                        for (let i in annonces) {
+                            annonceDiv += "<tr data-href='/admin/detail/annonce/" + annonces[i].id + "'>";
+                            switch (annonces[i].status) {
+                                case 0:
+                                    annonceDiv +="<td class='white'><div></div>隐藏</td>";
+                                    break;
+                                case 1:
+                                    annonceDiv += "<td class='green'><div></div>已租</td>";
+                                    break;
+                                case 2:
+                                    annonceDiv += "<td class='orange'><div></div>合约</td>";
+                                    break;
+                                case 3:
+                                    annonceDiv += "<td class='red'><div></div>空房</td>";
+                                    break;
+                                default:
+                                    annonceDiv += "<td><div>未知</div></td>";
+                                    break;
+
+                            }
+
+                            annonceDiv += "<td>" + (annonces[i].id + annonces[i].serial) + "</td>";
+                            annonceDiv += "<td>" + annonces[i].sdate + "</td>" +
+                                "<td>" + annonces[i].price + "</td>" +
+                                "<td>" + data.villes[annonces[i].location].name + "</td>" +
+                                "<td>" + annonces[i].address + "</td>" +
+                                "<td>" + data.villes[annonces[i].location].postcode + "</td>" +
+                                "<td></td>" +
+                                "<td>" + data.partners[annonces[i].pid].prenom + " " + data.partners[annonces[i].pid].nom + "</td>" +
+                                "<td></td>";
+                            annonceDiv += "<td>" + annonces[i].id + "</td>";
+                            annonceDiv += "<td>" +
+                                "   <span><a href='/admin/annonce/detail/" + annonces[i].id + "'>详情</a></span>" +
+                                "   <span><button class='form-control annonce-status' data-id='"+annonces[i].id+"'>状态</button></span>"+
+                                "</td>";
+                            annonceDiv += "</tr>";
+                            $("#search-result").html(annonceDiv);
+                        }
+
+                        if (data.pageHelper){
+                            let pageHelper = "<div class='pages-set'>" +
+                                "   <ul class='pagination'>";
+                            for (let i in data.pageHelper.pages) {
+                                if (data.pageHelper.currentPage == data.pageHelper.pages[i].key-1){
+                                    pageHelper += "<li class='page-item active'>" +
+                                        "<a data-href='" + data.pageHelper.pages[i].url + "' class='page-link'>" + data.pageHelper.pages[i].key + "</a>" +
+                                        "</li>";
+                                }else{
+                                    pageHelper += "<li class='page-item'>" +
+                                        "<a data-href='" + data.pageHelper.pages[i].url + "' class='page-link'>" + data.pageHelper.pages[i].key + "</a>" +
+                                        "</li>";
+                                }
+                            }
+                            pageHelper += "</ul></div>";
+                        }else{
+                            $("#annonce-more").html("");
+                        }
+                    }else{
+                        alert("没有找到您搜索的");
+                    }
+                });
+
+            });
+        </script>
+        <style>
+            .admin-center{
+                width: 100%;
+                height: 100%;
+                display: flex;
+            }
+
+            .admin-div-center {
+                padding: 20px;
+                width: 56vw;
+                height: 100%;
+                background-color: white;
+                margin-right: 1.5vw;
+                margin-left: 1.5vw;
+                overflow-y: scroll;
+                -ms-overflow-style: none; /* IE and Edge */
+                scrollbar-width: none; /* Firefox */
+            }
+            .admin-div-center::-webkit-scrollbar {
+                display: none;
+            }
+
+            .admin-div-title{
+                text-align: center;
+                margin-bottom: 50px;
+            }
+
+            .admin-center-item{
+                display: flex;
+            }
+
+            .admin-div-left,.admin-div-right{
+                width: 18vw;
+                height: 100%;
+                background-color: rgba(255,255,255,0.6);
+            }
+
+
+
+            .click{
+                width: 2vw;
+                /*padding-top: 5px;*/
+                /*padding-bottom: 5px;*/
+                background-color: white;
+                color: black;
+                text-align: center;
+                height: 3vw;
+                line-height: 3vw;
+            }
+
+            .click:hover{
+                cursor: pointer;
+                background-color: black;
+                color: white;
+            }
+
+
+            tbody td,tbody th,
+            thead td,thead th{
+                text-align: center;
+                padding: 10px;
+                min-width: 60px;
+            }
+
+            thead{
+                background-color: #1e7e34;
+                color: white;
+            }
+
+            tbody tr:nth-child(odd) {
+                background-color: whitesmoke;
+            }
+            tbody tr:nth-child(even) {
+                background-color: lightgray;
+            }
+
+            .class-annonces{
+                width: 52vw;
+                margin-top: 50px;
+                overflow-x: hidden;
+            }
+
+            tfoot {
+                background-color: #3f87a6;
+                color: #fff;
+            }
+
+            .pages-set{
+                text-align: center;
+                display: flex;
+                margin-top: 20px;
+            }
+
+            .pagination{
+                margin: auto;
+                /*display: flex;*/
+            }
+
+            tr .red>div,
+            tr .orange>div,
+            tr .green>div{
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+            }
+
+            tr .white>div{
+                background-color: #1d2124;
+            }
+
+            tr .red>div{
+                background-color: darkred;
+            }
+
+            tr .green>div{
+                background-color: #1c7430;
+            }
+
+            tr .orange>div{
+                background-color: yellow;
+            }
+
+            tbody tr:hover{
+                cursor: pointer;
+                background-color: #c69500;
+                color: white;
+            }
+
+            .parnter-title{
+                text-align: center;
+                padding: 5px;
+            }
+            .partner-info-item{
+                padding: 5px;
+            }
+
+            .hwwd-alert-div-show{
+                overflow: hidden;
+            }
+
+            .hwwd-alart-background{
+                position: absolute;
+                top: 0;
+                right: 0;
+                left: 0;
+                bottom: 0;
+                background-color:rgba(0,0,0,0.3);
+                z-index: 5000;
+            }
+
+            .hwwd-alart-div{
+                padding: 30px;
+                border-radius: 5px;
+                background-color: white;
+                position: relative;
+                margin: auto;
+                margin-top: 30vh;
+                width: 70%;
+            }
+
+            .button-group{
+                text-align: right;
+            }
+        </style>
+    </div>
+</html>

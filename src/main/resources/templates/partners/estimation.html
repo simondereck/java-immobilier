@@ -1,0 +1,283 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+                <div class="form-group">
+                    <h3>我的估价</h3>
+                </div>
+                <div class="form-group button-group">
+                    <button class="btn btn-success btn-estimation">我要估价</button>
+                </div>
+                <div class="form-group">
+                    <div class="line-item"></div>
+                </div>
+                <div id="estimation-div" class="form-group">
+
+                </div>
+
+                <div id="pageHelper" class="form-group"></div>
+        </div>
+    </div>
+    <script>
+
+        $.get("/partner/bussiness/data/estimation",function (data) {
+            if (data.status==1){
+                console.log(data);
+                $("#estimation-div").html("");
+                let estimates = data.models;
+
+                let estimateDiv = "";
+                let j = 10000000;
+                for (let i in estimates){
+                    console.log(estimates[i]);
+
+                    let num = j + i;
+                    estimateDiv += "<div class='estimate-item form-group'>" +
+                        "<div class='form-group'>编号："+num+"</div>"+
+                        "<h4 class='form-group'>"+estimates[i].area+"</h4>"+
+                        "<div class='form-group'>"+estimates[i].address+"</div>" +
+                        "<div class='form-group house-type'>" +
+                        "   <span>"+estimates[i].size+" 平</span>";
+
+                    if (estimates[i].types==0){
+
+                        switch (estimates[i].houseType){
+                            case 0:
+                                estimateDiv += "<span>别墅</span>";
+
+                                break;
+                            case 1:
+                                estimateDiv += "<span>公寓</span>";
+
+                                break;
+                            case 2:
+                                estimateDiv += "<span>整栋楼</span>";
+
+                                break;
+                            case 3:
+                                estimateDiv += "<span>船</span>";
+
+                                break;
+                            case 4:
+                                estimateDiv += "<span>养老房</span>";
+                                break;
+                        }
+                    }
+
+                    if (estimates[i].roomType>0){
+                        switch (parseInt(estimates[i].roomType)){
+                            case 1:
+                                estimateDiv += "<span>studio T1</span>";
+                                break;
+                            case 2:
+                                estimateDiv += "<span>T2 一室一厅</span>";
+                                break;
+                            case 3:
+                                estimateDiv += "<span>T3 二室一厅</span>";
+                                break;
+                            case 4:
+                                estimateDiv += "<span>T4 三室一厅</span>";
+                                break;
+                        }
+                    }
+
+                    switch (estimates[i].nouv) {
+                        case 0:
+                            estimateDiv += "<span>全新</span>";
+                            break;
+                        case 1:
+                            estimateDiv += "<span>七成新</span>";
+                            break;
+                        case 2:
+                            estimateDiv += "<span>半新</span>";
+                            break;
+                        case 3:
+                            estimateDiv += "<span>旧的</span>";
+                            break;
+                    }
+                    estimateDiv += "</div>";
+
+
+                    if (estimates[i].price){
+                        estimateDiv += "<div class='form-group estimate-price'>"+estimates[i].price+" EURO</div>";
+                    }
+
+                    estimateDiv += "<div class='form-group button-group'>" +
+                        "<a class='btn btn-link btn-edit' data-id='"+estimates[i].id+"'>编辑</a>" +
+                        "</div>" +
+                        "</div>";
+                }
+
+                $("#estimation-div").html(estimateDiv);
+
+
+                $("#pageHelper").html("");
+                let pageHelper = "<div class='pages-set'>" +
+                    "   <ul class='pagination'>";
+                for (let i in data.pageHelper.pages){
+                    if (data.pageHelper.currentPage==data.pageHelper.pages[i].key-1){
+                        pageHelper += "<li class='page-item active'>" +
+                            "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                            "</li>";
+                    }else{
+                        pageHelper += "<li class='page-item'>" +
+                            "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                            "</li>";
+                    }
+
+                }
+                pageHelper += "</ul></div>";
+
+                $("#pageHelper").append(pageHelper);
+            }
+        });
+        
+        $("#estimation-div").on("click",".btn-edit",function () {
+            let id = $(this).attr("data-id");
+            window.location.assign("/partner/bussiness/estimation/editor/"+id);
+        });
+
+
+        $(".btn-estimation").click(function () {
+           window.location.assign("/bussiness/estimation");
+        });
+
+
+    </script>
+    <style>
+
+        #pageHelper{
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .estimate-item{
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #f5f5f5;
+            margin-top: 20px;
+        }
+
+        .partner-center .content{
+            height: 100%;
+            margin: 0 25% 0 5%;
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .partner-center .content::-webkit-scrollbar {
+            display: none;
+        }
+        .button-group{
+            text-align: right;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+
+        .top-bar-item div{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .top-bar-div .white>div{
+            background-color: white;
+        }
+
+        .top-bar-div .orange>div{
+            background-color: yellow;
+        }
+
+        .top-bar-div .green>div{
+            background-color: #1c7430;
+        }
+
+
+        .top-bar-div .red>div{
+            background-color: darkred;
+        }
+
+
+        .line-item{
+            width: 100%;
+            border-bottom: 1px dashed gray;
+        }
+
+
+
+        .pages-set{
+            text-align: center;
+            display: flex;
+        }
+    </style>
+    <style>
+
+        @media screen and (min-width: 501px) {
+
+            .location-detail-item img{
+                width: 100%;
+                height: 25vh;
+                object-fit: cover;
+            }
+
+
+
+
+        }
+
+        .location-detail-item-desc{
+            position: relative;
+        }
+
+        .location-detail-item{
+            position: relative;
+        }
+
+        .cover{
+            position: absolute;
+            overflow: hidden;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 25vh;
+        }
+        .location-item-label{
+            transform: rotate(-45deg);
+            background-color: #0f74a8;
+            padding: 5px;
+            text-align: center;
+            color: white;
+            position: absolute;
+            width: 100%;
+            top: 10%;
+            left: -30%;
+        }
+
+        .estimate-price{
+            font-size: 22px;
+            color: #0f6674;
+            font-weight: bold;
+        }
+
+        .house-type span{
+            padding: 10px;
+            margin-right: 20px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 15px;
+            background-color: #0c5460;
+            color: white;
+
+        }
+    </style>
+</div>
+</html>

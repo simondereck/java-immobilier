@@ -1,0 +1,57 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <div class="alarm-div">
+        <div class="alarm-div-content">
+            <div class="alarm-div-title"><h3>员工报警系统</h3></div>
+            <div class="alarm-admin-div">
+
+            </div>
+        </div>
+        <div class="employee-lists">
+
+        </div>
+    </div>
+
+
+    <style>
+        .alarm-div-title{
+            text-align: center;
+        }
+        .alarm-div{
+            width: 100vw;
+            padding: 50px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .alarm-div-content{
+            width: 70vw;
+            overflow: scroll;
+            background-color: white;
+        }
+
+
+        .employee-lists{
+            width: 26vw;
+            overflow: scroll;
+            background-color: white;
+        }
+
+        .button-group{
+            text-align: right;
+        }
+
+        .progress-item{
+            margin-bottom: 40px;
+        }
+
+
+    </style>
+</div>
+</html>

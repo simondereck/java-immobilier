@@ -1,0 +1,50 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div class="content">
+            <form method="post" >
+                <div class="form-group"><h3>更新国家</h3></div>
+                <div class="form-group">
+                    <label>名称</label>
+                    <div>
+                        <input name="name" th:value="${pays.name}" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>检索字母</label>
+                    <div>
+                        <input name="zname" th:value="${pays.zname}" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>code</label>
+                    <div>
+                        <input name="code" th:value="${pays.code}" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>权重</label>
+                    <div>
+                        <input name="premission" th:value="${pays.premission}" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group button-group">
+                    <button class="btn btn-success">更新</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <style>
+        .partner-center .content{
+            height: 100%;
+        }
+        .button-group{
+            text-align: right;
+        }
+    </style>
+</div>
+</html>

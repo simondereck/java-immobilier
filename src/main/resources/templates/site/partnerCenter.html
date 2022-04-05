@@ -1,0 +1,18 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <div th:data-id="${id}" id="partner-div">
+
+    </div>
+    <script>
+        $(function () {
+            let id = $("#partner-div").attr("data-id");
+            $.get("/site/partner/center/data?id="+id,function (data) {
+                console.log(data);
+            });
+        });
+    </script>
+</div>
+</html>

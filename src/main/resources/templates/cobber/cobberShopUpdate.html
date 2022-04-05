@@ -1,0 +1,71 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <link rel="stylesheet"  th:href="@{/css/admin/cobber-detail.css}"/>
+    <script type="text/javascript" th:src="@{/ckeditor/ckeditor.js}"></script>
+
+    <div class="cobber-div">
+        <form method="post" th:action="@{/admin/cobber/shop/update/}+${shop.id}">
+            <div class="form-group"><h3>店铺信息</h3></div>
+            <div class="form-group">
+                <label for="name">店铺名称</label>
+                <div><input name="name" id="name" class="form-control" th:value="${shop.name}"/></div>
+            </div>
+            <div class="form-group">
+                <label for="address">地址</label>
+                <div><input name="address" id="address" class="form-control" th:value="${shop.address}"/></div>
+            </div>
+            <div class="form-group">
+                <label for="email">邮箱</label>
+                <div><input id="email" name="email" class="form-control" th:value="${shop.email}"/></div>
+            </div>
+            <div class="form-group">
+                <label for="telephone">电话</label>
+                <div><input id="telephone" name="telephone" class="form-control" th:value="${shop.telephone}"/></div>
+            </div>
+            <div class="form-group">
+                <label for="type">服务类型</label>
+                <select name="type" id="type" class="form-control">
+                    <view th:each="type,iter:${types}" th:remove="tag">
+                        <view th:if="${iter.index==shop.type}" th:remove="tag">
+                            <option th:value="${iter.index}" th:text="${type}" selected></option>
+                        </view>
+                        <view th:unless="${iter.index==shop.type}" th:remove="tag">
+                            <option th:value="${iter.index}" th:text="${type}"></option>
+                        </view>
+                    </view>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="status">状态</label>
+                <div>
+                    <select id="status" name="iStatus" class="form-control">
+                        <view th:if="${shop.status==0}" th:remove="tag">
+                            <option value="0" selected>屏蔽</option>
+                        </view>
+                        <view th:unless="${shop.status==0}" th:remove="tag">
+                            <option value="0">屏蔽</option>
+                        </view>
+                        <view th:if="${shop.status==1}" th:remove="tag">
+                            <option value="1" selected>激活</option>
+                        </view>
+                        <view th:unless="${shop.status==1}" th:remove="tag">
+                            <option value="1">激活</option>
+                        </view>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <textarea id="TextArea1" cols="20" rows="2" class="ckeditor" name="description" th:text="${shop.description}"></textarea>
+                </div>
+            </div>
+            <div class="form-group button-group">
+                <button class="btn btn-success">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

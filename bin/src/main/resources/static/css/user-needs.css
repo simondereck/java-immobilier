@@ -1,0 +1,140 @@
+.signup-div{
+    width:100vw;
+    height: 100%;
+    padding-top:50px;
+    overflow-y: scroll;
+    background: whitesmoke;
+}
+.signup-title{
+    text-align: center;
+}
+.signup-from {
+    margin: auto;
+    width: 75%;
+    padding: 30px;
+    background: white;
+    border-radius: 5px;
+}
+
+.telephone-div input[type=text]{
+    min-width: 550px;
+}
+
+.button-group{
+    text-align: right;
+}
+div[class=step-4]{
+    display: none;
+}
+
+.step-register{
+    padding: 10px;
+}
+
+.steps{
+    margin: auto;
+    max-width: 700px;
+    color: gray;
+    margin-bottom: 20px;
+}
+
+.steps .active{
+    border-bottom: #0c5460 3px solid;
+}
+
+.step-register:hover{
+    cursor: pointer;
+    border-bottom: #0c5460 3px solid;
+}
+
+.budget{
+    /*display: flex;*/
+
+}
+
+.slider-div{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+#slider{
+    width: 80%;
+}
+
+
+
+#slider-container .ui-widget-content {
+    border: 1px solid #0c5460; background: #b21f2d;
+}
+
+/*#slider-container .ui-widget-header { border: 1px solid #aaaaaa; background: #00caff; }*/
+
+
+.search-input{
+    background-image: url('/img/searchicon.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding-left: 40px;
+    margin-bottom: 0;
+}
+
+#search-table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ddd;
+    font-size: 18px;
+}
+
+#search-table th, #search-table td {
+    text-align: center;
+    padding: 5px;
+}
+
+#search-table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+#search-table tr.header, #search-table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.imm-item{
+    margin:20px;
+    padding:20px;
+    border-radius: 5px;
+    display: inline-block;
+    border:1px solid #8b8b8b;
+}
+
+
+.imm-item:hover{
+    background: #0c5460;
+    color: white;
+    cursor:pointer;
+    border: none;
+}
+
+.base-item{
+    margin:20px;
+    padding:20px;
+    border-radius: 5px;
+    display: inline-block;
+    border:1px solid #8b8b8b;
+}
+
+
+.base-item:hover{
+    background: #0c5460;
+    color: white;
+    cursor:pointer;
+    border: none;
+}
+
+.form-group .active{
+    background: #0c5460;
+    color: white;
+    border: none;
+}

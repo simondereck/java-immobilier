@@ -1,0 +1,220 @@
+<view xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div th:fragment="header (tab)">
+        <div class="hwwd-client-widget">
+            <div><span class="btn btn-link hwwd-client-widget-close">x</span></div>
+            <div class="hwwd-client-messages" id="messages">
+
+            </div>
+            <div class="hwwd-client-bottom-group">
+                <textarea id="hwwd-message-content"></textarea>
+                <div id="hwwd-client-send">发送</div>
+            </div>
+        </div>
+        <script>
+
+            $(function () {
+                let number = Math.floor(Math.random() * 11) % 2+1;
+                $(".hwwd-client-messages").css("background","url(/img/chat-"+number+".jpg)");
+
+                let token = window.localStorage.getItem('token');
+                console.log(token);
+                let urlParams = "?";
+                if (!token){
+                    $.get("/data/islogin",function (result){
+                        if (result instanceof Object){
+                            if (result.type==1){
+                                urlParams += "user="+result.id;
+                            }else if(result.type==2){
+                                urlParams += "partner="+result.id;
+                            }
+                        }else{
+                            token = result;
+                            urlParams += "visitor="+token;
+                            window.localStorage.setItem("token",token);
+                        }
+                        init();
+
+                    });
+                }else{
+                    $.get("/data/islogin",function (result){
+                        if (result instanceof Object){
+                            if (result.type==1){
+                                urlParams += "user="+result.id;
+                            }else if(result.type==2){
+                                urlParams += "partner="+result.id;
+                            }
+                        }
+                        init();
+                    });
+                }
+
+                $("#hwwd-client-send").click(function (){
+                    if (socket!=null){
+                        let val = $("#hwwd-message-content").val();
+                        if (val.length>255){
+                            alert("消息不能太长");
+                        }
+                        let item = "<div class='message-send-item'>"+val+"</div>";
+                        $("#messages").append(item);
+                        let data = {};
+                        data["type"]=1;
+                        data["message"] = val;
+                        data["token"] = token;
+                        socket.send(JSON.stringify(data));
+                        $("#hwwd-message-content").val("");
+                    }
+                });
+                var socket;
+
+                function init(){
+                    // 判断浏览器是否支持WebSocket
+                    if ('WebSocket' in window) {
+                        console.log("ws://47.242.82.105:80/websocket"+urlParams);
+                        // socket = new WebSocket("ws://47.242.82.105/websocket"+urlParams);
+                        socket = new WebSocket("ws://www.haiwaihuangdi.com/websocket"+urlParams);
+
+                        // socket = new WebSocket("ws://localhost:8000/websocket"+urlParams);
+                        // 第一次连接
+                        socket.onopen = function (ev) {
+                            console.log(ev)
+                            // 向服务器发送消息
+                            // socket.send('sfsd')
+                        }
+                        // 连接被关闭： 浏览器刷新 | 浏览器关闭 | 服务器关闭
+                        socket.onclose = function (ev) {
+                            console.log(ev)
+                        }
+                        // 连接错误
+                        socket.onerror = function (ev) {
+                            console.log(ev)
+                        }
+                        // 接收消息
+                        socket.onmessage = function (ev) {
+                            // 打印消息
+                            console.log(ev.data)
+                            try{
+                                let data =  JSON.parse(ev.data);
+                                console.log(data);
+                                if (data.message){
+                                    let item = "<div class='message-rec-item'>"+data.message+"</div>";
+                                    $("#messages").append(item);
+                                }
+                            }catch (e) {
+                                console.log(e);
+                            }
+                        }
+                    }
+                }
+
+            });
+
+
+        </script>
+        <style>
+            @media screen and (max-width: 500px){
+                .hwwd-client-widget{
+                    width: 100%;
+                    height:100vh;
+                    box-shadow: 0 10px 10px rgba(0,0,0,0.6);
+                    position: absolute;
+                    z-index: 8000;
+                    background-color: white;
+                    top: 0;
+                    left:0;
+                    display: none;
+                }
+
+
+                .hwwd-client-messages{
+                    width: 100%;
+                    padding: 20px;
+                    height: calc( 90vh - 38px );
+                    overflow-y: scroll;
+                }
+
+                .hwwd-client-bottom-group{
+                    display: flex;
+                }
+                #hwwd-message-content{
+                    height: 10vh;
+                    width: 80%;
+                    border-radius: 0;
+                    border: none;
+                    padding: 3px;
+                }
+
+                #hwwd-client-send{
+                    width: 20%;
+                    height: 10vh;
+                    text-align: center;
+                    line-height: 10vh;
+                    cursor: pointer;
+                    background-color: #26a442;
+                    color: white;
+                }
+            }
+
+            @media screen and (min-width: 501px){
+                .hwwd-client-widget{
+                    width: 80%;
+                    height:80vh;
+                    box-shadow: 0 10px 10px rgba(0,0,0,0.6);
+                    position: absolute;
+                    z-index: 8000;
+                    background-color: white;
+                    top: 10%;
+                    left: 10%;
+                    display: none;
+                }
+
+
+                .hwwd-client-messages{
+                    width: 100%;
+                    padding: 20px;
+                    height: calc( 70vh - 38px );
+                    overflow-y: scroll;
+                }
+
+                .hwwd-client-bottom-group{
+                    display: flex;
+                }
+                #hwwd-message-content{
+                    height: 10vh;
+                    width: 80%;
+                    border-radius: 0;
+                    border: none;
+                    padding: 3px;
+                }
+
+                #hwwd-client-send{
+                    width: 20%;
+                    height: 10vh;
+                    text-align: center;
+                    line-height: 10vh;
+                    cursor: pointer;
+                    background-color: #26a442;
+                    color: white;
+                }
+            }
+
+
+
+            .message-send-item{
+                padding: 5px;
+                background-color: white;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+            .message-rec-item{
+                padding: 5px;
+                background-color: white;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+
+        </style>
+    </div>
+
+</view>

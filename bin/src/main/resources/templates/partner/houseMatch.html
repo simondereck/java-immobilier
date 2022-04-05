@@ -1,0 +1,162 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+            <div class="annonce-item">
+                <div class="annonce-item-info">
+                    <div>
+                        <h3 th:text="${'房源: '+annonce.id}"></h3>
+                    </div>
+                    <div>
+                        <view class="annonce-item-label">房屋地址：</view>
+                        <view th:text="${annonce.address}"></view>
+                    </div>
+                    <div>
+                        <view class="annonce-item-label">房  租：</view>
+                        <view th:text="${annonce.loyer + 'EUR'}"></view>
+                    </div>
+                    <div>
+                        <view class="annonce-item-label">物  业：</view>
+                        <view th:text="${annonce.charges + 'EUR'}"></view>
+                    </div>
+                    <div>
+                        <view class="annonce-item-label">入住时间：</view>
+                        <view th:text="${annonce.sdate}"></view>
+                    </div>
+                </div>
+                <div class="annonce-item-option">
+                    <button class="btn btn-success house-detail" th:data-id="${annonce.id}">房屋详情</button>
+                </div>
+            </div>
+            <div class="line-item"></div>
+            <div class="match-div">
+                <div th:each="item,iter:${dataMatches}" class="match-item">
+                    <div class="match-item-info">
+                        <div>
+                            <view th:text="${item.budget}"></view>
+                        </div>
+                        <div>
+                            <view th:text="${item.location}"></view>
+                        </div>
+                        <div>
+                            <view th:text="${item.sdate}"></view>
+                        </div>
+                        <div>
+                            <view th:text="${item.rtype}"></view>
+                        </div>
+                        <div>
+                            <view th:text="${item.trans}"></view>
+                        </div>
+                        <div>
+                            <view th:text="${item.status}"></view>
+                        </div>
+                        <div>
+                            <view th:text="${item.immsJson}"></view>
+                        </div>
+                        <div>
+                            <view th:text="${item.envirJson}"></view>
+                        </div>
+                    </div>
+                    <div class="match-item-button">
+                        <button class="btn btn-warning ">
+                            <span class="btn-icon heart"></span>
+                            喜欢
+                        </button>
+                        <button class="btn btn-danger ">
+                            <span class="btn-icon dislike"></span>
+                            不喜欢
+                        </button>
+                        <button class="btn btn-success ">
+                            <span class="btn-icon house"></span>
+                            <text>预约看房</text>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .annonce-item{
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid whitesmoke;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 20px;
+        }
+
+        .annonce-item-info{
+            width:70%;
+        }
+
+        .annonce-item-option{
+            width:25%;
+            text-align: right;
+        }
+
+        .line-item{
+            width: 100%;
+            border-bottom: 1px dashed gray;
+        }
+
+        .annonce-item-label{
+            display: inline-block;
+            width: 150px;
+        }
+        .match-div{
+            margin-top:30px;
+            padding: 20px;
+            background-color: whitesmoke;
+        }
+        .match-item{
+            background-color: white;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .match-item-info{
+
+        }
+
+        .match-item-button{
+
+        }
+        .btn{
+            color:white;
+        }
+        .btn-icon{
+            width:20px;
+            height:20px;
+            display:inline-block;
+            fill: white;
+        }
+        .heart{
+            background-color: white;
+            -webkit-mask-image: url("/icons/heart.svg") no-repeat;
+            background-repeat: no-repeat;
+            mask-image: url(icon.svg);
+            fill: white;
+        }
+
+        .dislike{
+            background-image: url("/icons/trash.svg");
+            background-repeat: no-repeat;
+            fill:whie;
+        }
+
+        .house{
+            background-image: url("/icons/chat.svg");
+            background-repeat: no-repeat;
+            fill:white;
+        }
+    </style>
+</div>
+</html>

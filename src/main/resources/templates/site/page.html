@@ -1,0 +1,34 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+    <div layout:fragment="content" >
+            <div th:data-id="${id}" class="page-content" id="description"></div>
+            <script>
+                $(function () {
+                    let id = $("#description").attr("data-id");
+                    $.get("/site/page/data/"+id,function (data) {
+                        if (data.status==1){
+                            $("#description").html(data.page.description);
+                        }
+                    });
+                });
+            </script>
+            <style>
+                body{
+                    background: url("/img/005.jpg");
+                }
+                .page-content{
+                    width: 80vw;
+                    padding: 30px;
+                    margin: auto;
+                    background: white;
+                }
+                .page-content img{
+                    max-width: 100%;
+                    object-fit: cover;
+                }
+
+            </style>
+    </div>
+</html>

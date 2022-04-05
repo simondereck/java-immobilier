@@ -1,0 +1,89 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/user-nav.js}"></script>
+    <link th:href="@{/css/user-center.css}" rel="stylesheet" />
+    <link th:href="@{/css/user-needs.css}" rel="stylesheet" />
+    <div class="user-message-div">
+        <div th:replace="layout/user-nav"></div>
+        <div class="user-message">
+            <div class="profile-title"><h3>看房信息</h3></div>
+            <br/>
+            <div>
+                <div class="rdv-item">
+                    <view th:if="${rdvs}" th:remove="tag">
+                        <view th:each="rdv:${rdvs}" th:remove="tag">
+                            <div class="rdv-item-row">
+                                <div class="rdv-item-title">发送时间：</div>
+                                <div th:text="${rdv.ctime}"></div>
+                            </div>
+                            <div class="rdv-item-row">
+                                <div class="rdv-item-title">匹配房屋：</div>
+                                <a th:href="@{/location/house/detail/}+${rdv.aid+'.html'}" class="btn btn-link">详情</a>
+                            </div>
+                            <div class="rdv-item-row">
+                                <div class="rdv-item-title">约会时间:</div>
+                                <div th:text="${rdv.sdate}"></div>
+                                <div>----</div>
+                                <div th:text="${rdv.edate}"></div>
+                            </div>
+                            <div class="rdv-item-row">
+                                <div th:text="${rdv.message}"></div>
+                            </div>
+                        </view>
+                    </view>
+                </div>
+                <div th:if="${pageHelper}" class="pages-set">
+                    <div th:if="${pageHelper.totalPage>0}" th:remove="tag">
+                        <ul class="pagination">
+                            <div th:each="page,iter:${pageHelper.pages}" th:remove="tag">
+                                <li  class="page-item"><a th:text="${page.key}" th:href="${page.url}" class="page-link"></a></li>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <style>
+        .user-message-div{
+            width: 100%;
+            height: 100%;
+            background: url("/img/002.jpg");
+        }
+        .user-message{
+            width: 70%;
+            height: 100%;
+            background: white;
+            box-shadow: 0 10px 10px rgba(0,0,0,0.4);
+            margin: auto;
+            padding: 50px 30px 30px 50px;
+        }
+        .profile-title{
+            text-align: center;
+        }
+
+        .rdv-item{
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid whitesmoke;
+            margin-bottom: 25px;
+        }
+        .rdv-item-row{
+            display: flex;
+        }
+        .rdv-item-row div{
+            margin-right: 10px;
+        }
+
+        .rdv-item-title{
+            width: 150px;
+        }
+
+    </style>
+</div>
+</html>

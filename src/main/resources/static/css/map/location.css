@@ -1,0 +1,95 @@
+body{
+    background: whitesmoke;
+}
+
+.create-title{
+    text-align: center;
+}
+
+.location-div{
+    background-color: whitesmoke;
+    height: 100%;
+    margin: auto;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.location-div::-webkit-scrollbar {
+    display: none;
+}
+.button-group{
+    text-align: right;
+}
+#map{
+    width: 100%;
+    height: 300px;
+    background: whitesmoke;
+}
+
+@media screen and (max-width: 500px){
+
+    .location-detail-item{
+        width: 100%;
+        background: white;
+        margin: 20px 0px 20px 0px;
+        color: darkslategray;
+
+    }
+
+    .location-detail-item img{
+        width: 100%;
+        height: 40vh;
+        object-fit: cover;
+    }
+}
+
+@media screen and (min-width: 501px){
+    .location-row{
+        display: flex;
+        padding-left: 2.4%;
+    }
+
+    .location-detail-item{
+        width: 22%;
+        /*height: 20vh;*/
+        background: white;
+        margin: 20px 0px 20px 0px;
+        color: darkslategray;
+        /*text-align: center;*/
+        border-radius: 5px;
+        /*padding: 20px;*/
+        margin-right: 2.4%;
+
+    }
+
+    .location-detail-item img{
+        width: 100%;
+        height: 14vw;
+        object-fit: cover;
+    }
+}
+
+
+
+.location-detail-item:hover{
+    box-shadow: 0 5px 5px rgba(0,0,0,0.4);
+    cursor: pointer;
+}
+
+.location-detail-item-desc{
+    padding: 20px;
+}
+.annonce-description{
+    height: 200px;
+    overflow-y: hidden;
+}
+.pages-set{
+    text-align: center;
+    display: flex;
+}
+
+.pagination{
+    margin: auto;
+    /*display: flex;*/
+}

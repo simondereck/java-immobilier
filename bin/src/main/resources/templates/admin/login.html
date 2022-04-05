@@ -1,0 +1,54 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="login-div">
+        <div class="login-form">
+            <form class="form-horizontal" method="post" th:action="@{/admin/login}">
+                <div class="form-group">
+                    <label for="username" class="control-label">姓名：</label>
+                    <div>
+                        <input type="text" class="form-control" name="username"  id="username" placeholder="姓名"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="control-label">邮箱：</label>
+                    <div>
+                        <input type="text" class="form-control" name="email"  id="email" placeholder="Email"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="permission" class="control-label">权限</label>
+                    <div>
+                        <select th:each="role: ${roles}" name="permission" id="permission" class="form-control">
+                            <option th:text="${role}" />
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="telephone" class="control-label">电话：</label>
+                    <div>
+                        <input type="text" class="form-control" name="telephone"  id="telephone" placeholder="Telephone"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="control-label">密码：</label>
+                    <div>
+                        <input type="text" class="form-control" name="password"  id="password" placeholder="密码"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <style>
+        .login-div{
+            width: 100%;
+            height: 100%;
+            background-image: url("/img/008.jpg");
+        }
+
+    </style>
+</div>
+</html>

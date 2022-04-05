@@ -1,0 +1,36 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+            <form method="post" th:action="@{/partner/admin/house/detail/update/description/}+${annonce.id}">
+                <div class="form-group"><h3>更新描述</h3></div>
+
+                <div class="form-group">
+                    <div><h5>细节描述</h5></div>
+                    <textarea  class="form-control" id="house-description" name="description" placeholder="Attention
+Inutile d’indiquer ici la date de disponible , celle-ci est systématiquement envoyee aux locataires sélectionnés .
+ Décrivez votre logement, son agencement , ses equipments (cuisine équipée ,parking cave , …… ),ses points forts ,
+ sa proximité des transports , le quartier ,etc . Et n’oubliez pas les photos!" th:value="${annonce.description}" th:text="${annonce.description}"></textarea>
+                </div>
+                <div class="form-group button-group">
+                    <button class="btn btn-success">更新描述</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <style>
+        .partner-center .content{
+            height: 100%;
+        }
+        .button-group{
+            text-align: right;
+        }
+    </style>
+</div>
+</html>

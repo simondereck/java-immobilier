@@ -1,0 +1,89 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <div class="choice-div">
+        <div class="user-contain">
+            <div class="user-item role-partenr">
+                <img src="img/partner.jpg" />
+                <div class="user-item-button">
+                    <button class="btn btn-primary btn-partner">我是业主</button>
+                </div>
+            </div>
+            <div class="user-item role-user">
+                <img src="img/user.jpg" />
+                <div class="user-item-button">
+                    <button class="btn btn-success btn-user">我是租客</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(".btn-partner").click(function (){
+           window.location.href = "/partner/login";
+        });
+
+        $(".btn-user").click(function (){
+            window.location.href = "/user/login";
+        });
+    </script>
+    <style>
+        .choice-div{
+            background-image: url("img/002.jpg");
+            padding-top:80px;
+            width: 100%;
+            height: 100%;
+        }
+        .user-contain{
+            width: 70%;
+            display: flex;
+            margin: auto;
+            justify-content: space-around;
+        }
+
+        .user-item{
+            width: 400px;
+            height: 350px;
+            line-height: 320px;
+            position: relative;
+        }
+
+        .user-item button{
+            width: 100%;
+        }
+
+        .user-item-button{
+            position: absolute;
+            width: 400px;
+            height: 350px;
+            z-index: 500;
+            padding: 30px;
+        }
+        .user-item-button:hover{
+            background: rgba(0,0,0,0.6);
+        }
+        .user-item:hover{
+            box-shadow: 0 10px 10px rgba(0,0,0,0.4);
+        }
+
+        .user-item img{
+            width: 400px;
+            object-fit: cover;
+            height: 350px;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        /*.role-partenr{*/
+        /*    background-image: url("img/partner.jpg");*/
+        /*}*/
+
+        /*.role-user{*/
+        /*    background-image: url("img/user.jpg");*/
+        /*}*/
+
+    </style>
+</div>
+</html>

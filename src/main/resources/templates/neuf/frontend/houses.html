@@ -1,0 +1,159 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/nlayout" >
+    <div layout:fragment="content">
+        <div class="neuf-houses-div">
+
+
+        </div>
+        <script>
+            $(function () {
+                function initPage(url) {
+                    let urlPath = url?url:"/neuf/data/houses";
+                    $.get(urlPath,function (data) {
+                        if (data.status===1){
+                            let housesDiv = "";
+                            let items = data.items;
+                            for (let i in items){
+                                if(i%3===0){
+                                    housesDiv += "<div class='house-item-row'>";
+                                    if(items[i]){
+                                        housesDiv += "<div class='house-item'>" +
+                                            "<div class='hosue-cover' style='"+items[parseInt(i)].cover+"'>" +
+                                            "   <div class='house-status'>"+items[parseInt(i)].statusString+"</div>" +
+                                            "   <div class='house-address'>"+items[parseInt(i)].address+"</div>" +
+                                            "</div>" +
+                                            "</div>";
+                                    }
+
+                                    if(items[parseInt(i)+1]){
+                                        housesDiv += "<div class='house-item'>" +
+                                            "<div class='hosue-cover' style='"+items[parseInt(i)+1].cover+"'>" +
+                                            "   <div class='house-status'>"+items[parseInt(i)+1].statusString+"</div>" +
+                                            "   <div class='house-address'>"+items[parseInt(i)+1].address+"</div>" +
+                                            "</div>" +
+                                            "</div>";
+                                    }
+
+                                    if(items[parseInt(i)+2]){
+                                        housesDiv += "<div class='house-item'>" +
+                                            "<div class='hosue-cover' style='"+items[parseInt(i)+2].cover+"'>" +
+                                            "   <div class='house-status'>"+items[parseInt(i)+2].statusString+"</div>" +
+                                            "   <div class='house-address'>"+items[parseInt(i)+2].address+"</div>" +
+                                            "</div>" +
+                                            "</div>";
+                                    }
+                                    housesDiv += "</div>";
+                                }
+
+                            }
+
+                            $(".neuf-houses-div").html(housesDiv);
+
+                            let pageHelper = "<div class='pages-set'>" +
+                                "   <ul class='pagination'>";
+                            for (let i in data.pageHelper.pages){
+                                if (data.pageHelper.currentPage == i){
+                                    pageHelper += "<li class='page-item active'>" +
+                                        "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                        "</li>";
+                                }else{
+                                    pageHelper += "<li class='page-item'>" +
+                                        "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                        "</li>";
+                                }
+
+                            }
+                            pageHelper += "</ul></div>";
+
+                            $(".neuf-houses-div").append(pageHelper);
+
+                        }
+                    });
+
+                }
+
+                initPage();
+
+                $("html").on("click",".page-item",function () {
+                    let href = $(this).find("a").attr("data-href");
+                    initPage(href);
+                });
+
+            });
+
+        </script>
+        <style>
+
+            .house-status{
+                background: red;
+                color: white;
+                padding: 5px;
+                border-radius: 5px;
+                width: fit-content;
+            }
+
+            .house-address{
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 10px;
+                width: 100%;
+                background-color: rgba(0,0,0,0.6);
+                color: white;
+            }
+
+            .pagination{
+                text-align: center;
+            }
+
+            @media screen and (min-width: 501px){
+
+                .neuf-houses-div{
+                    padding: 50px;
+                }
+
+                .house-item-row{
+                    display: flex;
+                    justify-content: space-around;
+                    margin-bottom: 50px;
+                }
+
+                .house-item{
+                    width: 25vw;
+                    height: 25vw;
+                    border-radius: 5px;
+                    box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+                    overflow: hidden;
+                    cursor: pointer;
+                }
+
+                .hosue-cover{
+                    width: 25vw;
+                    height: 25vw;
+                    padding: 20px;
+                    position: relative;
+                }
+            }
+
+            @media screen and (max-width: 500px) {
+
+                .house-item{
+                    width: 100%;
+                    height: 90vw;
+                    margin-bottom: 20px;
+                }
+
+                .hosue-cover{
+                    width: 100%;
+                    height: 90vw;
+                    padding: 20px;
+                    position: relative;
+                }
+            }
+
+        </style>
+    </div>
+</html>

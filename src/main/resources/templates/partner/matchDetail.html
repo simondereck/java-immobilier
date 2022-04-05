@@ -1,0 +1,167 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+<!--            <form th:action="@{/partner/admin/house/match/rdv/}+${id}+@{/}+${aid}+" method="post">-->
+<!--                <div class="form-group">-->
+<!--                    <input name="rdv" type="date"/>-->
+<!--                </div>-->
+<!--            </form>-->
+
+            <div class="center-title bg-info text-white un-element"><h3>用户需求</h3></div>
+            <div class="double-element">
+                <div class="form-group element-item">
+                    <label>预算</label>
+                    <div>
+                        <view th:text="${needs.budget + ' EUR'}"></view>
+                    </div>
+                </div>
+                <div class="line-splite"></div>
+                <div class="form-group element-item">
+                    <label>我的地段</label>
+                    <div>
+                        <view th:text="${ville.postcode + ' --- ' + ville.name + ' --- ' + ville.code}"></view>
+                    </div>
+                </div>
+            </div>
+            <div class="double-element bg-white">
+                <div class="form-group element-item">
+                    <label>房  型</label>
+                    <div>
+                        <view th:text="${rtypes[needs.rtype]}"></view>
+                    </div>
+                </div>
+                <div class="line-splite"></div>
+                <div class="form-group element-item">
+                    <label>入住日期</label>
+                    <div>
+                        <view th:text="${needs.sdate}"></view>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group un-element ">
+                <label>交  通</label>
+                <div>
+                    <view th:text="${trans[needs.trans]}"></view>
+                </div>
+            </div>
+            <div class="form-group un-element bg-white">
+                <label>基本家具配置</label>
+                <div class="bases form-group">
+                    <view  th:each="item,iter:${needs.base}" class="base-item active" th:data-id="${iter.index}">
+                        <text th:text="${bases[item.value]}"></text>
+                    </view>
+                </div>
+            </div>
+
+            <div class="form-group un-element ">
+                <label>高级配置</label>
+                <div class="envir form-group">
+                    <view  th:each="item,iter:${needs.envir}" class="imm-item active" th:data-id="${iter.index}">
+                        <text th:text="${imms[item.value]}"></text>
+                    </view>
+                </div>
+            </div>
+
+            <div class="center-title bg-info text-white un-element"><h3>担保 / 提前付房租</h3></div>
+            <view th:if="${garantie}">
+                <div class="form-group un-element">
+                    <label>类型</label>
+                    <div>
+                        <view th:text="${garanties[garantie.garantie]}"></view>
+                    </div>
+                </div>
+                <view th:if="${garantie.garantie==0}">
+                    <div class="form-group garantie-0">
+                        <div class="form-group">
+                            <label>工作</label>
+                            <div th:text="${professions[garantie.job]}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>收入</label>
+                            <div th:text="${garantie.salary + ' EUR'}"></div>
+                        </div>
+                    </div>
+                </view>
+                <view th:if="${garantie.garantie==1}">
+                    <div class="form-group un-element garantie-1">
+                        <label>担保文件</label>
+                        <div th:text="${garantie.document}"></div>
+                    </div>
+                </view>
+                <view th:if="${garantie.garantie==2}">
+                    <div class="form-group un-element garantie-2">
+                        <label>提前付房租</label>
+                        <div th:text="${payMethods[garantie.payMethod]}"></div>
+                    </div>
+                </view>
+            </view>
+            <div class="button-group un-element bg-dark">
+                <button class="btn btn-warning btn-lg btn-like">喜欢</button>
+                <button class="btn btn-danger btn-lg btn-dislike">不喜欢</button>
+                <button class="btn btn-success btn-lg btn-telephone">电话</button>
+                <button class="btn btn-light btn-lg btn-rdv" th:data-nid="${needs.id}" th:data-aid="${aid}"  th:data-uid="${person.id}">rdv</button>
+            </div>
+        </div>
+        <script>
+            $(".btn-like").click(function (){
+                window.location.href = "/partner/admin/house/match/like"
+            });
+
+            $(".btn-dislike").click(function () {
+                window.location.href = "/partner/admin/house/match/dislike"
+
+            });
+
+            $(".btn-telephone").click(function (){
+                
+            });
+
+            $(".btn-rdv").click(function (){
+                let aid = $(this).attr("data-aid");
+                let nid = $(this).attr("data-nid");
+                let uid = $(this).attr("data-uid");
+                window.location.href = "/partner/admin/house/match/rdv.html?aid="+aid+"&nid="+nid+"&uid="+uid;
+            });
+
+        </script>
+        <style>
+            .partner-center>.content{
+                width: 70%;
+                background: rgba(255,255,255,0.4);
+                margin:auto;
+                padding: 0;
+            }
+
+            .double-element{
+                padding: 30px;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .un-element{
+                padding: 30px;
+            }
+
+            .double-element .element-item{
+                width: 48%;
+            }
+
+            .line-splite{
+                width: 0;
+                height: 1;
+                border-right: 1px solid gray;
+            }
+
+        </style>
+    </div>
+</div>
+</html>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/site/more.css}" />
+    <div class="more-div" th:data-page="${page}">
+        <div class="more-div-title"><h3>所有房源</h3></div>
+        <div>
+            <div class="location-details">
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+
+        $(function () {
+            let page = $(".more-div").attr("data-page");
+            $.get("/site/bussiness/data/annonce/more?page="+page,function (data) {
+                if (data.status==1){
+                    let HouseTypes = data.houseType;
+                    for (let k in data.annonces){
+                        let annonce = data.annonces[k];
+                        let imgUrl = "/partners/"+ annonce.pid +"/";
+                        let item = "<div class='location-detail-item' data-id='"+annonce.id+"'>";
+                        if (annonce.cover){
+                            item += "<div><img src='"+imgUrl + annonce.cover+"'/></div>";
+                        }else{
+                            item += "<div><img src='/img/default.jpg'/></div>";
+                        }
+
+                        item += "<div class='location-detail-item-desc'>" +
+                            "   <div class='title'>"+annonce.area+"</div>" +
+                            "   <div class='title'>"+ HouseTypes[annonce.types][annonce.houseType] +"</div>"+
+
+                            "   <div class='title'>"+annonce.size+" 平</div>" +
+                            "   <div class='title'>"+annonce.price+" EURO</div>" +
+                            "</div>";
+                        item += "</div>";
+                        $(".location-details").append(item);
+                    }
+
+
+                    let pageHelper = "<div class='pages-set'>" +
+                        "   <ul class='pagination'>";
+                    for (let i in data.pageHelper.pages){
+                        if (data.pageHelper.currentPage == i){
+                            pageHelper += "<li class='page-item active'>" +
+                                "<a href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                "</li>";
+                        }else{
+                            pageHelper += "<li class='page-item'>" +
+                                "<a href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                "</li>";
+                        }
+
+                    }
+                    pageHelper += "</ul></div>";
+                    $(".more-div").append(pageHelper);
+                }
+
+            });
+
+
+            $("html").on("click",".location-detail-item",function () {
+               let id = $(this).attr("data-id");
+               window.location.assign("/bussiness/house/detail/"+id+".html");
+            });
+        })
+
+    </script>
+    <style>
+        @media screen and (min-width: 501px){
+            .location-detail-item {
+                display: inline-table;
+            }
+
+            .more-div{
+                padding-left: 2.4%;
+            }
+        }
+    </style>
+</div>
+</html>

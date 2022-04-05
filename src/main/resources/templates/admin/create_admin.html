@@ -1,0 +1,213 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <div class="create-admin-div">
+        <div class="admin-create">
+            <div class="create-admin-form">
+                <div class="create-title form-group"><h3>创建管理员</h3></div>
+                <form class="" method="post" th:action="@{/admin/create_admin}" id="create-admin-form">
+                    <div class="form-group">
+                        <label for="username" class="control-label">姓名：</label>
+                        <div>
+                            <input type="text" class="form-control" name="username"  id="username" placeholder="姓名"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="control-label">邮箱：</label>
+                        <div>
+                            <input type="text" class="form-control" name="email"  id="email" placeholder="Email"/>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="telephone" class="control-label">电话：</label>
+                        <div>
+                            <input type="text" class="form-control" name="telephone"  id="telephone" placeholder="Telephone"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="control-label">密码：</label>
+                        <div>
+                            <input type="text" class="form-control" name="password"  id="password" placeholder="密码"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="permission" class="control-label">权限</label>
+                        <div>
+                            <select name="permission" id="permission" class="form-control">
+                                <view th:each="role,iter:${roles}">
+                                    <option th:value="${role.key}" th:text="${role.value}" />
+                                </view>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status" class="control-label">状态</label>
+                        <div>
+                            <select name="astatus" class="form-control" id="status">
+                                <view th:each="su,iter:${adminStatus}">
+                                    <option th:value="${iter.index}" th:text="${su}" />
+                                </view>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginAddress" >主要登录地址</label>
+                        <div class="form-group" style="display: flex;">
+                            <input name="loginAddress" class="form-control" id="loginAddress" placeholder="地址"/>
+                            <input name="loginPostcode" class="form-control" placeholder="邮编"/>
+                            <input name="loginLat" hidden="hidden" />
+                            <input name="loginLng" hidden="hidden" />
+                            <button type="button" class="btn btn-info btn-address">定位</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="backupAddress">备用登录地址</label>
+                        <div class="form-group"  style="display: flex;">
+                            <input name="backupAddress" class="form-control" id="backupAddress" placeholder="地址"/>
+                            <input name="backupPostcode" class="form-control" placeholder="邮编"/>
+                            <input name="backupLat" hidden="hidden" />
+                            <input name="backupLng" hidden="hidden" />
+                            <button type="button" class="btn btn-info btn-backup-address">定位</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="button-group" >
+                            <button class="btn btn-success btn-create" type="button">创建</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            mapboxgl.accessToken = 'pk.eyJ1IjoiaGFpd2FpaHVhbmdkaSIsImEiOiJja2huZGpmZmUyZW5pMnJxcXA0bHlycmc0In0.Wh2Kzu-CfQYA0D91x5YyNg';
+            let map;
+
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+                center: [2.2770199, 48.8589507], // starting position [lng, lat]
+                zoom:13
+            });
+
+            var nav = new mapboxgl.NavigationControl();
+            map.addControl(nav, 'top-left');
+
+
+
+            $(".btn-backup-address").click(function () {
+                let params = {};
+                params["address"] = $("input[name=backupAddress]").val();
+                params["code"] = $("input[name=backupPostcode]").val();
+                $.post("/bussiness/getLocation",params,function (data) {
+                    console.log(data);
+                    if (data.status==1){
+                        if(data.response && data.response.features && data.response.features[0]){
+                            center = data.response.features[0].center;
+                            var marker = new mapboxgl.Marker({color:"#dc0000"})
+                                .setLngLat(center);
+                            marker.addTo(map);
+                            map.flyTo({
+                                center: center,
+                                zoom:13
+                            });
+                            map.resize();
+                            $("input[name=backupLng]").val(center[0]);
+                            $("input[name=backupLat]").val(center[1]);
+                        }
+                    }
+                });
+            });
+
+            $(".btn-address").click(function () {
+                let params = {};
+                params["address"] = $("input[name=loginAddress]").val();
+                params["code"] = $("input[name=loginPostcode]").val();
+                $.post("/bussiness/getLocation",params,function (data) {
+                    console.log(data);
+                    if (data.status==1){
+                        if(data.response && data.response.features && data.response.features[0]){
+                            center = data.response.features[0].center;
+                            var marker = new mapboxgl.Marker({color:"#0c5460"})
+                                .setLngLat(center);
+                            marker.addTo(map);
+                            map.flyTo({
+                                center: center,
+                                zoom:13
+                            });
+                            map.resize();
+                            $("input[name=loginLat]").val(center[1]);
+                            $("input[name=loginLng]").val(center[0]);
+                        }
+                    }
+                });
+            });
+
+
+            $(".btn-create").click(function () {
+                let dataArray = $("#create-admin-form").serializeArray();
+                console.log(dataArray);
+                let params = {};
+                for(let i in dataArray){
+                    params[dataArray[i].name] = dataArray[i].value;
+                }
+
+                console.log(params);
+                if (parseInt(params["permission"])<9){
+                    if (!(params["loginLat"]&&params["loginLng"])){
+                        alert("必须要填写登录地址");
+                        return;
+                    }
+                }
+
+                $("#create-admin-form").submit();
+            });
+
+        });
+
+    </script>
+    <style>
+        body{
+            overflow-y: hidden;
+        }
+        .create-admin-div{
+            background-color: white;
+        }
+        .create-title{
+            text-align: center;
+        }
+
+        .admin-create{
+            display: flex;
+        }
+        .create-admin-form{
+            width: 60vw;
+            padding: 50px;
+            height: calc( 100vh - 72px );
+            overflow-y: scroll;
+        }
+        .button-group{
+            text-align: right;
+        }
+
+        #map{
+            width: 40vw;
+            height: calc( 100vh - 72px );
+            background-color: cadetblue;
+        }
+        footer{
+            display: none;
+        }
+    </style>
+</div>
+</html>

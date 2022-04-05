@@ -1,0 +1,549 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/user-nav.js}"></script>
+    <link th:href="@{/css/user-center.css}" rel="stylesheet" />
+    <link th:href="@{/css/site/residence-apply.css}" rel="stylesheet" />
+
+    <script src="https://kit.fontawesome.com/ab6cdd5d20.js" crossorigin="anonymous"></script>
+    <div class="user-center">
+        <div th:replace="layout/user-nav"></div>
+        <div class="content">
+            <div class="residence-booking">
+                <div class="residence-room-detail"></div>
+                <div class="residence-room-booking"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            var progressDiv = "<div id='hwwd-upload-progress'><progress max='100' value='0' id='hwwd-progress'>0</progress></div>";
+            let room;
+            let types;
+            let residence;
+            let ville;
+            let bookingRoom;
+            let dateClass = ".datechk";
+            let documents;
+
+            $.get("/user/residence/data/apply",function (data) {
+                console.log(data);
+                if (data.status==1){
+                    room = data.room;
+                    types = data.resTypes;
+                    residence = data.residence;
+                    ville = data.ville;
+                    bookingRoom = data.bookingRoom;
+
+                    documents = data.documents;
+
+                    let type = types[room.type] + " ";
+                    if (room.minSize){
+                        type += "从" + room.sizeMin + " ㎡ 到 "
+                    }
+
+                    if (room.maxSize){
+                        type += room.maxSize + " ㎡";
+                    }
+
+                    let price = "";
+                    if (room.priceMin){
+                        price += "从 "+ room.priceMin+" EURO/月 到 ";
+                    }
+
+                    if (room.priceMax){
+                        price += room.priceMax+" EURO/月 ";
+                    }
+
+                    let images = JSON.parse(room.imageJson);
+                    let detailDiv = "<div class='detail-div'>" +
+                        "    <div class='form-group detail-div-title'><h4>住宿详情</h4></div>" +
+                        "    <div class='form-group room-detail'>" +
+                        "        <div class='form-group room-detail-img'><img src='/partners/"+images[0]+"' /></div>" +
+                        "        <div class='form-group room-type'>" +
+                        "            <h4>"+type+"</h4>" +
+                        "        </div>" +
+                        "        <div class='form-group address'><i class='fas fa-map-marker-alt margin-right-10'></i><text>"+residence.address.toUpperCase()+", "+ville.postcode+", "+ville.name+"</text></div>" +
+                        "        <div class='form-group price text-align-right'><text>"+price+"</text></div>" +
+                        "    </div>" +
+                        "</div>";
+
+
+                    $(".residence-room-detail").append(detailDiv);
+
+
+                    let users = data.users;
+                    let userDiv = "<div class='detail-block-div form-group'>" +
+                                    "<div class='form-group double-elements'>" +
+                                        "<h5>住户</h5>" +
+                                        "<button class='btn btn-success'>添加室友</button>" +
+                                    "</div>";
+
+                    let user = data.myself;
+
+                    userDiv  +=  "<div class='room-booking-user-div'>" +
+                                 "   <div class='room-booking-user-div-title'>" +
+                                 "     <div>"+user.nom + " "+ user.prenom + "</div>" +
+                                 "   </div>" +
+                                 "   <div class='booking-roomate-telephone'>"+user.telephone+"</div>"+
+                                 "   <div class='booking-roomate-telephone'>"+user.email+"</div>"+
+                                 "</div>";
+
+                    if (users){
+                        for(let i in users){
+                             userDiv  +=  "<div class='room-booking-user-div' data-id='"+users[i].id+"'>" +
+                                          "   <div class='room-booking-user-div-title'>" +
+                                          "     <div>"+users[i].nom + " "+ users[i].prenom + "</div>" +
+                                          "     <div class='booking-roomate-delete'><i class='fas fa-trash-alt text-danger'></i></div>" +
+                                          "   </div>" +
+                                          "   <div class='booking-roomate-telephone'>"+users[i].telephone+"</div>"+
+                                          "   <div class='booking-roomate-telephone'>"+users[i].email+"</div>"+
+                                          "</div>";
+                        }
+                    }
+
+                    userDiv += "</div>";
+
+
+                    let coverDiv = "<div class='detail-block-div form-group'>" +
+                                    "<div class='form-group double-elements'>" +
+                                        "<h5>一张漂亮的照片</h5>";
+                    coverDiv += "<button class='change-cover btn btn-success'>更改照片</button>"
+                    coverDiv += "</div>";
+
+                    if (bookingRoom.cover){
+                        coverDiv += "<div class='room-booking-image form-group'><img src='/users/"+bookingRoom.uid+"/"+bookingRoom.cover+"' /></div>";
+                    }
+
+
+                    coverDiv += "</div>";
+
+
+
+                    let messageDiv = "<div class='detail-block-div form-group'>" +
+                                        "<div class='form-group double-elements'>" +
+                                            "<h5>一段自我介绍</h5>";
+                    messageDiv += "<button class='change-message btn btn-success'>更改消息</button>";
+                    messageDiv += "</div>";
+
+                    messageDiv += "<div class='form-group'>"+bookingRoom.message+"</div>";
+                    messageDiv += "</div>";
+
+
+
+                    let entreeDiv = "<div class='detail-block-div form-group'>" +
+                                        "<div class='form-group double-elements'>" +
+                                            "<h5>入住时间</h5>";
+                    entreeDiv += "<button class='change-entree btn btn-success'>更改入住时间</button>";
+                    entreeDiv += "</div>";
+
+                    entreeDiv  += "<div class='form-control form-group'>"+bookingRoom.entree+"</div>";
+                    entreeDiv += "</div>";
+
+
+                    let monthDiv = "<div class='detail-block-div form-group'>" +
+                                        "<div class='form-group double-elements'>" +
+                                            "<h5>入住多久</h5>";
+                    monthDiv += "<button class='change-month btn btn-success'>更改入住时长</button>";
+                    monthDiv += "</div>";
+
+                    monthDiv += "<div class='form-control form-group'>"+bookingRoom.month+"</div>";
+                    monthDiv += "</div>";
+
+
+                    let bookingDetailDiv = "<div class='form-group'>" +
+                                            "   <div class='room-booking-title'><h3>我的请求</h3></div>" +
+                                            "   <div class='room-booking-users'>"+userDiv+"</div>" +
+                                                entreeDiv +
+                                                monthDiv +
+                                                coverDiv +
+                                                messageDiv +
+                                            "</div>";
+
+                    $(".residence-room-booking").append(bookingDetailDiv);
+
+
+
+                    $(".residence-room-detail").on("click",".detail-div",function () {
+                        window.location.assign("/site/residence/"+residence.id+".html#"+room.id);
+                    });
+
+                    $("html").on("click",".booking-roomate-delete",function () {
+                        //delete item and remove from item
+                        let id = $(this).parents(".room-booking-user-div").attr("data-id");
+                        alert(id);
+                    });
+
+
+                    $("html").on("click",".change-cover",function () {
+
+                        let input = document.createElement("input");
+                        input.type = "file";
+                        input.click();
+
+                        input.addEventListener("change",function () {
+                            let length =  $(this).get(0).files.length;
+                            if(length>0){
+                                let file = $(this).get(0).files[0];
+                                let id = $(this).attr("id");
+                                let fileType = file.type.split("/");
+
+                                if (fileType[1]){
+                                    if (!fileType[1].match(/jpg|gif|png|jpeg/i)){
+                                        alert("您只能上传图片格式或pdf格式");
+                                        return;
+                                    }
+                                }else{
+                                    alert("您只能上传图片格式或pdf格式");
+                                    return;
+                                }
+
+                                compressImage(file,function (success) {
+                                    var formdata =  new FormData();
+                                    formdata.append("file",success,success.fileName);
+                                    formdata.append("type",id);
+                                    $("html").addClass("progress-active");
+                                    $("body").addClass("progress-active");
+                                    $('html').append(progressDiv);
+                                    $.ajax({
+                                        xhr: function() {
+                                            var xhr = new window.XMLHttpRequest();
+                                            xhr.upload.addEventListener("progress", function(evt) {
+                                                if (evt.lengthComputable) {
+                                                    var percentComplete = evt.loaded / evt.total;
+                                                    percentComplete = parseInt(percentComplete * 100);
+                                                    $("#hwwd-progress").val(percentComplete);
+                                                    if (percentComplete === 100) {
+                                                        $("html").removeClass("progress-active");
+                                                        $("body").removeClass("progress-active");
+                                                        $("#hwwd-upload-progress").remove();
+                                                    }
+                                                }
+                                            }, false);
+                                            return xhr;
+                                        },
+                                        url:'/user/uplaod/file',
+                                        type: 'post',
+                                        data: formdata,
+                                        processData: false,
+                                        contentType: false,
+                                        success: function(data) {
+                                            if (data.status==1){
+                                                alert(data.message);
+                                                if (data.path){
+                                                    let params = {};
+                                                    params["cover"] = data.path
+                                                    params["id"] = room.id;
+                                                    $.post("/user/residence/update/apply/cover",params,function (data) {
+                                                        if (data.status==1){
+                                                            window.location.reload();
+                                                        }
+                                                    });
+                                                }
+                                            }else if(data.status==0){
+                                                alert(data.message);
+                                            }
+                                        },
+                                        error: function(err) {
+                                            $("html").removeClass("progress-active");
+                                            $("body").removeClass("progress-active");
+                                            $("#hwwd-upload-progress").remove();
+                                            alert("图片上传失败");
+                                        }
+                                    });
+                                },function(error){
+                                    console.log(error);
+                                });
+
+                            }
+                        });
+                    });
+
+
+                    $("html").on("click",".change-month",function () {
+                        let changeMonthDiv = "<div class='changement-div-background'>" +
+                                "<div class='changement-div'>" +
+                                    "<div class='changement-close'>x</div>"+
+                                    "<div class='form-group'>" +
+                                        "<input class='form-control' name='month' value='"+bookingRoom.month+"' type='number'/>" +
+                                    "</div>" +
+                                    "<div class='button-group form-group'>" +
+                                        "<button class='btn btn-danger btn-cancel margin-right-10'>取消</button>"+
+                                        "<button class='btn btn-info btn-submit-month'>提交</button>" +
+                                    "</div>"+
+                                "</div>" +
+                            "</div>";
+
+                        $("html").addClass("changement-active");
+                        $("body").addClass("changement-active");
+
+                        $("html").append(changeMonthDiv);
+
+                        $("html").on("click",".btn-submit-month",function () {
+                            let month = $("input[name=month]").val();
+                            if (residence.duree > parseInt(month)){
+                                alert("该住宿方要求至少需要住 " + residence.duree + " 个月");
+                                $(this).val(residence.duree);
+                                return;
+                            }
+                            let params = {};
+                            params["month"] = parseInt(month);
+                            params["id"] = room.id;
+
+                            $.post("/user/residence/update/apply/month",params,function (data) {
+                                if (data.status==1){
+                                    window.location.reload();
+                                }
+                            });
+                        });
+                    });
+
+                    $("html").on("click",".change-entree",function () {
+                        let changeEntreeDiv = "<div class='changement-div-background'>" +
+                            "<div class='changement-div'>" +
+                            "<div class='changement-close'>x</div>"+
+                            "<div class='form-group'>" +
+                                "<input class='form-control datechk' name='entree' value='"+bookingRoom.entree+"' type='date'/>" +
+                            "</div>" +
+                            "<div class='button-group form-group'>" +
+                            "<button class='btn btn-danger btn-cancel margin-right-10'>取消</button>"+
+                            "<button class='btn btn-info btn-submit-entree'>提交</button>" +
+                            "</div>"+
+                            "</div>" +
+                            "</div>";
+
+                        $("html").append(changeEntreeDiv);
+                        $("html").addClass("changement-active");
+                        $("body").addClass("changement-active");
+
+                        $("html").on("click",".btn-submit-entree",function () {
+                            let entree = $("input[name=entree]").val();
+                            let params = {};
+                            params["entree"] = entree;
+                            params["id"] = room.id;
+                            $.post("/user/residence/update/apply/entree",params,function (data) {
+                                if (data.status==1){
+                                    window.location.reload();
+                                }
+                            });
+                        });
+
+                        if (document.querySelector(dateClass)){
+                            if (document.querySelector(dateClass).type !== 'date')
+                            {
+                                var oCSS = document.createElement('link');
+                                oCSS.type='text/css'; oCSS.rel='stylesheet';
+                                oCSS.href='//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css';
+                                oCSS.onload=function()
+                                {
+                                    var oJS = document.createElement('script');
+                                    oJS.type='text/javascript';
+                                    oJS.src='//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js';
+                                    oJS.onload=function()
+                                    {
+                                        $(dateClass).datepicker({ dateFormat: 'yy-mm-dd' });
+                                    }
+                                    document.body.appendChild(oJS);
+                                }
+                                document.body.appendChild(oCSS);
+                            }
+                        }
+                    });
+
+                    $("html").on("click",".change-message",function () {
+                        let changeMessageDiv = "<div class='changement-div-background'>" +
+                            "<div class='changement-div'>" +
+                            "<div class='changement-close'>x</div>"+
+                            "<div class='form-group'>" +
+                            "<textarea class='form-control' name='message' >"+bookingRoom.message+"</textarea>" +
+                            "</div>" +
+                            "<div class='button-group form-group'>" +
+                            "<button class='btn btn-danger btn-cancel margin-right-10'>取消</button>"+
+                            "<button class='btn btn-info btn-submit-message'>提交</button>" +
+                            "</div>"+
+                            "</div>" +
+                            "</div>";
+
+                        $("html").append(changeMessageDiv);
+                        $("html").addClass("changement-active");
+                        $("body").addClass("changement-active");
+
+                        $("html").on("click",".btn-submit-message",function () {
+                            let message = $("textarea[name=message]").val();
+                            if (message.length<10){
+                                alert("自我介绍不能太简短");
+                                return;
+                            }
+
+                            let params = {};
+                            params["message"] = message;
+                            params["id"] = room.id;
+
+                            $.post("/user/residence/update/apply/message",params,function (data) {
+                                if (data.status==1){
+                                    window.location.reload();
+                                }
+                            });
+                        });
+
+                    });
+
+                    $("html").on("click",".btn-cancel",function () {
+                        $(".changement-div-background").remove();
+                        $("html").removeClass("changement-active");
+                        $("body").removeClass("changement-active");
+                    });
+
+
+                    $("html").on("click",".changement-close",function () {
+                        $(".changement-div-background").remove();
+                        $("html").removeClass("changement-active");
+                        $("body").removeClass("changement-active");
+                    });
+
+
+                    if(!documents){
+                        let documentDiv = "<div class='document-div alert alert-danger' role='alert'>你还没上传材料，请及时上传您的材料，完善预订</div>";
+                        $(documentDiv).insertBefore(".room-booking-title").slideDown();
+                    }else{
+                        if (documents.certifcation &&
+                            documents.grantieVisa &&
+                            documents.grantiepayRoll &&
+                            documents.passport &&
+                            documents.tax &&
+                            documents.visa){
+                            let documentDiv = "<div class='document-div alert alert-info' role='alert'>查看我的材料</div>";
+                            $(documentDiv).insertBefore(".room-booking-title").slideDown();
+                        }else{
+                            let documentDiv = "<div class='document-div alert alert-warning' role='alert'>你的材料还不完善，请及时上传您的材料，完善预订</div>";
+                            $(documentDiv).insertBefore(".room-booking-title").slideDown();
+                        }
+
+                        let documentItems = "";
+
+                        if (documents.certifcation){
+                            documentItems += "<div class='document-item'><img src='/users/"+bookingRoom.uid+"/"+documents.certifcation+"' /></div>";
+                        }
+
+                        if (documents.grantieVisa){
+                            documentItems += "<div class='document-item'><img src='/users/"+bookingRoom.uid+"/"+documents.grantieVisa+"' /></div>";
+                        }
+
+                        if (documents.grantiepayRoll){
+                            documentItems += "<div class='document-item'><img src='/users/"+bookingRoom.uid+"/"+documents.grantiepayRoll+"' /></div>";
+                        }
+
+
+                        if (documents.passport){
+                            documentItems += "<div class='document-item'><img src='/users/"+bookingRoom.uid+"/"+documents.passport+"' /></div>";
+                        }
+
+                        if (documents.tax){
+                            documentItems += "<div class='document-item'><img src='/users/"+bookingRoom.uid+"/"+documents.tax+"' /></div>";
+                        }
+
+
+                        if (documents.visa){
+                            documentItems += "<div class='document-item'><img src='/users/"+bookingRoom.uid+"/"+documents.visa+"' /></div>";
+                        }
+
+                        let documentsInfoDiv = "<div class='detail-block-div form-group'>" +
+                            "<div class='form-group double-elements'>" +
+                                "<h5>我的材料</h5>" +
+                                "<button class='btn btn-success btn-update-document'>更新材料</button>"+
+                            "</div>" +
+                            "<div class='form-group document-scroll'>"+documentItems+"</div>" +
+                            "</div>";
+
+                        $(".residence-room-booking").append(documentsInfoDiv);
+
+                    }
+
+                    $("html").on("click",".document-div",function () {
+                        window.location.assign("/user/documents");
+                    });
+
+                    $("html").on("click",".btn-update-document",function () {
+                        window.location.assign("/user/documents");
+                    });
+
+                }else{
+                    alert("您的请求不存在,请刷新后再试！");
+                }
+            });
+
+
+            function compressImage(file,success,error){
+                let name = file.name;
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = e =>{
+                    let src = e.target.result;
+                    let img = new Image();
+                    img.src = src;
+                    img.onload = e =>{
+                        let w = img.width;
+                        let h = img.height;
+                        // let quality =  0.8;
+
+                        let canvas = document.createElement('canvas');
+                        let ctx = canvas.getContext('2d');
+
+                        let anw = document.createAttribute('width');
+                        anw.nodeValue = w;
+                        let anh = document.createAttribute('height');
+                        anh.nodeValue = h;
+                        canvas.setAttributeNode(anw);
+                        canvas.setAttributeNode(anh);
+
+                        ctx.fillStyle = "#fff";
+                        ctx.drawImage(img,0,0,w,h);
+
+                        let quality = caculateSize(file,canvas,src,1);
+
+                        let base64 = canvas.toDataURL('image/jpeg',quality);
+                        let size = ((base64.length/1024).toFixed(2)/(src.length/1024).toFixed(2)).toFixed(2)*file.size;
+
+                        let bytes = window.atob(base64.split(',')[1]);
+
+                        let ab  = new ArrayBuffer(bytes.length);
+                        let ia = new Uint8Array(ab);
+
+                        for (let i=0;i<bytes.length;i++){
+                            ia[i] = bytes.charCodeAt(i);
+                        }
+                        file = new Blob([ab],{type:'image/jpeg'});
+                        file.fileName = name;
+                        file.lastModifiedDate = new Date();
+                        success(file);
+                        console.log(file.size/(1024*1024));
+
+                    }
+                    img.onerror = e =>{
+                        error(e);
+                    }
+                }
+                reader.onerror = e =>{
+                    error(e);
+                }
+            }
+
+
+            function caculateSize(file,canvas,src,quality) {
+                quality *= 0.8
+                let base64 = canvas.toDataURL('image/jpeg',quality);
+                let size = ((base64.length/1024).toFixed(2)/(src.length/1024).toFixed(2)).toFixed(2)*file.size;
+                if (size/(1024*1024)>=1){
+                    return caculateSize(file,canvas,src,quality);
+                }
+                return quality;
+            }
+
+        });
+
+    </script>
+
+</div>
+</html>

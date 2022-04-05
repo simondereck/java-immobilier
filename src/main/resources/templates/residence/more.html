@@ -1,0 +1,31 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script src="https://kit.fontawesome.com/ab6cdd5d20.js" crossorigin="anonymous"></script>
+    <script th:src="@{/js/hwwd-image-display.js}"></script>
+    <link th:href="@{/css/hwwd-image-display.css}" rel="stylesheet" />
+    <div class="div-center">
+        <div class="residence-more">
+            <div class="residence-room-detail"></div>
+            <div class="residence-room-booking"></div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+
+           $.get("/site/data/residences",function (data) {
+                console.log(data);
+           });
+        });
+    </script>
+    <style>
+        .footer{
+            display: none;
+        }
+
+
+    </style>
+</div>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <link rel="stylesheet"  th:href="@{/css/admin/cobber-list.css}"/>
+    <div class="cobber-div">
+        <div class="admin-cobber-title"><h3>合作商列表</h3></div>
+        <div>
+            <div th:if="${cobbers}" th:remove="tag">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>姓</th>
+                            <th>名</th>
+                            <th>电话</th>
+                            <th>邮箱</th>
+                            <th>状态</th>
+                            <th>更新时间</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <view th:each="cobber,iter:${cobbers}" th:remove="tag">
+                            <tr>
+                                <td th:text="${cobber.id}"></td>
+                                <td th:text="${cobber.prenom}"></td>
+                                <td th:text="${cobber.nom}"></td>
+                                <td th:text="${cobber.telephone}"></td>
+                                <td th:text="${cobber.email}"></td>
+                                <td th:text="${cobber.status}"></td>
+                                <td th:text="${cobber.utime}"></td>
+                                <td th:text="${cobber.ctime}"></td>
+                                <td>
+                                    <span><a th:href="@{/admin/cobber/detail/}+${cobber.id}">详情</a></span>
+                                    <span><a th:href="@{/admin/cobber/update/}+${cobber.id}">更新</a></span>
+                                    <span><a th:href="@{/admin/cobber/login/}+${cobber.id}">登录</a></span>
+                                </td>
+                            </tr>
+                        </view>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${pageHelper}" class="pages-set">
+                <div th:if="${pageHelper.totalPage>0}" th:remove="tag">
+                    <ul class="pagination">
+                        <div th:each="page,iter:${pageHelper.pages}" th:remove="tag">
+                            <li  class="page-item"><a th:text="${page.key}" th:href="${page.url}" class="page-link"></a></li>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

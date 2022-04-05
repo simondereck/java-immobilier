@@ -1,0 +1,190 @@
+@media screen and (max-width: 500px){
+    .detail-div{
+        /*display: flex;*/
+        height: 100%;
+        margin: auto;
+        justify-content: space-around;
+    }
+
+    .float-left{
+        width: 100vw;
+        overflow-y: scroll;
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+
+    .float-right{
+        width: 100vw;
+    }
+
+
+    #map{
+        width: 100vw;
+        height: 50vh;
+        background: whitesmoke;
+    }
+
+
+}
+
+@media screen and (min-width: 501px){
+    .detail-div{
+        display: flex;
+        height: 100%;
+        margin: auto;
+        justify-content: space-around;
+    }
+
+    .float-left{
+        width: 60vw;
+        overflow-y: scroll;
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+    .float-right{
+        width: 30vw;
+    }
+
+
+    #map{
+        width: 30vw;
+        height: 450px;
+        background: whitesmoke;
+    }
+
+}
+
+
+.show-imgs{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    padding: 50px;
+    z-index: 1000;
+    background-color: rgba(0,0,0,0.8);
+    display: none;
+}
+body{
+    background: whitesmoke;
+}
+
+
+
+.float-left::-webkit-scrollbar {
+    display: none;
+}
+
+
+
+#carouselExampleControls{
+    height: 50vh;
+}
+
+#carouselExampleControls .carousel-inner,
+#carouselExampleControls .carousel-inner img{
+    height: 50vh;
+}
+
+#carouselControls .carousel-inner,
+#carouselControls .carousel-inner img{
+    height: 90vh;
+    width: fit-content;
+    margin: auto;
+}
+
+.carousel-inner{
+    background-color: rgba(0,0,0,0.4);
+}
+
+.carousel-inner img{
+    object-fit: scale-down;
+}
+
+
+.house-detail{
+    background: darkslategray;
+    color: white;
+    font-size: 20px;
+    padding: 20px;
+    margin-top: 50px;
+}
+
+.hosue-detail-row{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.house-detail-item{
+    display: flex;
+    padding:5px;
+}
+
+.house-detail-item img{
+    height: 32px;
+    width: 32px;
+    margin-right: 20px;
+}
+
+.house-detail-item-text{
+    line-height: 32px;
+}
+
+.house-detail-info{
+    margin-bottom: 50px;
+}
+
+
+.house-description{
+    padding: 50px;
+    background: #fcfcfc;
+    border: none;
+    width: 100%;
+    rows:1000;
+
+}
+
+.address{
+    background: orange;
+    padding: 50px;
+}
+
+.imms-item{
+    padding: 20px;
+    background: #1e7e34;
+    border-radius: 5px;
+    color: white;
+    margin: 10px;
+    min-width: 120px;
+    text-align: center;
+    display: inline-flex;
+}
+
+.bases-div{
+    padding: 50px;
+}
+
+
+.base-div-1{
+    background: #fcfcfc;
+}
+
+.base-div-2{
+    background: white;
+}
+
+.show-imgs .close{
+    font-size: 40px;
+    font-weight: bolder;
+    color: white;
+    text-align: right;
+    padding: 20px;
+    z-index: 2000;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}

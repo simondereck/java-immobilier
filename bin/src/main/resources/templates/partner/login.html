@@ -1,0 +1,71 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <div class="login-div">
+        <div class="login-form">
+            <div class="login-title"><h1>登 录</h1></div>
+            <div>
+                <form class="form-horizontal"   th:action="@{/partner/login}"  method="post">
+                    <div class="form-group">
+                        <label for="email" class="control-label">邮箱或电话：</label>
+                        <div>
+                            <input type="text" class="form-control" name="email"  id="email" placeholder="Email ou telephone"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="control-label" >密码</label>
+                        <div>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="Password"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" id="remember-me" name="remember"/>
+                        <label for="remember-me">记住我</label>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success" >登 录</button>
+                    </div>
+                    <div class="form-group forgot-password">
+                        <a class="btn btn-link" th:href="@{/partner/forgotPassword}">忘记密码</a>
+                        <a class="btn btn-link" th:href="@{/partner/signup}">注册</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <style>
+        .login-div {
+            width: 100%;
+            height: 100%;
+            background: #fcf8e3;
+            padding:50px;
+
+        }
+        .login-title{
+            text-align: center;
+        }
+
+        .login-form{
+            margin: auto;
+            width: 70vw;
+            max-width: 450px;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+            border-radius: 5px;
+        }
+        .form-group button{
+            width: 100%;
+        }
+
+        .forgot-password{
+            /*text-align: right;*/
+            display: flex;
+            justify-content: space-between;
+        }
+
+    </style>
+</div>
+</html>

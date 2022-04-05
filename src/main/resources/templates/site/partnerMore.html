@@ -1,0 +1,261 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/site/more.css}" />
+    <link th:href="@{/css/hwwd-image-display.css}" rel="stylesheet" />
+    <link th:href="@{/css/map/map-annonces.css}" rel="stylesheet" />
+    <script th:src="@{/js/hwwd-image-display.js}"></script>
+
+    <div class="more-div">
+        <div class="more-div-title"><h3>所有业主</h3></div>
+
+        <div>
+            <div class="location-details" id="location-details">
+
+            </div>
+            <div id="pageHelper">
+
+            </div>
+
+        </div>
+    </div>
+    <script>
+
+        // $(".location-details").on("click",".location-detail-item",function (){
+        //     let id = $(this).attr("data-id");
+        //     window.location.assign("/site/partner/center/"+id);
+        // });
+
+
+        $.get("/data/pays",function (data) {
+            if (data){
+                let dataString = '<select name="pays" id="pays" class="form-control">';
+                data.forEach(function (item,key) {
+                    dataString += '<option value="'+item.id+'">'+item.name+'</option>';
+                })
+                dataString += '</select>';
+                $(".pays-set").html(dataString);
+            }
+        });
+
+        $("#area").keyup(function (){
+            let val = $(this).val();
+            var data = {keyword:val};
+            $.get("/user/location/keywords",data,function (result){
+                if (result) {
+                    villes = result;
+                    var $table = "<table id='search-table'>" +
+                        " <tr class='header'>" +
+                        "<th style='width:30%' >邮编</th>" +
+                        "<th style='width:30%' >城市</th>" +
+                        "<th style='width:30%' >省</th></tr>";
+
+                    villes.forEach(function (ville, key) {
+                        $table += "<tr class='select-ville' data-id='"+ville.id+"' data-key='"+key+"'>" +
+                            "<td>"+ville.postcode+"</td>"+
+                            "<td>"+ville.name+"</td>"+
+                            "<td>"+ville.code+"</td>"+
+                            "</tr>"
+                    });
+                    $table += "</table>";
+                    let old = $("#search-table");
+                    if (old){
+                        old.remove();
+                    }
+                    $("#area-div").append($table);
+                }
+            });
+        });
+
+
+        $(".location-item").on('click',".select-ville",function (){
+            let key = $(this).attr("data-key");
+            let id = $(this).attr("data-id");
+            $("input[name=location]").val(id);
+            let value = villes[key].postcode + " -- " + villes[key].name + " -- " + villes[key].code;
+            $("input[name=area]").val(value);
+            $("#search-table").remove();
+            $("#area-div").hide();
+            $("#area-name").text(" : "+villes[key].name);
+            vkey = key;
+            initPage();
+        });
+
+
+        $(".select-item").click(function () {
+            let label = $(this).attr("data-label");
+            $(".select-item-content").each(function (key,item) {
+                if($(item).hasClass(label)){
+                    $(item).toggle();
+                }else{
+                    $(item).hide();
+                }
+            });
+        });
+
+        $(".btn-confirm").click(function () {
+            let label = $(this).attr("data-label");
+            $("."+label).toggle();
+            if(label=="price"){
+                let price1 = $("input[name=price1]").val();
+                let price2 = $("input[name=price2]").val();
+
+                if (price1&&price2){
+                    $("#price-text").text(" : "+price1 + " ~ " +price2 );
+                }else if (price1){
+                    $("#price-text").text(" : > "+price1);
+                }else if (price2){
+                    $("#price-text").text(" : < "+price2);
+                }else{
+                    $("#price-text").text("");
+                }
+            }else if (label=="size"){
+                let size1 = $("input[name=size1]").val();
+                let size2 = $("input[name=size2]").val();
+
+                if (size1&&size2){
+                    $("#size-text").text(" : "+size1 + " ~ " +size2 );
+                }else if (size1){
+                    $("#size-text").text(" : > "+size1);
+                }else if (size2){
+                    $("#size-text").text(" : < "+size2);
+                }else{
+                    $("#size-text").text("");
+                }
+            }
+
+            initPage();
+        });
+
+
+        $(function () {
+            initPage();
+        });
+
+        function initPage(url){
+            let urlPath = url ? url:"/site/partner/more/data";
+            let dataParams = $("#searchAnnonces").serializeArray();
+            let params = {};
+            Loadding();
+            dataParams.forEach(function (item,key) {
+                if (item.value){
+                    params[item.name] = item.value;
+                }
+            });
+
+            $.post(urlPath,params,function (data) {
+                console.log(data);
+                if (data.status===1){
+                    if (data.partners){
+                        let partners = data.partners;
+                        let villes = data.villes;
+                        let partnersDiv = "";
+                        $("#location-details").html("");
+                        for (let i in partners){
+                            if (i%4===0){
+                                partnersDiv += "<div class='location-row'>";
+                                for (let j=0;j<4;j++){
+                                    let m = parseInt(i) + parseInt(j);
+                                    if (partners[m]){
+
+                                        partnersDiv += "<div  class='location-detail-item' id='location-detail-item' data-id='"+partners[m].id+"'>";
+
+                                        if (partners[m].cover){
+                                            partnersDiv += "<div class='partner-img '><img src='/partners/"+partners[m].id + "/" +partners[m].cover+"' /></div>"
+                                        }else{
+                                            partnersDiv += "<div class='partner-img'><img src='/img/homme.png' /></div>"
+                                        }
+
+                                        partnersDiv += "<div class='location-detail-item-desc'>";
+                                        partnersDiv += "<div class='title'>姓名：" + partners[m].prenom+" , " +partners[m].nom}+ "</div>";
+
+                                        if (partners[m].annonce) {
+                                            partnersDiv += "<div class='title'>" + partners[m].annonce.price + " EURO</div>";
+                                            partnersDiv += "<div class='title'>面积：" + partners[m].annonce.size + " 平</div>";
+                                            partnersDiv += "<div class='title'>起租时间：" + partners[m].annonce.sdate + "</div>";
+                                            partnersDiv += "<div class='title'>" + partners[m].annonce.ctime + "</div>";
+                                        }
+
+                                        partnersDiv += "</div></div></div>";
+                                }
+                                partnersDiv += "</div>";
+
+                            }
+
+                        }
+                        $("#location-details").append(partnersDiv);
+                    }
+
+
+                    if (data.pageHelper){
+                        $("#pageHelper").html("");
+                        let pageHelper = "<div class='pages-set'>\n" +
+                            "<ul class='pagination'>";
+                        let pages = data.pageHelper.pages;
+                        if (pages){
+                            for (let k in pages){
+                                let current = data.pageHelper.currentPage + 1 ;
+                                if (current==pages[k].key){
+                                    pageHelper +=   "<li  class='page-item active'>" +
+                                        "   <a data-href='"+pages[k].url+"' class='page-link'>"+pages[k].key+"</a>" +
+                                        "</li>";
+                                }else{
+                                    pageHelper +=   "<li  class='page-item'>" +
+                                        "   <a data-href='"+pages[k].url+"' class='page-link'>"+pages[k].key+"</a>" +
+                                        "</li>";
+                                }
+
+                            }
+                        }
+                        pageHelper += "</ul></div>";
+                        $("#pageHelper").append(pageHelper);
+                    }
+                }else{
+                    $("#location-details").html("");
+                    $("#pageHelper").html("");
+                }
+            });
+            stopLoadding();
+        }
+
+        $("#pageHelper").on("click","a",function () {
+            let href = $(this).attr("data-href");
+            initPage(href);
+        });
+
+        $(".rtype").change(function () {
+            initPage();
+        });
+
+    </script>
+    <style>
+        .more-div{
+            margin-bottom: 50px;
+        }
+        .location-detail-item{
+            padding-top: 30px;
+        }
+        .partner-img{
+            background: white;
+            width: 90px;
+            height: 90px;
+            line-height: 90px;
+            text-align: center;
+            border-radius: 50%;
+            margin: auto;
+            border: 4px solid lightblue;
+        }
+
+        .partner-img img{
+            height: 65px;
+            object-fit: cover;
+        }
+
+        .location-detail-item img{
+            width: auto;
+        }
+    </style>
+</div>
+</html>

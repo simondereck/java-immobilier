@@ -1,0 +1,291 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="annonce-div">
+        <div class="detail-title">
+            <div class="detail-title-item"><div class="detail-title-item-title active" data-id="1">业主详情</div></div>
+            <div class="detail-title-item"><div class="detail-title-item-title" data-id="2">业主房源</div></div>
+            <div class="detail-title-item"><div class="detail-title-item-title" data-id="3">已租</div></div>
+            <div class="detail-title-item"><div class="detail-title-item-title" data-id="4">买卖</div></div>
+            <div class="detail-title-item"><div class="detail-title-item-title" data-id="5">房管</div></div>
+            <div class="detail-title-item"><div class="detail-title-item-title" data-id="6">短租</div></div>
+        </div>
+
+        <div class="bg-white partner-detail select-detail" data-id="1">
+            <div class="partner-detail">
+                <view th:if="${partner}" th:remove="tag">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID:</th>
+                                <th>名：</th>
+                                <th>姓：</th>
+                                <th>邮箱：</th>
+                                <th>电话：</th>
+                                <th>微信：</th>
+                                <th>性别：</th>
+                                <th>状态</th>
+                                <th>创建时间：</th>
+                                <th>更新时间：</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td th:text="${partner.id}"></td>
+                                <td th:text="${partner.prenom}"></td>
+                                <td th:text="${partner.nom}"></td>
+                                <td th:text="${partner.email}"></td>
+                                <td th:text="${partner.telephone}"></td>
+                                <td th:text="${partner.wechat}"></td>
+                                <view th:if="${partner.sex==0}" th:remove="tag">
+                                    <td>男</td>
+                                </view>
+                                <view th:if="${partner.sex==1}" th:remove="tag">
+                                    <td>女</td>
+                                </view>
+                                <view th:if="${partner.status==0}" th:remove="tag">
+                                    <td>屏蔽</td>
+                                </view>
+                                <view th:if="${partner.status==1}" th:remove="tag">
+                                    <td>激活</td>
+                                </view>
+                                <view th:if="${partner.status==17}" th:remove="tag">
+                                    <td>邮箱或电话不存在</td>
+                                </view>
+                                <td th:text="${partner.ctime}"></td>
+                                <td th:text="${partner.utime}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </view>
+            </div>
+        </div>
+        <div class="anonces bg-light annonce-detail select-detail" data-id="2">
+            <view th:if="${annonces}" th:remove="tag">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Status</th>
+                            <th>price</th>
+                            <th>loyer</th>
+                            <th>charges</th>
+                            <th>location</th>
+                            <th>address</th>
+                            <th>起租日期</th>
+                            <th>size</th>
+                            <th>energy</th>
+                            <th>rtype</th>
+                            <th>trans</th>
+                            <th>utime</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <view th:each="annonce,iter:${annonces}" th:remove="tag">
+                            <div>
+                                <tr>
+                                    <td th:text="${annonce.id}"></td>
+                                    <view th:if="${annonce.status==1}" th:remove="tag">
+                                        <td class="green"><div></div></td>
+                                    </view>
+                                    <view th:if="${annonce.status==2}" th:remove="tag">
+                                        <td class="orange"><div></div></td>
+                                    </view>
+                                    <view th:if="${annonce.status==3}" th:remove="tag">
+                                        <td class="red"><div></div></td>
+                                    </view>
+                                    <td th:text="${annonce.price}"></td>
+                                    <td th:text="${annonce.loyer}"></td>
+                                    <td th:text="${annonce.charges}"></td>
+                                    <td th:text="${annonce.location}"></td>
+                                    <td th:text="${annonce.address}"></td>
+                                    <td th:text="${annonce.sdate}"></td>
+                                    <td th:text="${annonce.size}"></td>
+                                    <td th:text="${annonce.energy}"></td>
+                                    <td th:text="${annonce.rtype}"></td>
+                                    <td th:text="${annonce.trans}"></td>
+                                    <td th:text="${annonce.utime}"></td>
+                                    <td>
+                                        <span><a th:href="@{/admin/annonce/detail/}+${annonce.id}">详情</a></span>
+                                        <span><a th:href="@{/admin/annonce/detail/houseMatch/}+${annonce.id}">匹配详情</a></span>
+                                        <span>假房源</span>
+                                    </td>
+                                </tr>
+                            </div>
+                        </view>
+                    </tbody>
+                </table>
+
+            </view>
+        </div>
+        <div class="select-detail" data-id="3">
+
+        </div>
+        <div class="select-detail" data-id="4">
+
+        </div>
+        <div class="select-detail" data-id="5">
+
+        </div>
+        <div class="select-detail" data-id="6">
+
+        </div>
+        <div class="select-detail" data-id="7">
+
+        </div>
+    </div>
+    <script>
+        $(".detail-title-item-title").hover(function () {
+           let active = $(this).hasClass("active");
+           if(!active){
+               $(this).css("background","#0c5460");
+               $(this).css("color","white");
+           }else{
+               $(this).css("box-shadow","5px 0 5px 0 rgba(0, 0, 0, .2)")
+           }
+        },function () {
+            let active = $(this).hasClass("active");
+            if(!active){
+                $(this).css("background","whitesmoke");
+                $(this).css("color","black");
+            }else{
+                $(this).css("box-shadow","none");
+            }
+        });
+
+        $(".detail-title-item-title").click(function () {
+           let id = $(this).attr("data-id");
+           $(".detail-title-item-title").each(function (key,item) {
+               let selectid = $(item).attr("data-id");
+               if (selectid==id){
+                   $(item).addClass("active");
+               }else{
+                   $(item).removeClass("active");
+                   $(item).removeAttr("style");
+               }
+           });
+            $(".select-detail").each(function (key,item) {
+                let did = $(item).attr("data-id");
+                if(did==id){
+                    $(item).show("slow");
+                }else{
+                    $(item).hide();
+                }
+            });
+        });
+    </script>
+    <style>
+        /*.annonce-detail{*/
+        /*    display: none;*/
+        /*}*/
+        .select-detail{
+            display: none;
+        }
+        .annonce-div{
+            width: 98%;
+            background-color: rgba(0,0,0,0.6);
+            padding: 50px;
+            margin: auto;
+            /*background-color: white;*/
+        }
+
+        .carousel-inner img{
+            object-fit: cover;
+        }
+
+
+
+        td,th{
+            padding: 10px;
+        }
+
+        th{
+            background: #0c5460;
+            color: white;
+            text-align: center;
+        }
+
+        td:nth-child(odd){
+            background-color: #80bdff;
+            text-align: center;
+        }
+        td:nth-child(even){
+            background-color: whitesmoke;
+        }
+
+        tr:nth-child(odd){
+            border: 1px solid lightgray;
+        }
+        tr:nth-child(even){
+            border-right: 1px solid lightgray;
+            border-left: 1px solid lightgray;
+        }
+
+
+        .anonces{
+            margin-top: 50px;
+        }
+
+
+        tr .red>div,
+        tr .orange>div,
+        tr .green>div{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        tr .red>div{
+            background-color: darkred;
+        }
+
+        tr .green>div{
+            background-color: #1c7430;
+        }
+
+        tr .orange>div{
+            background-color: yellow;
+        }
+
+
+        .detail-title{
+            width: fit-content;
+            display: flex;
+            margin: auto;
+            padding-bottom: 50px;
+        }
+
+        .detail-title-item{
+            width: 140px;
+            text-align: center;
+            padding: 7px;
+        }
+
+        .detail-title-item div{
+            border-radius: 25px;
+            border: 1px solid whitesmoke;
+            font-size: 22px;
+            width: 140px;
+            height: 50px;
+            line-height: 50px;
+            cursor: pointer;
+        }
+
+
+        .active{
+            background: #0c5460;
+            color: white;
+            border:1px solid #0c5460;
+        }
+
+        .partner-detail{
+            width: fit-content;
+            margin: auto;
+            display: block;
+        }
+    </style>
+</div>
+</html>

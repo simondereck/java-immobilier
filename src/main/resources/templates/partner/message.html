@@ -1,0 +1,106 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+            <div>
+                <view th:if="${rdvs}" th:remove="tag">
+                    <view th:each="rdv:${rdvs}">
+                        <div class="rdv-item">
+                            <div class="rdv-item-row">
+                                <div class="rdv-item-title">发送时间：</div>
+                                <div th:text="${rdv.ctime}"></div>
+                            </div>
+                            <div class="rdv-item-row">
+                                <div class="rdv-item-title">租客信息:</div>
+                                <div th:text="${users[rdv.uid+''].prenom}"></div>
+                                <div th:text="${users[rdv.uid+''].telephone}"></div>
+                                <div th:text="${users[rdv.uid+''].email}"></div>
+                            </div>
+                            <div class="rdv-item-row">
+                                <div class="rdv-item-title">我的房源：</div>
+                                <a th:href="@{/partner/admin/house/detail/}+${rdv.aid}" class="btn btn-link">详情</a>
+                            </div>
+                            <div class="rdv-item-row">
+                                <div class="rdv-item-title">租客需求：</div>
+                                <a th:href="@{/partner/user/needs/}+${rdv.nid}+@{/}+${rdv.uid}" class="btn btn-link">详情</a>
+                            </div>
+                            <div class="rdv-item-row">
+                                <div class="rdv-item-title">约会时间:</div>
+                                <div th:text="${rdv.sdate}"></div>
+                                <div>----</div>
+                                <div th:text="${rdv.edate}"></div>
+                            </div>
+                            <div class="rdv-item-row">
+                                <div th:text="${rdv.message}"></div>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn btn-danger btn-delete" th:data-id="${rdv.id}">删除</button>
+                                <button class="btn btn-success btn-detail" th:data-id="${rdv.id}">详情</button>
+                            </div>
+                        </div>
+                    </view>
+                </view>
+
+                <div th:if="${pageHelper}" class="pages-set">
+                    <div th:if="${pageHelper.totalPage>0}" th:remove="tag">
+                        <ul class="pagination">
+                            <div th:each="page,iter:${pageHelper.pages}" th:remove="tag">
+                                <li  class="page-item"><a th:text="${page.key}" th:href="${page.url}" class="page-link"></a></li>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        $(".btn-delete").click(function (){
+            let id = $(this).attr("data-id")
+            window.location.href = "/partner/rdv/delete/"+id+".html"
+        });
+
+        $(".btn-detail").click(function () {
+            let id = $(this).attr("data-id");
+            window.location.href = ""
+        })
+    </script>
+    <style>
+        .pages-set{
+            text-align: center;
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .pagination{
+            margin: auto;
+        }
+
+        .rdv-item{
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid whitesmoke;
+            margin-bottom: 25px;
+        }
+        .rdv-item-row{
+            display: flex;
+        }
+        .rdv-item-row div{
+            margin-right: 10px;
+        }
+
+        .rdv-item-title{
+            width: 150px;
+        }
+        .button-group{
+            text-align: right;
+        }
+    </style>
+</div>
+</html>

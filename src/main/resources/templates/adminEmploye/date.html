@@ -1,0 +1,312 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="employe-detail" th:data-id="${id}">
+        <div class="form-group selects-div">
+            <div class="select-item" data-id="0">基本信息</div>
+            <div class="select-item" data-id="1">当天操作</div>
+            <div class="select-item btn-date active" data-id="2">员工考勤</div>
+        </div>
+
+        <div class="form-group" id="admin">
+
+        </div>
+        <div class="admin-dates form-group">
+            <h4>搜索</h4>
+            <div class="form-group">
+                <form id="date-search">
+                    <div class="date-search">
+                        <div class="form-group">
+                            <label>开始时间</label>
+                            <input class="form-control" name="sdate" type="date"/>
+                        </div>
+                        <div class="form-group">
+                            <label>结束时间</label>
+                            <input class="form-control" name="edate" type="date"/>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-success btn-search" type="button">搜索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <table class="form-group">
+                <thead>
+                    <tr>
+                        <td>日期</td>
+                        <td>中断次数（超过30mins）</td>
+                        <td>操作次数</td>
+                        <td>统计时间</td>
+                        <td>首次</td>
+                        <td>最后一次</td>
+                        <td>操作</td>
+                    </tr>
+                </thead>
+                <tbody id="employee-models">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            let id = $(".employe-detail").attr("data-id");
+
+            $(document).ready( function() {
+                var now = new Date();
+                var month = (now.getMonth() + 1);
+                var day = now.getDate();
+                if (month < 10)
+                    month = "0" + month;
+                if (day < 10)
+                    day = "0" + day;
+                var today = now.getFullYear() + '-' + month + '-' + day;
+                $('input[name=sdate]').val(today);
+                $('input[name=edate]').val(today);
+            });
+
+            $.get("/admin/employe/info/"+id,function (data) {
+                if (data.status==1){
+                    let adminDiv = "";
+                    if (data.admin) {
+                        adminDiv += "<h3>员工姓名： "+data.admin.username+"</h3>";
+
+                        adminDiv += "<div class='form-group'>";
+
+                        switch (data.admin.permission) {
+                            case 6:
+                                adminDiv += "<span style='background-color: #c69500;color: white;padding: 10px;border-radius: 5px;margin-right: 20px;'>实习生</span>";
+                                break;
+                            case 7:
+                                adminDiv += "<span style='background-color: #c69500;color: white;padding: 10px;border-radius: 5px;margin-right: 20px;'>普通管理员</span>";
+
+                                break;
+                            case 8:
+                                adminDiv += "<span style='background-color: #c69500;color: white;padding: 10px;border-radius: 5px;margin-right: 20px;'>金牌管理员</span>";
+
+                                break;
+                            case 9:
+                                adminDiv += "<span style='background-color: #c69500;color: white;padding: 10px;border-radius: 5px;margin-right: 20px;'>超级管理员</span>";
+                                break;
+                        }
+
+
+                        switch (data.admin.astatus) {
+                            case 0:
+                                adminDiv += "<span style='background-color: gray;padding: 10px; display: inline-block;border-radius: 5px;'>屏蔽</span>";
+                                break;
+                            case 1:
+                                adminDiv += "<span style='background-color: darkgreen;color: white;padding: 10px;display: inline-block;border-radius: 5px;'>激活</span>";
+                                break;
+                            case 2:
+                                adminDiv += "<span style='background-color: darkred;color: white;padding: 10px;display: inline-block;border-radius: 5px;'>离职</span>";
+                                break;
+                        }
+
+                        adminDiv += "</div>";
+
+                        adminDiv += "<div class='form-group'><span style='display: inline-block;padding: 10px;margin-right: 20px;background-color: whitesmoke; border-radius: 5px;'>" + data.admin.email + "</span>" +
+                            "<span style='display: inline-block;padding: 10px;margin-right: 20px;background-color: whitesmoke;border-radius: 5px;'>"+ data.admin.telephone+ "</span></div>";
+
+
+                        $("#admin").append(adminDiv);
+                    }
+                }
+            })
+
+            var models;
+            $(".btn-search").click(function () {
+                let params = {};
+                let sdate = $("input[name=sdate]").val();
+                let edate = $("input[name=edate]").val();
+                if (sdate)
+                $.post("/admin/employe/date/search/"+sdate+"/"+edate+"/"+id,params,function (data) {
+                    $("#employee-models").html("");
+                    if (data.status==1){
+                        console.log(data);
+                        models = data.models;
+                        let modelDivs = "";
+                        for(let i in models){
+                            let item = JSON.parse(models[i].detail);
+                            modelDivs += "<tr>" +
+                                "   <td>"+models[i].date+"</td>" +
+                                "   <td>"+models[i].breaktimes+"</td>" +
+                                "   <td>"+models[i].opt+"</td>" +
+                                "   <td>"+models[i].ctime+"</td>" +
+                                "   <td>"+item[0].etime+"</td>"+
+                                "   <td>"+item[item.length-1].etime+"</td>"+
+                                "   <td><button class='btn btn-outline-primary btn-detail' data-id='"+i+"'>中断详情</button></td>" +
+                                "</tr>";
+                        }
+
+                        $("#employee-models").append(modelDivs);
+                    }else{
+                        alert("没有数据");
+                    }
+                });
+            });
+
+            $("#employee-models").on("click",".btn-detail",function () {
+               let id = $(this).attr("data-id");
+               let model = models[parseInt(id)];
+               let detail = JSON.parse(model.detail);
+               console.log(detail);
+               let backgroudDiv = "<div class='hwwd-image-background'>" +
+                   "    <table>" +
+                   "        <thead>" +
+                   "            <tr>" +
+                   "                <td>时间</td>" +
+                   "                <td>是否是断开的点</td>" +
+                   "            </tr>" +
+                   "        </thead>" +
+                   "        <tbody>";
+
+               for (let i in detail){
+                   backgroudDiv += "<tr>" +
+                       "    <td>"+detail[i].etime+"</td>";
+                    if (detail[i].lasted){
+                        backgroudDiv += "<td>是</td>";
+                    }else{
+                        backgroudDiv += "<td>否</td>";
+                    }
+                   backgroudDiv += "</tr>";
+               }
+
+               backgroudDiv += "</tbody></table></div>";
+               $("html").append(backgroudDiv);
+               $("html").addClass("html-active");
+            });
+
+
+            $("html").on('click','.hwwd-image-background',function () {
+                $(".hwwd-image-background").remove();
+                $("html").removeClass("html-active");
+            });
+
+            $(".selects-div").on("click",".select-item",function () {
+                // let id = $(this).attr("data-id");
+                if ($(this).hasClass("active")){
+                    return;
+                }else{
+                    window.location.assign("/admin/employe/detail/"+id);
+                }
+
+            });
+        });
+    </script>
+    <style>
+
+        .employe-detail{
+            margin: auto;
+            width: 90vw;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+            overflow: scroll;
+        }
+
+
+        .button-group button{
+            width:100%;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+        td,th{
+            text-align: center;
+            padding: 10px;
+            min-width: 120px;
+        }
+        thead{
+            background-color: #0c5460;
+            color: white;
+        }
+
+
+        tbody tr:nth-child(odd) {
+            background-color: whitesmoke;
+        }
+        tbody tr:nth-child(even) {
+            background-color: lightgray;
+        }
+
+        .admin-info tbody td:nth-child(odd) {
+            background-color: #0f6674;
+            color: white;
+        }
+
+        .date-search{
+            display: flex;
+            padding: 10px;
+            background-color: whitesmoke;
+            align-items: flex-end;
+            /*justify-content: space-between;*/
+        }
+
+        .date-search .form-group{
+            margin-right: 30px;
+        }
+
+        .employee-title{
+            text-align: center;
+        }
+
+
+        .selects-div{
+            margin: auto;
+            width: fit-content;
+            display: flex;
+            margin-bottom: 30px;
+        }
+
+        .select-item{
+            min-width: 120px;
+            height: 50px;
+            text-align: center;
+            border-radius: 50px;
+            line-height: 50px;
+            border: 1px solid whitesmoke;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+        .select-item:hover,
+        .selects-div .active{
+            background-color: #4d9200;
+            color: white;
+            border: none;
+        }
+
+        .select-item:hover{
+            box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+            border: none;
+        }
+
+        .hwwd-image-background{
+            position: absolute;
+            z-index: 200;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background-color: rgba(0,0,0,0.3);
+        }
+
+        .html-active{
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .hwwd-image-background table{
+            margin:20vh auto 0;
+        }
+
+    </style>
+</div>
+</html>

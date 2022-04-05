@@ -1,0 +1,331 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" th:href="@{/css/map/house-detail.css}" />
+    <div class="detail-div-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">首页</a></li>
+                <li class="breadcrumb-item active" aria-current="page">房屋详情</li>
+            </ol>
+        </nav>
+        <div class="detail-div">
+            <div class="float-left">
+                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" th:if="${annonce.images}">
+                    <div class="carousel-inner">
+                        <view th:each="image,iter:${annonce.images}" th:remove="tag">
+                            <div th:if="${iter.index==0}"  class="carousel-item active">
+                                <img class="d-block w-100" th:src="${image}" alt="First slide">
+                            </div>
+                            <div class="carousel-item" th:unless="${iter.index==0}">
+                                <img class="d-block w-100" th:src="${image}" alt="Second slide">
+                            </div>
+                        </view>
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                <div class="house-detail ">
+                    <div class="hosue-detail-row">
+                        <div class="house-detail-item">
+                            <div><img src="/img/house/budget.png"/></div>
+                            <div class="house-detail-item-text" th:text="${'房租' + annonce.price + '€'}"></div>
+                        </div>
+                        <div th:if="${annonce.trans}" class="house-detail-item">
+                            <div><img src="/img/house/bus.png"/></div>
+                            <div th:text="${trans[annonce.trans]}"></div>
+                        </div>
+                        <div class="house-detail-item">
+                            <div><img src="/img/house/surface_chambre.png"/></div>
+                            <div class="house-detail-item-text" th:text="${rtypes[annonce.rtype] + ' ' + annonce.size + ' 平'}"></div>
+                        </div>
+                    </div>
+                    <div class="hosue-detail-row">
+                        <div class="house-detail-item">
+                            <div><img src="/img/house/dpe.png"/></div>
+                            <view th:if="${annonce.energy}" th:remove="tag">
+                                <div class="house-detail-item-text" th:text="${energies[annonce.energy]}"></div>
+                            </view>
+                            <view th:unless="${annonce.energy}" th:remove="tag">
+                                <div class="house-detail-item-text" th:text="${energies[0]}"></div>
+                            </view>
+                        </div>
+                        <div class="house-detail-item">
+                            <div><img src="/img/house/meuble.png"/></div>
+                            <div th:if="${annonce.furniture}" th:remove="tag">
+                                <div class="house-detail-item-text" th:if="${annonce.furniture==0}">不带家具</div>
+                                <div class="house-detail-item-text" th:if="${annonce.furniture==1}">家具齐全</div>
+                            </div>
+                            <div th:unless="${annonce.furniture}" th:remove="tag">
+                                <div class="house-detail-item-text">不带家具</div>
+                            </div>
+                        </div>
+                        <div class="house-detail-item">
+                            <div><img src="/img/house/dispo.png"/></div>
+                            <div th:if="${annonce.sdate <= current}" th:remove="tag">
+                                <div class="house-detail-item-text">立即能租</div>
+                            </div>
+                            <div th:unless="${annonce.sdate <= current}" th:remove="tag">
+                                <div class="house-detail-item-text" th:text="${annonce.sdate + ' 可租'}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bases-div base-div-2">
+                    <div th:text="${'房屋编号:'+ (annonce.id + annonce.serial) }"></div>
+                </div>
+                <div class="bases-div base-div-1">
+                    <div class="base-div-content">
+                        <div>基本房屋配置</div>
+                        <view th:if="${annonce.base}">
+                            <div class="base-div-imms">
+                                <view th:each="item,iter:${annonce.base}" th:remove="tag">
+                                    <text th:text="${bases[item.value]}" class="imms-item"></text>
+                                </view>
+                            </div>
+                        </view>
+                    </div>
+                </div>
+                <div class="bases-div base-div-2">
+                    <div class="base-div-content">
+                        <div>高级房屋配置</div>
+                        <view th:if="${annonce.envir}">
+                            <div class="base-div-imms">
+                                <view th:each="envir,iter:${annonce.envir}" th:remove="tag">
+                                    <div th:text="${imms[envir.value]}" class="imms-item"></div>
+                                </view>
+                            </div>
+                        </view>
+                    </div>
+                </div>
+                <div class="house-detail-info">
+                    <div th:text="${annonce.description}" class="house-description"></div>
+                </div>
+
+            </div>
+
+            <div class="float-right">
+                <div id='map'></div>
+                <div class="address">
+                    <label>房源地址:</label>
+                    <div>
+                        <div th:text="${annonce.address}" th:remove="tag"></div>
+                        <div th:if="${ville}" th:remove="tag">
+                            <div th:text="${' , '+ville.postcode}" th:remove="tag"></div>
+                        </div>
+                        <div th:if="${ville}" th:remove="tag">
+                            <div th:text="${' , '+ville.name}" th:remove="tag"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="show-imgs">
+            <div class="close">x</div>
+            <div class="slideshow-container">
+                <view th:each="image,iter:${annonce.images}" th:remove="tag">
+                    <div class="mySlides">
+                        <div class="numbertext" th:text="${iter.count + ' / ' + iter.size}"></div>
+                        <div style="width: fit-content;margin: auto;"><img th:src="${image}" style="height:80vh;" /></div>
+                    </div>
+                </view>
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+            </div>
+            <br>
+
+            <div style="text-align:center">
+                <view th:each="image,iter:${annonce.images}" th:remove="tag">
+                    <span class="dot" th:onclick="'currentSlide('+iter.count+')'"></span>
+                </view>
+            </div>
+        </div>
+    </div>
+    <view th:if="${latLng}" th:remove="tag">
+        <script>
+            $(function (){
+
+                /*<![CDATA[*/
+
+                var map = new mapboxgl.Map({
+                    container: 'map',
+                    style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+                    center: [[${latLng.center}]], // starting position [lng, lat]
+                    zoom: 15 // starting zoom
+                });
+
+                var nav = new mapboxgl.NavigationControl();
+                map.addControl(nav, 'top-left');
+
+                var marker = new mapboxgl.Marker()
+                    .setLngLat([[${latLng.geometry.coordinates}]])
+                    .addTo(map);
+                /*]]>*/
+            });
+        </script>
+    </view>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGFpd2FpaHVhbmdkaSIsImEiOiJja2huZGpmZmUyZW5pMnJxcXA0bHlycmc0In0.Wh2Kzu-CfQYA0D91x5YyNg';
+
+
+        $(".carousel-inner").click(function () {
+            $(".show-imgs").show("slow");
+            showSlides(slideIndex);
+        });
+        $(".show-imgs").on("click",".close",function (){
+            $(".show-imgs").hide("slow");
+        });
+
+
+        var slideIndex = 1;
+        showSlides(slideIndex);
+
+        // Next/previous controls
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        // Thumbnail image controls
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            var i;
+            var slides = document.getElementsByClassName("mySlides");
+            var dots = document.getElementsByClassName("dot");
+            if (n > slides.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = slides.length}
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+                $(slides[i]).hide();
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            $(slides[slideIndex-1]).show();
+            // slides[slideIndex-1].style.display = "block";
+            dots[slideIndex-1].className += " active";
+        }
+
+        $(function () {
+            let val = $(".house-description").html();
+            let result = val.split("\n").join("<br/>");
+            console.log(result);
+            $(".house-description").html(result);
+
+        })
+
+    </script>
+
+    <style>
+        * {box-sizing:border-box}
+
+        /* Slideshow container */
+        .show-imgs .slideshow-container {
+            max-width: 1000px;
+            position: relative;
+            margin: auto;
+        }
+
+        /* Hide the images by default */
+        .show-imgs .mySlides {
+            display: none;
+        }
+
+        /* Next & previous buttons */
+        .show-imgs .prev, .show-imgs .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            margin-top: -22px;
+            padding: 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+        }
+
+        /* Position the "next button" to the right */
+        .show-imgs .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        /* On hover, add a black background color with a little bit see-through */
+        .show-imgs .prev:hover, .show-imgs .next:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        /* Caption text */
+        .show-imgs .text {
+            color: #f2f2f2;
+            font-size: 15px;
+            padding: 8px 12px;
+            position: absolute;
+            bottom: 8px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Number text (1/3 etc) */
+        .show-imgs .numbertext {
+            color: #f2f2f2;
+            font-size: 12px;
+            padding: 8px 12px;
+            position: absolute;
+            top: 0;
+        }
+
+        /* The dots/bullets/indicators */
+        .show-imgs .dot {
+            cursor: pointer;
+            height: 15px;
+            width: 15px;
+            margin: 0 2px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.6s ease;
+        }
+
+        /*.active,*/
+        .show-imgs .dot:hover {
+            background-color: #717171;
+        }
+
+        /* Fading animation */
+        .show-imgs .fade {
+            -webkit-animation-name: fade;
+            -webkit-animation-duration: 1.5s;
+            animation-name: fade;
+            animation-duration: 1.5s;
+        }
+
+        @-webkit-keyframes fade {
+            from {opacity: .4}
+            to {opacity: 1}
+        }
+
+        @keyframes fade {
+            from {opacity: .4}
+            to {opacity: 1}
+        }
+    </style>
+</div>
+</html>

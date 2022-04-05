@@ -1,0 +1,116 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <div class="cobber-div">
+        <div class="cobber-items">
+            <view th:if="${shops}">
+                <view th:each="shop,iter:${shops}" th:remove="tag">
+                    <view th:if="${iter.index%3==0}" th:remove="tag">
+                        <div class="cobber-row">
+                            <view th:if="${iter.index < iter.size}" th:remove="tag">
+                                <div class="cobber-item" th:text="${shops[iter.index].name}" th:data-id="${shops[iter.index].id}"></div>
+                            </view>
+                            <view th:if="${iter.index+1 < iter.size}" th:remove="tag">
+                                <div class="cobber-item" th:text="${shops[iter.index+1].name}" th:data-id="${shops[iter.index+1].id}"></div>
+                            </view>
+                            <view th:if="${iter.index+2 < iter.size}" th:remove="tag">
+                                <div class="cobber-item" th:text="${shops[iter.index+2].name}" th:data-id="${shops[iter.index+2].id}"></div>
+                            </view>
+                        </div>
+                    </view>
+                </view>
+            </view>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $(".cobber-div").on("click",".cobber-item",function () {
+               let id = $(this).attr("data-id");
+               window.location.href = "/site/corporation/detail/"+id+".html"
+            });
+        });
+    </script>
+    <style>
+
+        @media screen and (min-width: 501px){
+            body{
+                background: url("/img/005.jpg");
+            }
+            .cobber-div{
+                width: 70%;
+                height: 100%;
+                margin: auto;
+                background-color: white;
+                padding: 50px 0px 50px;
+                overflow-y: scroll;
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+
+            .cobber-div::-webkit-scrollbar {
+                display: none;
+            }
+
+            .cobber-row{
+                display: flex;
+                margin-bottom: 30px;
+                padding-left: 3.3%;
+            }
+            .cobber-item{
+                width: 30%;
+                height: 120px;
+                line-height: 120px;
+                background-color: #4d9200;
+                color: white;
+                cursor: pointer;
+                text-align: center;
+                margin-right: 3.3%;
+            }
+
+            .cobber-item:hover{
+                background-color: #1c7430;
+                box-shadow: 0 5px 5px rgba(0,0,0,0.6);
+            }
+        }
+
+
+        @media screen and (max-width: 500px){
+            .cobber-div{
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                padding: 50px 0px 50px;
+                overflow-y: scroll;
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+
+            .cobber-div::-webkit-scrollbar {
+                display: none;
+            }
+
+            .cobber-item{
+                width: 90vw;
+                height: 120px;
+                line-height: 120px;
+                background-color: #4d9200;
+                color: white;
+                cursor: pointer;
+                text-align: center;
+                margin:0px auto 30px;
+
+            }
+
+            .cobber-item:hover{
+                background-color: #1c7430;
+                box-shadow: 0 5px 5px rgba(0,0,0,0.6);
+            }
+        }
+
+
+    </style>
+
+</div>
+</html>

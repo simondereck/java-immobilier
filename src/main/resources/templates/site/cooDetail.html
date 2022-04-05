@@ -1,0 +1,73 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <div class="cobber-div">
+        <div class="form-group cobber-title"><h3>店铺名称:<label th:text="${shop.name}"></label></h3></div>
+        <div class="form-group"><button class="btn btn-success cobber-order" th:data-id="${shop.id}">我需要订购</button></div>
+        <hr/>
+        <div th:data-text="${shop.description}" id="description" class="form-group"></div>
+    </div>
+    <script>
+        $(function (){
+            let description = $("#description").attr("data-text");
+            if (description){
+                $("#description").html(description);
+            }
+        });
+        $(".cobber-order").click(function () {
+           let id = $(this).attr("data-id");
+           window.location.href = "/site/corporation/order/"+id+".html";
+        });
+    </script>
+    <style>
+
+        @media screen and (min-width: 501px) {
+            body{
+                background: url("/img/005.jpg");
+            }
+
+            .cobber-div{
+                width: 70%;
+                height: 100%;
+                margin: auto;
+                background-color: white;
+                padding: 50px 30px 50px;
+                overflow-y: scroll;
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+
+            .cobber-div::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .cobber-title{
+                text-align: center;
+            }
+        }
+
+        @media screen and (max-width: 500px){
+            .cobber-div{
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                padding: 50px 30px 50px;
+                overflow-y: scroll;
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+
+            .cobber-div::-webkit-scrollbar {
+                display: none;
+            }
+
+            .cobber-title{
+                text-align: center;
+            }
+        }
+
+    </style>
+</div>
+</html>

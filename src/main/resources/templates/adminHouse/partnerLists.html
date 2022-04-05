@@ -1,0 +1,212 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="lists-div">
+        <div>
+            <table>
+                <form method="post" id="searchAnnonces">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>头像</th>
+                            <th>姓</th>
+                            <th>名</th>
+                            <th>类型</th>
+                            <th>地址</th>
+                            <th>email</th>
+                            <th>telephone</th>
+                            <th>创建时间</th>
+                            <th>option</th>
+                        </tr>
+                        <tr>
+                            <th><input name="id" class="form-control"/></th>
+                            <th></th>
+                            <th><input name="nom" class="form-control"/></th>
+                            <th><input name="prenom" class="form-control" /></th>
+                            <th>
+                                <select name="type" class="form-control">
+                                    <option value="-1">--全部--</option>
+                                    <option value="1">个人</option>
+                                    <option value="2">中介</option>
+                                    <option value="3">学生公寓</option>
+                                </select>
+                            </th>
+                            <th></th>
+                            <th><input name="email" class="form-control"/></th>
+                            <th><input name="telephone" class="form-control"/></th>
+                            <th></th>
+                            <th><button class="btn btn-search-annonce" type="button">搜索</button></th>
+                        </tr>
+                    </thead>
+                </form>
+                <tbody class="house-divs">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="page-helper">
+
+        </div>
+
+    </div>
+    <script>
+        $(function () {
+            function initPage(url){
+                urlPath= url?url:"/admin/annonce/partners/lists/data";
+                let keywords = $("#searchAnnonces").serializeArray();
+                let params = {};
+                for (let i in keywords) {
+                    if (keywords[i].value){
+                        params[keywords[i].name] = keywords[i].value;
+                    }
+                }
+                $.get(urlPath,params,function (data) {
+                    console.log(data);
+                    if (data.status==1){
+                        let models = data.models;
+                        let partners = data.partners;
+                        let partnerDiv = "";
+
+                        for (let i in partners){
+                            for(let j in models){
+                                if (partners[i].id==models[j].uid){
+                                    partners[i].models = models[j];
+                                }
+                            }
+                        }
+                        for (let k in partners){
+                            if (partners[k].models){
+                                partnerDiv += "<tr><td>"+ partners[k].id+"</td>";
+                                if (partners[k].cover){
+                                    partnerDiv += "<td><img src='/partners/"+partners[k].id+"/"+partners[k].cover+"' /></td>";
+                                }else{
+                                    partnerDiv += "<td><img src='' /></td>";
+                                }
+                                partnerDiv += "<td>"+ partners[k].nom +"</td>";
+                                partnerDiv += "<td>"+ partners[k].prenom +"</td>";
+                                switch (partners[k].models.type){
+                                    case 1:
+                                        partnerDiv += "<td>个人</td>";
+                                        break;
+                                    case 2:
+                                        partnerDiv += "<td>中介</td>";
+                                        break;
+                                    case 3:
+                                        partnerDiv += "<td>学生公寓</td>";
+                                        break;
+                                    default:
+                                        partnerDiv += "<td>个人</td>";
+                                        break;
+                                }
+                                if (partners[k].address){
+                                    partnerDiv += "<td>"+ partners[k].address +"</td>";
+                                }else{
+                                    partnerDiv += "<td></td>";
+                                }
+                                partnerDiv += "<td>"+ partners[k].email +"</td>";
+                                partnerDiv += "<td>"+ partners[k].telephone +"</td>";
+                                partnerDiv += "<td>"+ partners[k].models.ctime  +"</td>";
+                                partnerDiv += "   <td>" +
+                                    "       <span><a class='btn btn-warning' href='/admin/partner/annnonce/set/"+partners[k].models.id+"'>更新</a></span>" +
+                                    "       <span><a class='btn btn-link' href='/admin/partner/login/"+partners[k].id+"'>登录用户</a></span>" +
+                                    "   </td>" +
+                                    "</tr>";
+                            }
+                        }
+
+                        $(".house-divs").html("");
+                        $(".house-divs").append(partnerDiv);
+
+                        let helper = data.pageHelper;
+                        let helperDiv = "<div class='pages-set'>";
+                        $(".page-helper").html("");
+                        if(helper.totalPage>0){
+                            helperDiv += "<ul class='pagination'>"
+                            for (let i in helper.pages){
+                                if (helper.currentPage==i){
+                                    helperDiv += "<li  class='page-item active'><a data-href='"+helper.pages[i].url+"' class='page-link'>"+helper.pages[i].key+"</a></li>";
+                                }else{
+                                    helperDiv += "<li  class='page-item'><a data-href='"+helper.pages[i].url+"' class='page-link'>"+helper.pages[i].key+"</a></li>";
+                                }
+                            }
+                            helperDiv += "</ul>";
+                        }
+                        helperDiv += "</div>";
+                        $(".page-helper").append(helperDiv);
+                    }
+                });
+
+            }
+
+            initPage();
+
+            $(".btn-search-annonce").click(function () {
+                initPage();
+            });
+            $(".page-helper").on("click","a",function () {
+                let href = $(this).attr("data-href");
+                initPage(href);
+            });
+        });
+
+
+    </script>
+    <style>
+
+        .lists-div{
+            margin: auto;
+            width: 98%;
+            /*height: 100%;*/
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+            overflow: scroll;
+        }
+
+
+        .button-group button{
+            width:100%;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+        td,th{
+            text-align: center;
+            padding: 10px;
+            min-width: 120px;
+        }
+
+        td img{
+            max-width: 40px;
+            max-height: 40px;
+        }
+        thead{
+            background-color: #0c5460;
+            color: white;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: whitesmoke;
+        }
+        tbody tr:nth-child(even) {
+            background-color: lightgray;
+        }
+
+        .pages-set{
+            text-align: center;
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .pagination{
+            margin: auto;
+            /*display: flex;*/
+        }
+
+    </style>
+</div>
+</html>

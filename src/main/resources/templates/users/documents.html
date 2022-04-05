@@ -1,0 +1,269 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/user-nav.js}"></script>
+    <link th:href="@{/css/user-center.css}" rel="stylesheet" />
+    <link th:href="@{/css/user-needs.css}" rel="stylesheet" />
+    <link th:href="@{/css/user/documents.css}" rel="stylesheet" />
+    <div class="user-message-div">
+        <div th:replace="layout/user-nav"></div>
+        <div class="user-message">
+            <div class="profile-title"><h3>上传材料</h3></div>
+            <br/>
+            <div>
+                <div class="double-elements">
+                    <div class="form-group elements">
+                        <label for="passport">护照</label>
+                        <div class="form-group">
+                            <input id="passport" name="passport" type="file" hidden class="form-control-file  btn btn-success"/>
+                        </div>
+                        <div class="form-group passport-content"></div>
+                        <div class="form-group">
+                            <button class="btn btn-success upload-file" type="button" data-type="passport">上传</button>
+                        </div>
+                    </div>
+                    <div class="document-spilte-line"></div>
+                    <div class="form-group elements">
+                        <label for="visa">长居卡</label>
+                        <div class="form-group">
+                            <input id="visa" name="visa" type="file" hidden class="form-control-file  btn btn-success"/>
+                        </div>
+                        <div class="form-group visa-content"></div>
+                        <div class="form-group">
+                            <button class="btn btn-success upload-file" type="button" data-type="visa">上传</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="double-elements">
+                    <div class="form-group elements">
+                        <label for="certifcation">注册证明</label>
+                        <div class="form-group">
+                            <input id="certifcation" name="certifcation" type="file" hidden class="form-control-file  btn btn-success"/>
+                        </div>
+                        <div class="form-group certifcation-content"></div>
+                        <div class="form-group">
+                            <button class="btn btn-success upload-file" type="button" data-type="certifcation">上传</button>
+                        </div>
+                    </div>
+                    <div class="document-spilte-line"></div>
+                    <div class="form-group elements">
+                        <label for="tax">税单</label>
+                        <div class="form-group">
+                            <input id="tax" name="tax" type="file" hidden class="form-control-file  btn btn-success" />
+                        </div>
+                        <div class="form-group tax-content"></div>
+                        <div class="form-group">
+                            <button class="btn btn-success upload-file" type="button" data-type="tax">上传</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="double-elements">
+                    <div class="form-group elements">
+                        <label for="payRoll">工资单</label>
+                        <div class="form-group">
+                            <input id="payRoll" name="payRoll" type="file" hidden class="form-control-file  btn btn-success"/>
+                        </div>
+                        <div class="form-group payRoll-content"></div>
+                        <div class="form-group">
+                            <button class="btn btn-success upload-file" type="button" data-type="payRoll">上传</button>
+                        </div>
+                    </div>
+                    <div class="document-spilte-line"></div>
+                    <div class="form-group elements">
+                        <label for="grantieVisa">担保人长居卡</label>
+                        <div class="form-group">
+                            <input id="grantieVisa" name="grantieVisa" type="file" hidden class="form-control-file  btn btn-success"/>
+                        </div>
+                        <div class="form-group grantieVisa-content"></div>
+                        <div class="form-group">
+                            <button class="btn btn-success upload-file" type="button" data-type="grantieVisa">上传</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="double-elements">
+                    <div class="form-group elements">
+                        <label for="grantiepayRoll">担保人工资单</label>
+                        <div class="form-group">
+                            <input id="grantiepayRoll" name="grantiepayRoll" hidden type="file" class="form-control-file btn btn-success"/>
+                        </div>
+                        <div class="form-group grantiepayRoll-content"></div>
+                        <div class="form-group">
+                            <button class="btn btn-success upload-file" type="button" data-type="grantiepayRoll">上传</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        $(function () {
+            var progressDiv = "<div id='hwwd-upload-progress'><progress max='100' value='0' id='hwwd-progress'>0</progress></div>";
+            $("input[type=file]").change(function (){
+                let length =  $(this).get(0).files.length;
+                if(length>0){
+                    let file = $(this).get(0).files[0];
+                    let id = $(this).attr("id");
+                    let fileType = file.type.split("/");
+
+                    if (fileType[1]){
+                        if (!fileType[1].match(/jpg|gif|png|jpeg|pdf/i)){
+                            alert("您只能上传图片格式或pdf格式");
+                            return;
+                        }
+                    }else{
+                        alert("您只能上传图片格式或pdf格式");
+                        return;
+                    }
+
+                    if(file.size>(3*1024*1024)){
+                        //todo 压缩 大于2M的需要压缩
+                        alert("上传文件不能超过3M");
+                        return;
+                    }
+
+                    var formdata =  new FormData();
+                    formdata.append("file",file);
+                    formdata.append("type",id);
+                    $("html").addClass("progress-active");
+                    $("body").addClass("progress-active");
+                    $('html').append(progressDiv);
+                    $.ajax({
+                        xhr: function() {
+                            var xhr = new window.XMLHttpRequest();
+                            xhr.upload.addEventListener("progress", function(evt) {
+                                if (evt.lengthComputable) {
+                                    var percentComplete = evt.loaded / evt.total;
+                                    percentComplete = parseInt(percentComplete * 100);
+                                    $("#hwwd-progress").val(percentComplete);
+                                    if (percentComplete === 100) {
+                                        $("html").removeClass("progress-active");
+                                        $("body").removeClass("progress-active");
+                                        $("#hwwd-upload-progress").remove();
+                                    }
+                                }
+                            }, false);
+                            return xhr;
+                        },
+                        url:'/user/uplaod/file',
+                        type: 'post',
+                        data: formdata,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            if (data.status==1){
+                                alert(data.message);
+                                let uploadData = {};
+                                uploadData[id] = data.path;
+                                if (data.path){
+                                    if (data.path.match(/jpg|gif|png|jpeg/i)){
+                                        $("."+id+"-content").append("<img src='/users/"+data.uid+"/"+data.path+"'/>");
+                                    }else{
+                                        $("."+id+"-content").append("<button class='btn btn-link' data-href='/users/"+data.uid+"/"+data.path+"'>查看</button>");
+                                    }
+                                }
+                                $.post("/user/upload/info",uploadData,function (infoData) {
+                                    console.log(infoData);
+                                });
+                            }else if(data.status==0){
+                                alert(data.message);
+                            }
+                        },
+                        error: function(err) {
+                            $("html").removeClass("progress-active");
+                            $("body").removeClass("progress-active");
+                            $("#hwwd-upload-progress").remove();
+                            alert("图片上传失败");
+                        }
+                    });
+                }
+            });
+
+            $.get("/user/documents/data",function (data) {
+                console.log(data);
+                if (data.status==1){
+                    if (data.documents){
+                        let documents = data.documents;
+
+                        if (documents.passport){
+                            if (documents.passport.match(/jpg|gif|png|jpeg/i)){
+                                $(".passport-content").append("<img src='/users/"+documents.uid+"/"+documents.passport+"'/>");
+                            }else{
+                                $(".passport-content").append("<a class='btn btn-link' href='/users/"+documents.uid+"/"+documents.passport+"'>查看</a>");
+                            }
+                        }
+
+                        if (documents.visa){
+                            if (documents.visa.match(/jpg|gif|png|jpeg/i)){
+                                $(".visa-content").append("<img src='/users/"+documents.uid+"/"+documents.visa+"'/>");
+                            }else{
+                                $(".visa-content").append("<a class='btn btn-link' href='/users/"+documents.uid+"/"+documents.visa+"'>查看</a>");
+                            }
+                        }
+
+                        if (documents.tax){
+                            if (documents.tax.match(/jpg|gif|png|jpeg/i)){
+                                $(".tax-content").append("<img src='/users/"+documents.uid+"/"+documents.tax+"'/>");
+                            }else{
+                                $(".tax-content").append("<a class='btn btn-link' href='/users/"+documents.uid+"/"+documents.tax+"'>查看</a>");
+                            }
+                        }
+
+                        if (documents.payRoll){
+                            if (documents.payRoll.match(/jpg|gif|png|jpeg/i)){
+                                $(".payRoll-content").append("<img src='/users/"+documents.uid+"/"+documents.payRoll+"'/>");
+                            }else{
+                                $(".payRoll-content").append("<a class='btn btn-link' href='/users/"+documents.uid+"/"+documents.payRoll+"'>查看</a>");
+                            }
+                        }
+
+                        if (documents.grantiepayRoll){
+                            if (documents.grantiepayRoll.match(/jpg|gif|png|jpeg/i)){
+                                $(".grantiepayRoll-content").append("<img src='/users/"+documents.uid+"/"+documents.grantiepayRoll+"'/>");
+                            }else{
+                                $(".grantiepayRoll-content").append("<a class='btn btn-link' href='/users/"+documents.uid+"/"+documents.grantiepayRoll+"'>查看</a>");
+                            }
+                        }
+
+                        if (documents.grantieVisa){
+                            if (documents.grantieVisa.match(/jpg|gif|png|jpeg/i)){
+                                $(".grantieVisa-content").append("<img src='/users/"+documents.uid+"/"+documents.grantieVisa+"'/>");
+                            }else{
+                                $(".grantieVisa-content").append("<a class='btn btn-link' href='/users/"+documents.uid+"/"+documents.grantieVisa+"'>查看</a>");
+                            }
+                        }
+
+                        if (documents.certifcation){
+                            if (documents.certifcation.match(/jpg|gif|png|jpeg/i)){
+                                $(".certifcation-content").append("<img src='/users/"+documents.uid+"/"+documents.certifcation+"'/>");
+                            }else{
+                                $(".certifcation-content").append("<a class='btn btn-link' href='/users/"+documents.uid+"/"+documents.certifcation+"'>查看</a>");
+                            }
+                        }
+
+                    }
+                }
+            });
+
+            $("html").on("click",".btn-detail",function () {
+                let href = $(this).attr("data-href");
+                window.open(href);
+            });
+
+            $(".upload-file").click(function () {
+                let fileType = $(this).attr("data-type");
+                $("#"+fileType).click();
+            });
+        });
+
+    </script>
+    <style>
+        .elements img{
+            width: 45%;
+            object-fit: cover;
+        }
+    </style>
+</div>
+</html>

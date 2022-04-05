@@ -1,0 +1,133 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/bussiness/join-us.css}" />
+    <div class="join-us-div">
+        <section class="top-bar-div">
+            <div><img th:src="@{/img/bussiness/student-3.jpg}" /></div>
+            <div class="description">
+                学生创业：在校学生，在不转身份(自由职业，工签)的情况下，可以合法注册为 autoentreprneur(<a href="www.autoentrepreneur.urssaf.fr">www.autoentrepreneur.urssaf.fr</a>),从事经营活动，比如成为我们平台的轻加盟商或房管(管理别人的房源)。
+            </div>
+        </section>
+        <section class="section-item">
+            <div class="section-item-img"><img th:src="@{/img/bussiness/student-2.jpg}"/></div>
+            <div class="section-item-detail">
+                <div class="form-group "><h3>优势：</h3></div>
+                <div class="form-group">
+                    <label>A)</label> 每三个月，自己网上报一次营业额，无需会计，交Charges sociaux，0收入，0报，0负担。
+                </div>
+                <div class="form-group">
+                    <label>B)</label> 报营业额后，就自动上了法国的社保(跟学生社保不冲突)，同时你报的收入会计入你的退休金，比别人更早退休。
+                </div>
+                <div class="form-group">
+                    <label>C)</label> 当你毕业后，要转身份(自由职业，工签)，可以100%转成功，因为你有财务报表，证明你的成功经验。
+                </div>
+                <div class="form-group">
+                    <label>D)</label> 当你有3年的财务报表后，你只要身份转成功，立马就可以申请买房贷款(学生居留禁止贷款)，比别人早3年当房东。
+                </div>
+                <div class="form-group">
+                    <label>E)</label> 如有疫情，只要报了营业额，在满足条件后，就可以申请补助金。
+                </div>
+                <div class="form-group">
+                    <label>F)</label> 赶快加入我们吧，微信1：haiwaihuangdi，微信2：huangdihaiwai。我们提供专业指导。
+                </div>
+            </div>
+        </section>
+        <section class="section-item">
+            <div class="section-item-detail">
+                <ul>
+                    <li class="form-group">
+                        La santé : maladie, maternité, indemnités journalières (sauf pour les professions libérales relevant de la Cipav qui ne bénéficient pas des indemnités journalières) ;
+                    </li>
+                    <li class="form-group">
+                        Les allocations familiales ;
+                    </li>
+                    <li class="form-group">
+                        La retraite (régime de base et complémentaire obligatoire) ;
+                    </li>
+                    <li class="form-group">
+                        La prévoyance (invalidité, décès).
+                    </li>
+                </ul>
+            </div>
+            <div class="section-item-img"><img th:src="@{/img/bussiness/student-4.jpg}"/></div>
+        </section>
+
+        <section class="section-item">
+            <div class="section-item-img"><img th:src="@{/img/bussiness/student-1.png}"/></div>
+            <div class="section-item-detail">
+                <form method="post" action="/bussiness/student/entreship" id="apply">
+                    <div class="form-group section-item-title"><h3>现在申请</h3></div>
+                    <div class="form-group">
+                        <label>姓</label>
+                        <div>
+                            <input name="nom" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>名</label>
+                        <div>
+                            <input name="prenom" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>性别</label>
+                        <div>
+                            <select name="sex" class="form-control">
+                                <option value="0">男</option>
+                                <option value="1">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>电话</label>
+                        <div>
+                            <input name="telephone" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>邮箱</label>
+                        <div>
+                            <input name="email" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>微信</label>
+                        <div>
+                            <input name="wechat" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group button-group"><button class="btn btn-success" type="button">提交</button></div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <script th:if="${success==1}">
+        $(function () {
+            alert("你的信息已经成功提交");
+        });
+    </script>
+    <script>
+        $(function () {
+            $(".btn-success").click(function () {
+                let nom = $("input[name=nom]").val();
+                let prenom = $("input[name=prenom]").val();
+                let telephone = $("input[name=telephone]").val();
+                let email = $("input[name=email]").val();
+                let wechat = $("input[name=wechat]").val();
+                if (!telephone&&!email&&!wechat){
+                    alert("至少填写一个联系方式！");
+                    return;
+                }
+                if (!nom&&!prenom){
+                    alert("姓名不能为空！");
+                    return;
+                }
+                $("#apply").submit();
+            });
+        });
+    </script>
+</div>
+</html>

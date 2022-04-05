@@ -1,0 +1,537 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <script src="https://cdn.tiny.cloud/1/ccdalwh299ar3x26hxudobwbjcl2atcgo4reojd7rts3h6d2/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <div class="lists-div">
+        <div class="email-div">
+            <form method="post" id="post-article">
+                <div class="form-group">
+                    <label>发送</label>
+                    <div>
+                        <div class="form-control users" id="users">请选择用户</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>主题</label>
+                    <div>
+                        <input name="subject" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <textarea id="recrut" name="description"></textarea>
+                </div>
+                <div class="form-group button-group">
+                    <button class="btn btn-success btn-submit" type="button">确定</button>
+                </div>
+            </form>
+        </div>
+        <div class="email-lists">
+            <div>
+                <div class="dropdown-toggle email-item" data-href="/admin/user/email" data-id="0">租客</div>
+                <div class="user-scroll email-scroll" data-id="0">
+                    <div class="email-option">
+                        <span data-id="0" data-option="1">全选租客</span>
+                        <span data-id="0" data-option="0">取消全选</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="dropdown-toggle email-item" data-href="/admin/partner/email" data-id="1">业主</div>
+                <div class="partner-scroll email-scroll" data-id="1">
+                    <div class="email-option">
+                        <span data-id="1" data-option="1">全选业主</span>
+                        <span data-id="1" data-option="0">取消全选</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="dropdown-toggle email-item" data-href="/admin/apply/email" data-id="2">加盟</div>
+                <div class="apply-scroll email-scroll" data-id="2">
+                    <div class="email-option">
+                        <span data-id="2" data-option="1">全选加盟</span>
+                        <span data-id="2" data-option="0">取消全选</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="dropdown-toggle email-item" data-href="/admin/cobber/email" data-id="3">合作商</div>
+                <div class="cobber-scroll email-scroll" data-id="3">
+                    <div class="email-option">
+                        <span data-id="3" data-option="1">全选合作商</span>
+                        <span data-id="3" data-option="0">取消全选</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="dropdown-toggle email-item" data-href="/admin/estimation/email" data-id="4">估价</div>
+                <div class="estimation-scroll email-scroll" data-id="4">
+                    <div class="email-option">
+                        <span data-id="4" data-option="1">全选估价</span>
+                        <span data-id="4" data-option="0">取消全选</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        tinymce.init({
+            selector: '#recrut',//绑定渲染区
+            height: 600,
+            plugins: 'paste importcss code table advlist fullscreen imagetools  textcolor colorpicker hr  autolink link image lists preview media wordcount',
+            toolbar: 'styleselect |  formatselect | fontsizeselect | forecolor backcolor | bold italic underline strikethrough | image  media | table | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | preview removeformat  hr | paste code  link | undo redo | fullscreen',
+            skin: 'oxide',
+            language: 'zh_CN',//汉化
+            convert_urls: false,
+            // relative_urls : true,
+            images_upload_url: '/tmmedia/upload',//图片上传地址
+            images_upload_credentials: true,
+            image_dimensions: false,
+            image_class_list: [
+                {title: '无', value: ''},
+                {title: '预览', value: 'preview'},
+            ],
+            images_upload_handler:function(blobInfo, success, failure){
+                let file = blobInfo.blob();
+                if (file){
+                    compressImage(file,function (successFile) {
+                        let xhr, formData;
+                        xhr = new XMLHttpRequest();
+                        xhr.open('POST', '/tmmedia/upload');//自定义文件上传
+                        xhr.withCredentials = true;
+                        xhr.upload.onprogress = function (e) {
+                            // 进度(e.loaded / e.total * 100)
+                        };
+                        xhr.onerror = function () {
+                            console.log(xhr.status);
+                            return;
+                        };
+                        xhr.onload = function () {
+                            let json;
+
+                            if (xhr.status < 200 || xhr.status >= 300) {
+                                console.log('HTTP 错误: ' + xhr.status);
+                                return;
+                            }
+                            json = JSON.parse(xhr.responseText);
+                            // console.log(json.location);
+                            success(json.location);
+                        };
+                        formData = new FormData();
+                        //假设接口接收参数为file,值为选中的文件
+                        formData.append('file', successFile,blobInfo.filename());
+                        //正式使用将下面被注释的内容恢复
+                        xhr.send(formData);
+                    },function (error){
+                        failure(error);
+                        console.error(error);
+                    });
+                }
+
+
+            },
+            // images_upload_base_path: '/',
+            forced_root_block: 'p',
+            force_p_newlines: true,
+            importcss_append: true,
+            content_style: `
+    *                         { padding:0; margin:0; }
+    html, body                { height:100%; }
+    img                       { max-width:100%; display:block;height:auto; }
+    a                         { text-decoration: none; }
+    iframe                    { width: 100%; }
+    p                         { line-height:1.6; margin: 0px; }
+    table                     { word-wrap:break-word; word-break:break-all; max-width:100%; border:none; border-color:#999; }
+    .mce-object-iframe        { width:100%; box-sizing:border-box; margin:0; padding:0; }
+    ul,ol                     { list-style-position:inside; }
+  `,
+            insert_button_items: 'image link | inserttable',
+            // CONFIG: Paste
+            paste_retain_style_properties: 'all',
+            paste_word_valid_elements: '*[*]',        // word需要它
+            paste_data_images: true,                  // 粘贴的同时能把内容里的图片自动上传
+            paste_convert_word_fake_lists: false,     // 插入word文档需要该属性
+            paste_webkit_styles: 'all',
+            paste_merge_formats: true,
+            nonbreaking_force_tab: false,
+            paste_auto_cleanup_on_paste: false,
+
+            // CONFIG: Font
+            fontsize_formats: '10px 11px 12px 14px 16px 18px 20px 24px',
+
+            // CONFIG: StyleSelect
+            style_formats: [
+                {
+                    title: '首行缩进',
+                    block: 'p',
+                    styles: {'text-indent': '2em'}
+                },
+                {
+                    title: '行高',
+                    items: [
+                        {title: '1', styles: {'line-height': '1'}, inline: 'span'},
+                        {title: '1.5', styles: {'line-height': '1.5'}, inline: 'span'},
+                        {title: '2', styles: {'line-height': '2'}, inline: 'span'},
+                        {title: '2.5', styles: {'line-height': '2.5'}, inline: 'span'},
+                        {title: '3', styles: {'line-height': '3'}, inline: 'span'}
+                    ]
+                }
+            ],
+            // Tab
+            tabfocus_elements: ':prev,:next',
+            object_resizing: true,
+
+            // Image
+            imagetools_toolbar: 'rotateleft rotateright | flipv fliph | editimage imageoptions',
+            file_picker_types: 'media',
+            media_live_embeds: true,
+            // //be used to add custom file picker to those dialogs that have it.
+            // file_picker_callback: function (cb, value, meta) {
+            //     return;
+            // }
+        });
+
+
+        function caculateSize(file,canvas,src,quality) {
+            quality *= 0.8
+            let base64 = canvas.toDataURL('image/jpeg',quality);
+            let size = ((base64.length/1024).toFixed(2)/(src.length/1024).toFixed(2)).toFixed(2)*file.size;
+            if (size/(1000*1000)>=1){
+                return caculateSize(file,canvas,src,quality);
+            }
+            return quality;
+        }
+
+        function compressImage(file,success,error){
+            let name = file.name;
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = e =>{
+                let src = e.target.result;
+                let img = new Image();
+                img.src = src;
+                img.onload = e =>{
+                    let w = img.width;
+                    let h = img.height;
+
+                    let canvas = document.createElement('canvas');
+                    let ctx = canvas.getContext('2d');
+
+                    let anw = document.createAttribute('width');
+                    let anh = document.createAttribute('height');
+                    anh.nodeValue = h;
+                    anw.nodeValue = w;
+                    canvas.setAttributeNode(anw);
+                    canvas.setAttributeNode(anh);
+
+                    ctx.fillStyle = "#fff";
+                    ctx.drawImage(img,0,0,w,h);
+
+                    let quality = caculateSize(file,canvas,src,1);
+
+                    let base64 = canvas.toDataURL('image/jpeg',quality);
+
+                    let bytes = window.atob(base64.split(',')[1]);
+
+                    let ab  = new ArrayBuffer(bytes.length);
+                    let ia = new Uint8Array(ab);
+
+                    for (let i=0;i<bytes.length;i++){
+                        ia[i] = bytes.charCodeAt(i);
+                    }
+                    file = new Blob([ab],{type:'image/jpeg'});
+                    file.fileName = name;
+                    file.lastModifiedDate = new Date();
+                    success(file);
+                }
+                img.onerror = e =>{
+                    error(e);
+                }
+            }
+            reader.onerror = e =>{
+                error(e);
+            }
+        }
+
+        $(".btn-submit").click(function () {
+            let dataArray = $("#post-article").serializeArray();
+            let dataParams = {};
+            for (let i in dataArray){
+                dataParams[dataArray[i].name] = dataArray[i].value;
+            }
+
+            dataParams["description"] = tinymce.activeEditor.getContent();
+
+            dataParams["users"] = JSON.stringify(emails);
+            if (emails.length>30){
+                alert("选择的用户过多，会耗时很长，请耐心等待返回结果");
+            }
+            console.log(dataParams);
+            $.post("/admin/send/email/data",dataParams,function (data) {
+                console.log(data);
+                if(data.status==1){
+                    alert("发送成功");
+                }else{
+                    alert("失败");
+                }
+            });
+        });
+
+        var dataEmails = [];
+
+
+        $(".email-item").click(function () {
+            let href = $(this).attr("data-href");
+            let id = $(this).attr("data-id");
+            if ($(this).hasClass("active")){
+                $(".email-scroll").each(function (key,item) {
+                    let sid = $(item).attr("data-id");
+                    if (id==sid){
+                        $(item).toggle();
+                    }
+                });
+                return;
+            }
+            $(".email-item").each(function (key,item) {
+                if ($(item).attr("data-id")==id){
+                    $(item).addClass("active");
+                }else{
+                    $(item).removeClass("active");
+                }
+            });
+            if(dataEmails[id]){
+                $(".email-scroll").each(function (key,item) {
+                    let sid = $(item).attr("data-id");
+                    if (id==sid){
+                        $(item).show();
+                    }else{
+                        $(item).hide();
+                    }
+                });
+            }else{
+                $.get(href,function (data) {
+                    if (data.status==1){
+                        switch (parseInt(id)){
+                            case 0:
+                                dataEmails[id] = data.users;
+                                console.log(data.users);
+                                break;
+                            case 1:
+                                dataEmails[id] = data.partners;
+                                break;
+                            case 2:
+                                dataEmails[id] = data.applys;
+                                break;
+                            case 3:
+                                dataEmails[id] = data.cobbers;
+                                break;
+                            case 4:
+                                dataEmails[id] = data.estimates;
+                                break;
+                        }
+                    }
+
+                    let divItems = "<div class='email-item-content'>";
+                    for (let i in dataEmails[id]){
+                        if (dataEmails[id][i].email){
+                            divItems += "<div class='email-item-box'>"
+                            divItems += "   <div><input data-id='"+id+"' data-i='"+i+"'  type='checkbox'/>"+dataEmails[id][i].nom+" , "+dataEmails[id][i].prenom+"</div>";
+                            divItems += "   <div>"+dataEmails[id][i].email+"</div>";
+                            divItems += "</div>";
+                        }
+                    }
+                    divItems += "</div>"
+
+                    $(".email-scroll").each(function (key,item) {
+                        let sid = $(item).attr("data-id");
+                        if (id==sid){
+                            $(item).show();
+                            $(item).append(divItems);
+                        }else{
+                            $(item).hide();
+                        }
+                    });
+
+                });
+            }
+        });
+
+        var emails = [];
+
+        $(".email-scroll").on("click",".email-item-box",function () {
+            let input = $(this).find("input");
+            let id = input.attr("data-id");
+            let i = input.attr("data-i");
+            let item = dataEmails[id][parseInt(i)];
+            if (input.is(':checked')){
+                input.removeAttr("checked");
+                for (let j in emails){
+                    if (emails[j]==item.email){
+                        delete emails[j];
+                        break;
+                    }
+                }
+            }else{
+                input.attr("checked","checked");
+                let check = false;
+                for (let j in emails){
+                    if (emails[j]==item.email){
+                        check = true;
+                        break;
+                    }
+                }
+                if (!check){
+                    emails.push(item.email);
+                }
+            }
+            emails = emails.filter(res=>{return res!="undefined"})
+
+            // console.log(emails);
+            $("#users").html("总共选择了："+emails.length+" 个用户");
+
+        });
+
+        $(".email-option").on("click","span",function () {
+            let id = $(this).attr("data-id");
+            let option = $(this).attr("data-option");
+
+            $(this).parent().find("span").each(function (key,item) {
+                if ($(item).attr("data-option")==option){
+                    $(item).addClass("active");
+                }else{
+                    $(item).removeClass("active");
+                }
+            });
+
+            $(this).parent().parent().find("input").each(function (key,item) {
+                let sid = $(item).attr("data-id");
+                let i = $(item).attr("data-i");
+                let emailItem = dataEmails[sid][parseInt(i)];
+                if (parseInt(option)==1){
+                    $(item).attr("checked","checked");
+                    let check = false;
+                    for (let j in emails){
+                        if (emails[j]==emailItem.email){
+                            check = true;
+                            break;
+                        }
+                    }
+                    if (!check){
+                        emails.push(emailItem.email);
+                    }
+                }else{
+                    $(item).removeAttr("checked");
+                    for (let j in emails){
+                        if (emails[j]==emailItem.email){
+                            delete emails[j];
+                            break;
+                        }
+                    }
+                }
+                emails = emails.filter(res=>{return res!="undefined"})
+                // console.log(emails);
+                $("#users").html("总共选择了："+emails.length+" 个用户");
+            });
+        });
+
+
+    </script>
+    <style>
+
+        .lists-div{
+            width: 100vw;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .email-div{
+            width: 73vw;
+            background-color: white;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+
+        }
+
+        .email-lists{
+            padding: 30px;
+            background-color: white;
+            width: 25vw;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .button-group button{
+            width:100%;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+        .email-item{
+            padding: 10px;
+            background-color: whitesmoke;
+            cursor: pointer;
+            box-shadow: 0 3px 3px rgba(0,0,0,0.3);
+            -moz-border-radius-topright: 5px;
+            border-top-left-radius: 5px;
+            -moz-border-radius-topleft: 5px;
+            border-top-right-radius: 5px;
+            margin-top: 3px;
+            text-align: center;
+        }
+
+        .email-lists .active,.email-item:hover{
+            background-color: #4d9200;
+            color: white;
+        }
+
+        .email-item-content{
+            border-right: 1px solid whitesmoke;
+            border-left: 1px solid whitesmoke;
+            border-bottom: 1px solid whitesmoke;
+            overflow: hidden;
+            font-size: 12px;
+        }
+
+        .email-item-box{
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .email-item-box:hover{
+            background-color: #19AAD8;
+            color: white;
+        }
+
+        .email-item-box input{
+            margin-right: 20px;
+        }
+
+        .email-option{
+            margin-top: 20px;
+        }
+
+        .email-option span{
+            display: inline-block;
+            padding: 5px;
+            background-color: whitesmoke;
+            border-radius: 5px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .email-option span:hover,
+        .email-option .active{
+            background-color: #0f6674;
+            color: white;
+        }
+
+        .email-scroll{
+            display: none;
+        }
+
+    </style>
+</div>
+</html>

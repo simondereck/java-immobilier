@@ -1,0 +1,130 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <div class="create-admin-div">
+        <div class="admin-create">
+            <div class="create-admin-form">
+                <view th:if="${message}" th:remove="tag">
+                    <div class="message-error" th:text="${message}"></div>
+                </view>
+                <div class="create-title form-group"><h3>创建学生公寓账号</h3></div>
+                <form class="" method="post" th:action="@{/admin/residence/create}" id="create-admin-form">
+                    <div class="form-group pays-set">
+
+                    </div>
+                    <div class="form-group">
+                        <label for="prenom" class="control-label">姓：</label>
+                        <div>
+                            <input type="text" class="form-control" name="prenom"  id="prenom" placeholder="姓"/>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="nom" class="control-label">名：</label>
+                        <div>
+                            <input type="text" class="form-control" name="nom"  id="nom" placeholder="姓"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="sex">性别</label>
+                        <div>
+                            <select name="sex" id="sex" class="form-control">
+                                <option value="0">男</option>
+                                <option value="1">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="control-label">邮箱：</label>
+                        <div>
+                            <input type="text" class="form-control" name="email"  id="email" placeholder="Email"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="telephone" class="control-label">电话：</label>
+                        <div>
+                            <input type="text" class="form-control" name="telephone"  id="telephone" placeholder="Telephone"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="control-label">密码：</label>
+                        <div>
+                            <input type="text" class="form-control" name="password"  id="password" placeholder="密码"/>
+                        </div>
+                    </div>
+                    <div class="form-group button-group">
+                        <button class="btn btn-success">创建</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        $(function () {
+            $(".btn-create").click(function () {
+                let dataArray = $("#create-admin-form").serializeArray();
+                console.log(dataArray);
+                let params = {};
+                for(let i in dataArray){
+                    params[dataArray[i].name] = dataArray[i].value;
+                }
+                $("#create-admin-form").submit();
+            });
+
+
+            $.get("/data/pays",function (data) {
+                if (data){
+                    let dataString  = '<label for="pays" class="control-label">国籍</label>';
+                    dataString += '<div><select name="pays" id="pays" class="form-control">';
+                    data.forEach(function (item,key) {
+                        dataString += '<option value="'+item.id+'">'+item.name+'</option>';
+                    })
+                    dataString += '</select></div>';
+                    $(".pays-set").html(dataString);
+                }
+            });
+        });
+
+    </script>
+    <style>
+        body{
+            overflow-y: hidden;
+        }
+
+        .create-title{
+            text-align: center;
+        }
+
+        .admin-create{
+            display: flex;
+        }
+        .create-admin-form{
+            width: 60vw;
+            padding: 50px;
+            height: calc( 100vh - 72px );
+            overflow-y: scroll;
+            margin: auto;
+            background-color: white;
+        }
+
+        .button-group{
+            text-align: right;
+        }
+
+        footer{
+            display: none;
+        }
+
+        .message-error{
+            padding: 20px;
+            border-radius: 5px;
+            background-color: rosybrown;
+        }
+    </style>
+</div>
+</html>

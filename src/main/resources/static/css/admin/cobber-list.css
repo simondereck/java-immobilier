@@ -1,0 +1,71 @@
+.cobber-div{
+    width: 90%;
+    height: 100%;
+    margin: auto;
+    background-color: white;
+    padding: 20px;
+}
+
+.admin-cobber-title{
+    text-align: center;
+}
+
+.pages-set{
+    text-align: center;
+    display: flex;
+    margin-top: 20px;
+}
+
+.pagination{
+    margin: auto;
+}
+
+
+td,th{
+    padding: 10px;
+}
+
+th{
+    background: #0c5460;
+    color: white;
+    text-align: center;
+}
+
+td:nth-child(odd){
+    background-color: #80bdff;
+    text-align: center;
+}
+td:nth-child(even){
+    background-color: whitesmoke;
+}
+
+tr:nth-child(odd){
+    border: 1px solid lightgray;
+}
+tr:nth-child(even){
+    border-right: 1px solid lightgray;
+    border-left: 1px solid lightgray;
+}
+
+
+
+
+tr .red>div,
+tr .orange>div,
+tr .green>div{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+tr .red>div{
+    background-color: darkred;
+}
+
+tr .green>div{
+    background-color: #1c7430;
+}
+
+tr .orange>div{
+    background-color: yellow;
+}

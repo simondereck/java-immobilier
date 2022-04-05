@@ -1,0 +1,536 @@
+.bussiness-div{
+    width: 100%;
+    height: 100%;
+}
+
+.bussiness-top{
+    width: 100%;
+    height: 60vh;
+    position: relative;
+    background: url("/img/bussiness/bussiness-bg-1.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+.bussiness-top-background{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.4);
+}
+
+
+
+.search-box-right{
+    padding: 20px;
+    background-color: #0f6674;
+    color: white;
+    box-shadow: 5px 0px 5px rgba(0,0,0,0.6);
+    z-index: 300;
+}
+
+.search-box-left img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.button-groups{
+    margin: 20px auto auto;
+    width: fit-content;
+}
+
+.button-type{
+    display: inline-table;
+    height: 30px;
+    line-height: 30px;
+    width: 100px;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    border: 1px solid white;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+}
+
+.button-active{
+    background-color:black;
+    border: 1px solid transparent;
+}
+
+.button-type:hover{
+    background-color: black;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+}
+
+.search-box-input{
+    margin:15px auto 15px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+    color: black;
+    width: fit-content;
+}
+
+.button-group{
+    text-align: right;
+}
+
+.button-group-center{
+    text-align: center;
+}
+
+.button-group-center button{
+    width: 70%;
+}
+
+.double-elements{
+    display: flex;
+}
+
+
+.search-tilte{
+    text-align: center;
+}
+
+.platform-house-scroll,.buy-house-scroll{
+    display: none;
+}
+
+
+.house-scroll,.platform-house-scroll,.buy-house-scroll{
+    background-color: whitesmoke;
+    padding: 20px;
+}
+
+.bussiness-calculator-title{
+    color: white;
+    text-align: center;
+}
+
+@media screen and (max-width: 500px){
+
+    .bussiness-advance{
+        padding: 20px;
+        background-color: whitesmoke;
+    }
+
+    .bussiness-advance-title{
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0px 5px 5px rgba(0,0,0,0.4);
+        position: relative;
+        width: fit-content;
+        margin:auto;
+        top: -70px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+
+
+    .advance-item{
+        width: 100%;
+        text-align: center;
+        cursor: pointer;
+        padding: 20px;
+        background-color: white;
+    }
+
+    .advance-item img{
+        width: 60px;
+        height: 60px;
+        margin-right: 20px;
+    }
+
+
+    .house-div-title{
+        display: flex;
+        width: 90vw;
+        margin: 10px auto 10px;
+        justify-content: space-between;
+    }
+
+    .house-div-title-item{
+        width: 30%;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 15px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .house-div-title-item:hover{
+        background-color: #1c7430;
+        color: white;
+        box-shadow: 0 5px 5px rgba(0,0,0,0.4);
+    }
+
+    .house-active{
+        background-color: #1c7430;
+        color: white;
+    }
+
+
+    .bussiness-top-estimer{
+        position: absolute;
+        width: 100vw;
+        height: 60vh;
+        top:0;
+        left: 0;
+        padding: 40px;
+    }
+
+    .bussiness-top-estimer:hover h1{
+        color: white;
+        cursor: pointer;
+    }
+
+
+    .bussiness-top-estimer-div{
+        text-align: right;
+    }
+
+    .bussiness-top-estimer input{
+        max-width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .bussiness-top-annocne{
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        top: 40vh;
+    }
+
+
+    .bussiness-top-map{
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        top: 30vh;
+    }
+
+    .location-detail-item{
+        width: 100%;
+    }
+
+    .location-detail-item img{
+        width: 100%;
+        height: 25vh;
+        object-fit: cover;
+    }
+
+    .location-detail-item-desc{
+        padding: 20px;
+        min-height: 20vh;
+        background-color: white;
+    }
+
+
+    .buy-item{
+        background-color: white;
+        width: 100%;
+        padding: 20px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .bussiness-calculator-content{
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        padding: 20px;
+    }
+
+    .bussiness-calculator-div{
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 5px 5px rgba(0,0,0,1);
+        margin: 30px auto 30px;
+        max-width: 700px;
+    }
+
+
+    .search-box{
+        width: 100%;
+        /*height: 60vh;*/
+        /*display: flex;*/
+    }
+
+    /*.search-box-right,.search-box-left{*/
+    /*    width: 50%;*/
+    /*}*/
+
+}
+
+
+
+@media screen and (min-width: 501px){
+
+    .bussiness-advance{
+        padding: 20px;
+        background-color: whitesmoke;
+        padding-bottom: 50px;
+    }
+
+    .bussiness-advance-title{
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0px 5px 5px rgba(0,0,0,0.4);
+        position: relative;
+        width: fit-content;
+        margin:auto;
+        top: -70px;
+        min-width: 500px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .bussiness-advance-items{
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .advance-item{
+        width: 30%;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .advance-item img{
+        width: 60px;
+        height: 60px;
+        margin-right: 20px;
+    }
+
+
+    .house-div-title{
+        display: flex;
+        width: fit-content;
+        margin: 50px auto 50px;
+    }
+
+    .house-div-title-item{
+        width: 180px;
+        height: 50px;
+        line-height: 50px;
+        border-radius: 25px;
+        margin-right: 25px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .house-div-title-item:hover{
+        background-color: #1c7430;
+        color: white;
+        box-shadow: 0 5px 5px rgba(0,0,0,0.4);
+    }
+
+    .house-active{
+        background-color: #1c7430;
+        color: white;
+    }
+
+
+    .bussiness-calculator{
+        background: url("/img/bussiness/cacu.jpg");
+        background-repeat: no-repeat;
+        width: 100%;
+    }
+
+
+    .location-detail-item{
+        display: inline-table;
+        width: 20%;
+        margin-left: 4%;
+        cursor: pointer;
+    }
+
+    .location-detail-item img{
+        width: 100%;
+        height: 25vh;
+        object-fit: cover;
+    }
+
+    .location-detail-item-desc{
+        padding: 20px;
+        min-height: 20vh;
+        background-color: white;
+    }
+
+    .location-detail-item:hover{
+        box-shadow: 0 10px 10px rgba(0,0,0,0.3);
+    }
+
+
+    .buy-item{
+        background-color: white;
+        padding: 20px;
+        cursor: pointer;
+        display: inline-table;
+        width: 20%;
+        margin-left: 4%;
+    }
+
+
+    .buy-item:hover{
+        box-shadow: 0 10px 10px rgba(0,0,0,0.3);
+    }
+
+
+    .bussiness-top-estimer{
+        position: absolute;
+        width: 50vw;
+        top:15vh;
+        left: 5vw;
+        padding: 40px;
+    }
+
+
+    .bussiness-top-estimer h1{
+        color: rgba(255,255,255,0.6);
+    }
+
+    .bussiness-top-estimer-div{
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .bussiness-top-estimer input{
+        max-width: 80%;
+    }
+
+    .bussiness-top-annocne{
+        position: absolute;
+        top: 40vh;
+        right: 10vw;
+    }
+
+
+    .bussiness-top-map{
+        position: absolute;
+        top: 20vh;
+        right: 10vw;
+    }
+
+    .bussiness-calculator-content{
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        padding: 50px;
+    }
+
+    .bussiness-calculator-div{
+        background-color: white;
+        padding: 50px;
+        border-radius: 5px;
+        box-shadow: 0 5px 5px rgba(0,0,0,1);
+        width: 70%;
+        margin: 30px auto 30px;
+        max-width: 700px;
+    }
+
+
+    .search-box{
+        width: 100%;
+        height: 60vh;
+        display: flex;
+    }
+
+    .search-box-right,.search-box-left{
+        width: 50%;
+    }
+
+}
+
+
+
+.bussiness-calculator-compare{
+    display: flex;
+    justify-content: space-around;
+}
+.calcu-title{
+    text-align: center;
+}
+
+.calcu-progress{
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.calcu-progress input{
+    width: 70%;
+}
+
+.calcu-progress label{
+    color: #0f6674;
+    font-size: 14px;
+}
+
+.bussiness-calcu-footer-title{
+    color: white;
+    text-align: right;
+}
+
+.calcu-gar-div{
+    font-size: 20px;
+    text-align: center;
+}
+
+#calcu-gar{
+    color: #b21f2d;
+    font-size: 24px;
+}
+
+.signup-div{
+    padding: 80px;
+    font-size: 40px;
+    text-align: center;
+    background:url("/img/bussiness/login.jpg");
+}
+.location-detail-item-desc{
+    position: relative;
+}
+
+.location-detail-item{
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.buy-item{
+    margin-bottom: 20px;
+}
+
+.cover{
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 25vh;
+}
+.location-item-label{
+    transform: rotate(-45deg);
+    background-color: #0f74a8;
+    padding: 5px;
+    text-align: center;
+    color: white;
+    position: absolute;
+    width: 100%;
+    top: 10%;
+    left: -30%;
+}
+
+.price{
+    font-size: 18px;
+    color: #0f6674;
+    font-weight: bold;
+}
+

@@ -1,0 +1,111 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <link th:href="@{/js/cropperjs/dist/cropper.css}" rel="stylesheet"/>
+    <script th:src="@{/js/cropperjs/dist/cropper.js}"></script>
+    <script th:src="@{/js/partner/partner-admin-set.js}"></script>
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+            <div class="user-info" th:data-id="${user.id}">
+                <div class="user-info-title"><h3>设置</h3></div>
+                <form method="post" th:action="@{/partner/admin/set}">
+                    <div class="form-group">
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-success btn-set-update">更新</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>头像</label>
+                        <div>
+                            <div class="form-group">
+                                <view th:if="${user.cover}" th:remove="tag">
+                                    <img id="head-img" th:src="@{/partners/}+${user.id}+@{/}+${user.cover}"/>
+                                    <input name="cover" id="cover" hidden="hidden" th:value="${user.cover}"/>
+                                </view>
+                                <view th:unless="${user.cover}" th:remove="tag">
+                                    <img id="head-img" />
+                                    <input name="cover" id="cover" hidden="hidden" />
+                                </view>
+                                <input type="file" accept="image/*" id="imgReader"  hidden="hidden" />
+                            </div>
+                            <button class="btn btn-success select-img" type="button" data-toggle="modal" data-target=".bd-example-modal-lg">选择头像</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="prenom" class="control-label" >姓</label>
+                        <div>
+                            <input type="text" class="form-control" name="prenom" id="prenom" th:value="${user.prenom}" placeholder="姓"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="nom" class="control-label" >名</label>
+                        <div>
+                            <input type="text" class="form-control" name="nom" id="nom" th:value="${user.nom}" placeholder="名"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="control-label" >email</label>
+                        <div>
+                            <input type="text" class="form-control" name="email" id="email" th:value="${user.email}" placeholder="邮箱"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="telephone" class="control-label" >电话</label>
+                        <div>
+                            <input type="text" class="form-control" name="telephone" id="telephone" th:value="${user.telephone}" placeholder="电话"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="control-label" >密码</label>
+                        <div>
+                            <input type="password" class="form-control" name="password" id="password" th:value="${user.password}" placeholder="密码"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="repassword" class="control-label" >确认密码</label>
+                        <div>
+                            <input type="password" class="form-control" name="repassword" id="repassword" th:value="${user.password}" placeholder="密码"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-success">更新</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="modal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="LageTitle">头像剪切</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div>
+                                    <img id="cropImg" />
+                                    <div class="previewText">裁剪预览</div>
+                                    <div class="previewBox"></div>
+                                    <div class="previewBoxRound"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                                <button type="button" class="btn btn-primary btn-upload">上传</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

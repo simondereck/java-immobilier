@@ -1,0 +1,215 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="lists-div">
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名字</th>
+                        <th>邮箱</th>
+                        <th>电话</th>
+                        <th>权限</th>
+                        <th>状态</th>
+                        <th>更新时间</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                    <tr>
+                        <form id="search-form">
+                            <th>
+                                <select class="form-control" name="id">
+                                    <option value="0">倒叙</option>
+                                    <option value="1">顺序</option>
+                                </select>
+                            </th>
+                            <th>
+                                <input name="username" class="form-control"/>
+                            </th>
+                            <th>
+                                <input name="email" class="form-control" />
+                            </th>
+                            <th>
+                                <input name="telephone" class="form-control" />
+                            </th>
+                            <th>
+                                <select class="form-control" name="permission">
+                                    <option value="0" selected>全部</option>
+                                    <option value="1">实习生</option>
+                                    <option value="2">普通管理员</option>
+                                    <option value="3">金牌管理员</option>
+                                    <option value="4">超级管理员</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select class="form-control" name="astatus">
+                                    <option value="0">屏蔽</option>
+                                    <option value="1" selected>激活</option>
+                                    <option value="2">离职</option>
+                                </select>
+                            </th>
+                            <th></th>
+                            <th></th>
+                            <th>
+                                <button type="button" class="btn btn-outline-primary btn-search">搜索</button>
+                            </th>
+                        </form>
+                    </tr>
+                </thead>
+                <tbody id="admins-body">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="page-helper"></div>
+    </div>
+    <script>
+        $(function () {
+            initPage();
+            $(".btn-search").click(function () {
+               initPage();
+            });
+            function initPage(url) {
+                let dataArray = $("#search-form").serializeArray();
+                let params = {};
+                for(let i in dataArray){
+                    if (dataArray[i].value){
+                        params[dataArray[i].name] = dataArray[i].value;
+                    }
+                }
+
+                console.log(params);
+                let urlPath = url?url:"/admin/data/employees";
+                $.post(urlPath,params,function (data) {
+                    console.log(data)
+                    if (data.status==1){
+                        let admins = data.admins;
+                        let adminDiv = "";
+                        for (let j in admins){
+                            
+                            adminDiv +=  "<tr class='admin-item'>" +
+                                "   <td>"+admins[j].id+"</td>" +
+                                "   <td>"+admins[j].username+"</td>" +
+                                "   <td>"+admins[j].email+"</td>" +
+                                "   <td>"+admins[j].telephone+"</td>";
+                            
+                            switch (admins[j].permission){
+                                case 6:
+                                    adminDiv += "<td>实习生</td>";
+                                    break;
+                                case 7:
+                                    adminDiv += "<td>普通管理员</td>";
+                                    break;
+                                case 8:
+                                    adminDiv += "<td>金牌管理员</td>";
+                                    break;
+                                case 9:
+                                    adminDiv += "<td>超级管理员</td>";
+                                    break;
+                            }
+                            
+                            switch (admins[j].astatus){
+                                case 0:
+                                    adminDiv += "<td style='background-color: gray;'>屏蔽</td>";
+                                    break;
+                                case 1:
+                                    adminDiv += "<td style='background-color: darkgreen;color: white;'>激活</td>";
+                                    break;
+                                case 2:
+                                    adminDiv += "<td style='background-color: darkred;color: white;'>离职</td>";
+                                    break;
+                            }
+
+                            adminDiv += "<td>"+admins[j].utime+"</td>";
+                            adminDiv += "<td>"+admins[j].ctime+"</td>";
+
+                            adminDiv += "<td>" +
+                                "   <a href='/admin/employe/detail/"+admins[j].id+"'>详情</a>" +
+                                "   <a href='/admin/update/"+admins[j].id+"'>更新</a>" +
+                                "   <a class='btn-link btn delete' data-href='/admin/delete/"+admins[j].id+"'>删除</a>" +
+                                "</td>";
+
+                            adminDiv += "</tr>";
+                     
+                        }
+
+                        $("#admins-body").html("");
+                        $("#admins-body").append(adminDiv);
+
+                        let helper = data.pageHelper;
+                        let helperDiv = "<div class='pages-set'>";
+                        if(helper.totalPage>0){
+                            helperDiv += "<ul class='pagination'>"
+                            for (let i in helper.pages){
+                                if (helper.pages[i].currentPage == helper.pages[i].key -1){
+                                    helperDiv += "<li  class='page-item active'><a data-href='"+helper.pages[i].url+"' class='page-link'>"+helper.pages[i].key+"</a></li>";
+                                }else{
+                                    helperDiv += "<li  class='page-item'><a data-href='"+helper.pages[i].url+"' class='page-link'>"+helper.pages[i].key+"</a></li>";
+                                }
+                            }
+                            helperDiv += "</ul>";
+                        }
+                        helperDiv += "</div>";
+                        $(".page-helper").html("");
+                        $(".page-helper").append(helperDiv);
+                    }
+                });
+            }
+            $("#admins-body").on("click",".delete",function () {
+                let href = $(this).attr("data-href");
+                $.get(href,function (data) {
+                    if (data.status==1){
+                        initPage();
+                        alert("删除成功");
+                    }
+                })
+            });
+            $(".page-helper").on("click","a",function () {
+               let href = $(this).attr("data-href");
+               initPage(href);
+            });
+        });
+    </script>
+    <style>
+
+        .lists-div{
+            margin: auto;
+            width: 90vw;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+            overflow: scroll;
+        }
+
+
+        .button-group button{
+            width:100%;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+        td,th{
+            text-align: center;
+            padding: 10px;
+            min-width: 120px;
+        }
+        thead{
+            background-color: #0c5460;
+            color: white;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: whitesmoke;
+        }
+        tbody tr:nth-child(even) {
+            background-color: lightgray;
+        }
+
+    </style>
+</div>
+</html>

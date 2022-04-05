@@ -1,0 +1,140 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link th:href="@{/css/user-needs.css}" rel="stylesheet" />
+    <script th:src="@{/js/user-needs.js}"></script>
+    <div class="signup-div">
+        <div class="steps">
+            <span id="step-1" class="step-register">注册 ></span>
+            <span id="step-2" class="step-register">个人信息 ></span>
+            <span id="step-3" class="step-register active">填写需求 ></span>
+            <span id="step-4" class="step-register">担保/提前支付 ></span>
+            <span id="step-5" class="step-register">发送需求 ></span>
+        </div>
+        <div class="signup-from">
+            <form class="form-horizontal"   th:action="@{/user/needs}"  method="post" id="user-needs">
+                <div class="step-3">
+                    <div class="signup-title"><h1>填写需求</h1></div>
+                    <br/><br/>
+                    <div class="form-group" >
+                        <label for="budget" class="control-label">预算（EUR）：</label>
+                        <div class="budget">
+                            <div class="slider-div">
+                                <label class="min-budget">0</label>
+                                <div id="slider"></div>
+                                <label class="max-budget">5000</label>
+                            </div>
+                            <input type="number" name="budget" class="form-control"  id="budget"/>
+                        </div>
+                        <text class="price-error error"></text>
+                    </div>
+                    <div class="form-group">
+                        <label for="area" class=" control-label">地段：</label>
+                        <div id="area-div">
+                            <input type="text" class="form-control search-input" name="area"  id="area" placeholder="地段"/>
+                            <input type="text" name="location" hidden="hidden" />
+                        </div>
+                        <text class="location-error error"></text>
+                    </div>
+                    <div class="form-group">
+                        <label for="entre" class="control-label" >入住日期：</label>
+                        <div >
+                            <input type="date" class="form-control datechk" name="sdate" id="entre" placeholder="入住日期"/>
+                        </div>
+                        <text class="sdate-error error"></text>
+                    </div>
+                    <div class="form-group">
+                        <label for="rtype" class="control-label" >房型：</label>
+                        <div>
+                            <select id="rtype" class="form-control" name="rtype">
+                                <view th:each="type,iter:${rtype}">
+                                    <option th:value="${iter.index}" th:text="${type}"></option>
+                                </view>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="trans">交通</label>
+                        <div>
+                            <select id="trans" class="form-control" name="trans">
+                                <view th:each="tran,iter:${trans}">
+                                    <option th:value="${iter.index}" th:text="${tran}"></option>
+                                </view>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bases">基本家具配置</label>
+                        <div id="bases">
+                            <view  th:each="base,iter:${bases}" class="base-item" th:data-id="${iter.index}">
+                                <text th:text="${base}"></text>
+                            </view>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>高级配置</label>
+                        <div>
+                            <view  th:each="imm,iter:${imms}" class="imm-item" th:data-id="${iter.index}">
+                                <text th:text="${imm}"></text>
+                            </view>
+                        </div>
+                    </div>
+                    <div class="form-group button-group">
+                        <button type="button" class="btn btn-success btn-garantie">下一步</button>
+                    </div>
+                </div>
+                <div class="step-4">
+                    <div class="signup-title"><h1>担保 / 提前付房租</h1></div>
+                    <br/><br/>
+                    <div class="form-group">
+                        <label for="garantie" class="control-label">担保：</label>
+                        <div>
+                            <select name="garantie" class="form-control" id="garantie">
+                                <option value="0">个人担保</option>
+                                <option value="1">公司或政府担保</option>
+                                <option value="2">提前给付房租</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group garantie-0">
+                        <label for="job">工作</label>
+                        <select class="form-control" name="job" id="job">
+                            <view th:each="profess,iter:${professions}" >
+                                <option th:value="${iter.index}" th:text="${profess}"></option>
+                            </view>
+                        </select>
+                        <div class="form-group">
+                            <label for="salary">收入</label>
+                            <input name="salary" id="salary" class="form-control" type="number" placeholder="收入"/>
+                        </div>
+                    </div>
+                    <div class="form-group garantie-1">
+                        <label for="document">担保文件</label>
+                        <input name="document" id="document"  placeholder="提供政府或公司文件链接" type="text" class="form-control"/>
+                    </div>
+                    <div class="form-group garantie-2">
+                        <label for="payMethod">提前付房租</label>
+                        <select name="payMethod" id="payMethod" class="form-control">
+                            <option value="0">3月一付</option>
+                            <option value="1">6月一付</option>
+                            <option value="2">一年一付</option>
+                        </select>
+                    </div>
+                    <div class="form-group button-group">
+                        <button type="button" class="btn btn-primary btn-pre">上一步</button>
+                        <button type="submit" class="btn btn-success btn-next">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</html>

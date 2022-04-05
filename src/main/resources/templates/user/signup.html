@@ -1,0 +1,241 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+    <div layout:fragment="content">
+        <link rel="stylesheet" th:href="@{/css/partner/signup.css}" />
+        <div class="signup-div">
+            <div class="steps">
+                <span id="step-1" class="step-register active">注册 ></span>
+                <span id="step-2" class=" step-register">个人信息 ></span>
+                <span id="step-3" class="step-register">填写需求 ></span>
+                <span id="step-4" class="step-register">担保/提前支付 ></span>
+                <span id="step-5" class="step-register">发送需求 </span>
+            </div>
+            <div class="signup-from">
+                <form class="form-horizontal"   th:action="@{/user/signup}"  method="post" id="signForm">
+                    <div class="step-1">
+                        <div class="signup-title"><h1>电话注册</h1></div>
+                        <br/>
+                        <div class="top-buttons-div">
+                            <button class="btn btn-info  button-telephone" type="button">电话注册</button>
+                            <button class="btn btn-light  button-email" type="button">邮箱注册</button>
+                        </div>
+                        <br/>
+
+                        <div class="form-group">
+                            <label for="telephone" class=" control-label">电话：</label>
+                            <div class="telephone-div">
+                                <select name="region" class="form-control" id="foo">
+                                    <option value="+33">+33</option>
+                                    <option value="+86">+86</option>
+                                </select>
+                                <input type="text" class="form-control" name="telephone"  id="telephone" placeholder="电话号码" th:value="${user.telephone}"/>
+                                <button type="button" class="btn btn-outline-dark get-code">获取</button>
+                            </div>
+                            <text class="telephone-error error"></text>
+                        </div>
+                        <div class="form-group">
+                            <label for="code" class="control-label" >验证码</label>
+                            <div >
+                                <input type="text" class="form-control" name="code" id="code" placeholder="Code"/>
+                            </div>
+                            <text class="code-error error"></text>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="control-label" >密码</label>
+                            <div >
+                                <input type="password" class="form-control" name="password" id="password" placeholder="Password"/>
+                            </div>
+                            <text class="password-error error"></text>
+                        </div>
+                        <div class="form-group button-group">
+                            <button type="button" class="btn btn-success btn-signup">注册</button>
+                        </div>
+                    </div>
+                    <div class="step-2">
+                        <div class="signup-title"><h1>个人信息</h1></div>
+                        <br/><br/>
+                        <div class="form-group">
+                            <label for="sex" class="control-label">性别</label>
+                            <div>
+                                <select name="sex" id="sex" class="form-control">
+                                    <option value="0">先生</option>
+                                    <option value="1">女士</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group pays-set">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="prenom" class="control-label">姓：</label>
+                            <div>
+                                <input type="text" class="form-control" name="prenom"  id="prenom" placeholder="姓" th:value="${user.prenom}"/>
+                            </div>
+                            <text class="prenom-error error"></text>
+                        </div>
+                        <div class="form-group">
+                            <label for="nom" class=" control-label">名：</label>
+                            <div >
+                                <input type="text" class="form-control" name="nom"  id="nom" placeholder="名" th:value="${user.nom}"/>
+                            </div>
+                            <text class="nom-error error"></text>
+                        </div>
+                        <div class="form-group">
+                            <label for="wechat">微信</label>
+                            <div>
+                                <input class="form-control" placeholder="微信" name="wechat" id="wechat" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="age" class="control-label">生日</label>
+                            <div>
+                                <input type="date" class="form-control datechk" name="birthday"  id="age" placeholder="Age" th:value="${user.birthday}"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="identity" class="control-label">身份</label>
+                            <div>
+                                <select name="identity" id="identity" class="form-control">
+                                    <option value="0">学生</option>
+                                    <option value="1">工作</option>
+                                    <option value="2">退休</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="salary" class="control-label">工作(选填)</label>
+                            <div>
+                                <select name="salary" id="salary" class="form-control">
+                                    <option value="0">< 600欧</option>
+                                    <option value="1">600 ~ 1000 欧</option>
+                                    <option value="2">1000 ~ 1800 欧</option>
+                                    <option value="3">1800 ~ 2500 欧</option>
+                                    <option value="4">> 2500 欧 </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="address" class="control-label">地址</label>
+                            <div>
+                                <input type="text" class="form-control" name="address"  id="address" placeholder="地址" th:value="${user.address}"/>
+                            </div>
+                        </div>
+                        <div class="form-group button-group">
+                            <button type="button" class="btn btn-success btn-next">下一步</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script>
+            $(function (){
+
+                var results;
+
+                $(".button-email").click(function () {
+                    window.location.href = "/user/signup/email";
+                });
+
+                $.get("/data/pays",function (data) {
+                    if (data){
+                        let dataString  = '<label for="pays" class="control-label">国籍</label>';
+                        dataString += '<div><select name="pays" id="pays" class="form-control">';
+                        data.forEach(function (item,key) {
+                            dataString += '<option value="'+item.id+'">'+item.name+'</option>';
+                        })
+                        dataString += '</select></div>';
+                        $(".pays-set").html(dataString);
+                    }
+                });
+
+                $("#telephone").blur(function (){
+                    let telephone = $(this).val();
+                    let data = {};
+                    data["telephone"] = telephone;
+                    $.get("/site/user/check/telephone",data,function (result){
+                        if (result.status===0){
+                            $(".telephone-error").text(result.message);
+                        }else{
+                            $(".telephone-error").text(null);
+                        }
+                    });
+                });
+
+                $(".get-code").click(function (){
+                    //get code
+                    $(this).attr("disabled","disabled");
+                    //get code
+                    // alert("get code form platform");
+                    let telephone = $("input[name=telephone]").val();
+                    // alert(telephone);
+                    let prix = $("select#foo option:checked").val();
+                    // alert(prix);
+                    let data = {};
+                    data["telephone"] = telephone;
+                    data["prix"] = prix;
+                    $.get("/site/getCode",data,function (result){
+                        results = result;
+                        $(".get-code").removeAttr("disabled");
+                    });
+                });
+
+                $(".btn-next").click(function () {
+                    let $nom = $("input[name=nom]").val();
+                    let $prenom = $("input[name=prenom]").val();
+                    if ($nom&&$prenom){
+                        $("#signForm").submit();
+                    }
+                    if (!$nom){
+                        $(".nom-error").text("名字不能为空！");
+                    }else{
+                        $(".nom-error").text("");
+                    }
+
+                    if (!$prenom){
+                        $(".prenom-error").text("姓不能为空！");
+                    }else{
+                        $(".prenom-error").text("");
+                    }
+                });
+                $(".btn-signup").click(function (){
+                    let $telephone = $("input[name=telephone]").val();
+                    let params = {};
+                    params["telephone"] = $telephone;
+                    let $code = $("input[name=code]").val();
+                    let $password = $("input[name=password]").val();
+
+                    if ($code && $password){
+                        if (results && results.code == $code){
+                            $("div[class=step-1]").toggle();
+                            $("div[class=step-2]").toggle('slow');
+                            $("#step-1").removeClass("active");
+                            $("#step-2").addClass("active");
+                        }else if ($code=="0000"){
+                            $("div[class=step-1]").toggle();
+                            $("div[class=step-2]").toggle('slow');
+                            $("#step-1").removeClass("active");
+                            $("#step-2").addClass("active");
+                        }else{
+                            alert("验证码不正确");
+                        }
+                    }
+                    if (!$code){
+                        $(".code-error").text("验证码不能为空！");
+                    }else{
+                        $(".code-error").text("");
+                    }
+
+                    if (!$password){
+                        $(".password-error").text("密码不能为空！");
+                    }else{
+                        $(".password-error").text("");
+                    }
+
+
+                });
+            });
+        </script>
+    </div>
+</html>

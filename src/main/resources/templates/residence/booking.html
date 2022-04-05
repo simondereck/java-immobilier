@@ -1,0 +1,898 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script src="https://kit.fontawesome.com/ab6cdd5d20.js" crossorigin="anonymous"></script>
+    <script th:src="@{/js/hwwd-image-display.js}"></script>
+    <link th:href="@{/css/hwwd-image-display.css}" rel="stylesheet" />
+    <div class="div-center">
+        <div class="residence-booking" th:data-id="${id}"  th:data-rid="${rid}">
+            <div class="residence-room-detail"></div>
+            <div class="residence-room-booking"></div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            var progressDiv = "<div id='hwwd-upload-progress'><progress max='100' value='0' id='hwwd-progress'>0</progress></div>";
+           let id = $(".residence-booking").attr("data-id");
+           let rid = $(".residence-booking").attr("data-rid");
+           let residence;
+           let room;
+           let partner;
+           let ville;
+           let types;
+           let user;
+           let count = 1;
+
+           $.get("/site/residence/booking/data/room/"+rid,function (data) {
+
+               if (data.status==1){
+                   residence = data.residence;
+                   room = data.room;
+                   partner = data.partner;
+                   types = data.types;
+                   ville = data.ville;
+                   user = data.user;
+
+                   if (!user){
+                       window.location.assign("/user/login");
+                       return;
+                   }
+
+                   let type = types[room.type] + " ";
+                   if (room.minSize){
+                       type += "从" + room.sizeMin + " ㎡ 到 "
+                   }
+
+                   if (room.maxSize){
+                       type += room.maxSize + " ㎡";
+                   }
+
+                   let price = "";
+                   if (room.priceMin){
+                       price += "从 "+ room.priceMin+" EURO/月 到 ";
+                   }
+
+                   if (room.priceMax){
+                       price += room.priceMax+" EURO/月 ";
+                   }
+
+
+                   let userDiv = "<div class='booking-user-items'>" +
+                                "   <div class='booking-user-item'>" +
+                                "       <div class='booking-user-title'>" +
+                                "           <div>我</div>" +
+                                "           <div class='booking-moi-editor'><i class='fas fa-edit text-secondary'></i></div>" +
+                                "       </div>" +
+                                "       <div class=''>"+user.name+" "+user.prenom+"</div>" +
+                                "       <div>"+user.telephone+"</div>" +
+                                "   </div>" +
+                                "</div>";
+
+                   let addRoomates = "<div class='booking-user-item add-roomate-item'>" +
+                                   "   <div class='booking-user-title'>" +
+                                   "       <div>添加一个新室友</div>" +
+                                   "       <div class='booking-add-roomate'><i class='fas fa-plus text-secondary'></i></div>" +
+                                   "   </div>" +
+                                   "</div>";
+
+                   let images = JSON.parse(room.imageJson);
+                   let detailDiv = "<div class='detail-div'>" +
+                       "    <div class='form-group detail-div-title'><h4>住宿详情</h4></div>" +
+                       "    <div class='form-group room-detail'>" +
+                       "        <div class='form-group room-detail-img'><img src='/partners/"+images[0]+"' /></div>" +
+                       "        <div class='form-group room-type'>" +
+                       "            <h4>"+type+"</h4>" +
+                       "        </div>" +
+                       "        <div class='form-group address'><i class='fas fa-map-marker-alt margin-right-10'></i><text>"+residence.address.toUpperCase()+", "+ville.postcode+", "+ville.name+"</text></div>" +
+                       "        <div class='form-group price text-align-right'><text>"+price+"</text></div>" +
+                       "    </div>" +
+                       "</div>";
+                   $(".residence-room-detail").append(detailDiv);
+
+                   let step2 =    " <div class='residence-booking-step-2 booking-steps' data-id='2'>" +
+                       "                <div class='form-group residence-booking-title'><h2>你们当中会有几个人入住那里？</h2></div>" +
+                       "                <div class='info-box margin-bottom-20'>住宿方该房源要求最多只能住 "+room.persons+" 个人</div>" +
+                       "                <div class='form-group apply-items'>" +
+                       "                    <div class='apply-item active' data-id='1'>" +
+                       "                        <text>👩 我会一个人</text>" +
+                       "                        <text>您正在申请您或第三方，但将独自居住在该地方。</text>" +
+                       "                    </div>" +
+                       "                    <div class='apply-item' data-id='2'>" +
+                       "                        <text>👫 我们会几个</text>" +
+                       "                        <text>您正在申请一个团体。</text>" +
+                       "                    </div>" +
+                       "                </div>"+
+                       "                <div class='box-line'></div>" +
+                       "                <div class='info-box'>如果你正在为其他人申请，请提供他的信息</div>" +
+                                        userDiv +
+                       "                <div class='form-group button-group text-align-right'>" +
+                       "                    <button class='btn btn-outline-info btn-pre' type='button'>上一步</button>" +
+                       "                    <button class='btn btn-success btn-next' type='button'>下一步</button>" +
+                       "                </div>"+
+                       "            </div>";
+
+
+                   let step3 =    " <div class='residence-booking-step-3 booking-steps' data-id='3'>" +
+                       "                <div class='form-group residence-booking-title'><h2>想从什么时候入住呢？ 📅</h2></div>" +
+                       "                <div class='form-group residence-center-item'>" +
+                       "                    <label>入住时间</label>" +
+                       "                    <div>" +
+                       "                        <input name='entree' type='date' class='form-control datechk'/>" +
+                       "                    </div>" +
+                       "                </div>" +
+                       "                <div class='info-box'>这住宿的时间从 "+room.disponibleAt+" 开始可以预定</div>" +
+                       "                <div class='form-group residence-center-item'>" +
+                       "                    <label>入住多久</label>" +
+                       "                    <div class='input-group'>" +
+                       "                        <input type='number' class='form-control duree booking-input' name='month' aria-describedby='basic-addon2' value='"+residence.duree+"'>" +
+                       "                        <div class='input-group-append'>" +
+                       "                            <span class='input-group-text' >月</span>" +
+                       "                            <button class='btn btn-info duree-add' type='button'>+</button>" +
+                       "                            <button class='btn btn-warning duree-mins' type='button'>-</button>" +
+                       "                        </div>" +
+                       "                    </div>" +
+                       "                </div>" +
+                       "                <div class='info-box'>这住宿方要求至少需要住 "+residence.duree+" 个月</div>" +
+                       "                <div class='form-group button-group text-align-right'>" +
+                       "                    <button class='btn btn-outline-info btn-pre' type='button'>上一步</button>" +
+                       "                    <button class='btn btn-success btn-next' type='button'>下一步</button>" +
+                       "                </div>"+
+                       "            </div>";
+
+
+                   let step4 =    " <div class='residence-booking-step-4 booking-steps' data-id='4'>" +
+                       "                <div class='form-group residence-booking-title'><h2>介绍自己 😀</h2></div>" +
+                       "                <div class='form-group residence-center-item'>" +
+                       "                    <label>一张漂亮的个人照片</label><i class='fas fa-camera margin-left-20 upload-image'></i>" +
+                       "                    <div class='selfish'>" +
+                       "                        <input name='photo' type='file' class='form-control' hidden/>" +
+                       "                    </div>" +
+                       "                </div>" +
+                       "                <div class='form-group residence-center-item'>" +
+                       "                    <label>一段自我介绍</label>" +
+                       "                    <textarea id='message' class='form-control' name='message'></textarea>"+
+                       "                </div>" +
+                       "                <div class='form-group button-group text-align-right'>" +
+                       "                    <button class='btn btn-outline-info btn-pre' type='button'>上一步</button>" +
+                       "                    <button class='btn btn-success btn-next' type='button'>完成我的预订</button>" +
+                       "                </div>"+
+                       "            </div>";
+
+
+
+                   let rightDiv = "<div class='residence-booking-detail'>" +
+                       "       <form id='booking-room'>" +
+                       "            <div class='residence-booking-step-1 booking-steps' data-id='1'>" +
+                       "                <div class='form-group residence-booking-title'><h2>您好，👋欢迎您，开始您的请求吧</h2></div>" +
+                       "                <div class='form-group residence-booking-description text-align-center'><text>"+partner.nom +" " + partner.prenom +" 正在寻找符合他/她条件的租户。让我们发出一个引起他/她所有注意力的请求！</text></div>" +
+                       "                <div class='row no-gutters d-flex align-items-center booking-des-content'>" +
+                       "                    <div class='col-md-2'>" +
+                       "                        <div class='recap-icon'>" +
+                       "                            <svg width='17' height='14' viewBox='0 0 17 14' fill='none' xmlns='http://www.w3.org/2000/svg'>" +
+                       "                                <mask id='mask0' mask-type='alpha' maskUnits='userSpaceOnUse' x='0' y='0' width='17' height='14'>" +
+                       "                                    <path d='M16.5 6.25H7.5C7.21875 6.25 7 6.5 7 6.75V7.25C7 7.53125 7.21875 7.75 7.5 7.75H16.5C16.75 7.75 17 7.53125 17 7.25V6.75C17 6.5 16.75 6.25 16.5 6.25ZM16.5 11.25H7.5C7.21875 11.25 7 11.5 7 11.75V12.25C7 12.5312 7.21875 12.75 7.5 12.75H16.5C16.75 12.75 17 12.5312 17 12.25V11.75C17 11.5 16.75 11.25 16.5 11.25ZM16.5 1.25H7.5C7.21875 1.25 7 1.5 7 1.75V2.25C7 2.53125 7.21875 2.75 7.5 2.75H16.5C16.75 2.75 17 2.53125 17 2.25V1.75C17 1.5 16.75 1.25 16.5 1.25ZM3 10.5C2.1875 10.5 1.5 11.1875 1.5 12C1.5 12.8438 2.1875 13.5 3 13.5C3.8125 13.5 4.5 12.8438 4.5 12C4.5 11.1875 3.8125 10.5 3 10.5ZM5.34375 5.125C5.28125 5.0625 5.15625 5 5.09375 5C5 5 4.875 5.0625 4.8125 5.125L2.8125 7.09375L2.125 6.40625C2.0625 6.34375 1.9375 6.3125 1.84375 6.3125C1.75 6.3125 1.65625 6.34375 1.59375 6.40625L1.09375 6.90625C1.03125 6.96875 0.96875 7.09375 0.96875 7.15625C0.96875 7.25 1.03125 7.375 1.09375 7.4375L2.59375 8.90625C2.65625 8.96875 2.75 9 2.84375 9C2.9375 9 3.0625 8.96875 3.125 8.90625L3.625 8.40625L5.875 6.1875C5.9375 6.125 5.96875 6 5.96875 5.90625C5.96875 5.84375 5.9375 5.71875 5.875 5.65625L5.34375 5.125ZM5.34375 0.125C5.28125 0.0625 5.15625 0 5.09375 0C5 0 4.875 0.0625 4.8125 0.125L2.8125 2.09375L2.125 1.40625C2.0625 1.34375 1.9375 1.3125 1.84375 1.3125C1.75 1.3125 1.65625 1.34375 1.59375 1.40625L1.09375 1.90625C1.03125 1.96875 0.96875 2.0625 0.96875 2.15625C0.96875 2.25 1.03125 2.375 1.09375 2.4375L2.59375 3.90625C2.65625 3.96875 2.78125 4 2.84375 4C2.9375 4 3.0625 3.96875 3.125 3.90625L5.875 1.15625C5.9375 1.09375 6 1 6 0.90625C6 0.8125 5.9375 0.6875 5.875 0.625L5.34375 0.125Z' fill='black'></path>" +
+                       "                                </mask>" +
+                       "                                <g mask='url(#mask0)'>" +
+                       "                                    <path d='M22 20.5L25.5 1L21.5 -6L-8 -5.5V24L22 20.5Z' fill='#36417D'></path>" +
+                       "                                </g>" +
+                       "                                <mask id='mask1' mask-type='alpha' maskUnits='userSpaceOnUse' x='0' y='0' width='17' height='14'>" +
+                       "                                    <path d='M16.5 6.25H7.5C7.21875 6.25 7 6.5 7 6.75V7.25C7 7.53125 7.21875 7.75 7.5 7.75H16.5C16.75 7.75 17 7.53125 17 7.25V6.75C17 6.5 16.75 6.25 16.5 6.25ZM16.5 11.25H7.5C7.21875 11.25 7 11.5 7 11.75V12.25C7 12.5312 7.21875 12.75 7.5 12.75H16.5C16.75 12.75 17 12.5312 17 12.25V11.75C17 11.5 16.75 11.25 16.5 11.25ZM16.5 1.25H7.5C7.21875 1.25 7 1.5 7 1.75V2.25C7 2.53125 7.21875 2.75 7.5 2.75H16.5C16.75 2.75 17 2.53125 17 2.25V1.75C17 1.5 16.75 1.25 16.5 1.25ZM3 10.5C2.1875 10.5 1.5 11.1875 1.5 12C1.5 12.8438 2.1875 13.5 3 13.5C3.8125 13.5 4.5 12.8438 4.5 12C4.5 11.1875 3.8125 10.5 3 10.5ZM5.34375 5.125C5.28125 5.0625 5.15625 5 5.09375 5C5 5 4.875 5.0625 4.8125 5.125L2.8125 7.09375L2.125 6.40625C2.0625 6.34375 1.9375 6.3125 1.84375 6.3125C1.75 6.3125 1.65625 6.34375 1.59375 6.40625L1.09375 6.90625C1.03125 6.96875 0.96875 7.09375 0.96875 7.15625C0.96875 7.25 1.03125 7.375 1.09375 7.4375L2.59375 8.90625C2.65625 8.96875 2.75 9 2.84375 9C2.9375 9 3.0625 8.96875 3.125 8.90625L3.625 8.40625L5.875 6.1875C5.9375 6.125 5.96875 6 5.96875 5.90625C5.96875 5.84375 5.9375 5.71875 5.875 5.65625L5.34375 5.125ZM5.34375 0.125C5.28125 0.0625 5.15625 0 5.09375 0C5 0 4.875 0.0625 4.8125 0.125L2.8125 2.09375L2.125 1.40625C2.0625 1.34375 1.9375 1.3125 1.84375 1.3125C1.75 1.3125 1.65625 1.34375 1.59375 1.40625L1.09375 1.90625C1.03125 1.96875 0.96875 2.0625 0.96875 2.15625C0.96875 2.25 1.03125 2.375 1.09375 2.4375L2.59375 3.90625C2.65625 3.96875 2.78125 4 2.84375 4C2.9375 4 3.0625 3.96875 3.125 3.90625L5.875 1.15625C5.9375 1.09375 6 1 6 0.90625C6 0.8125 5.9375 0.6875 5.875 0.625L5.34375 0.125Z' fill='black'></path>" +
+                       "                                </mask>" +
+                       "                                <g mask='url(#mask1)'>" +
+                       "                                    <path d='M24 35.5L27.5 16L23.5 9L-6 9.5V39L24 35.5Z' fill='#FF373D'></path>" +
+                       "                                </g>" +
+                       "                            </svg>" +
+                       "                        </div>" +
+                       "                    </div>" +
+                       "                    <div class='col-md-9'>" +
+                       "                        <h3><font style='vertical-align: inherit;'><font style='vertical-align: inherit;'>确认您的信息</font></font></h3>" +
+                       "                    </div>" +
+                       "                    <div class='col-md-2 mt-3'>" +
+                       "                        <div class='recap-icon'>" +
+                       "                            <i class='fal fa-id-card-alt'></i>" +
+                       "                        </div>" +
+                       "                    </div>" +
+                       "                    <div class='col-md-9 mt-3'>" +
+                       "                        <h3><font style='vertical-align: inherit;'><font style='vertical-align: inherit;'>自我介绍</font></font></h3>" +
+                       "                    </div>" +
+                       "                </div>" +
+                       "                <div class='form-group button-group button-begin'>" +
+                       "                    <button class='btn btn-success btn-next' type='button'>下一步</button>" +
+                       "                </div>" +
+                       "            </div>" +
+                                    step2 +
+                                    step3 +
+                                    step4 +
+                       "       </form>" +
+                       "</div>";
+
+
+
+                   $(".residence-room-booking").append(rightDiv);
+
+                   let dateClass = ".datechk";
+                   if (document.querySelector(dateClass)){
+                       if (document.querySelector(dateClass).type !== 'date')
+                       {
+                           var oCSS = document.createElement('link');
+                           oCSS.type='text/css'; oCSS.rel='stylesheet';
+                           oCSS.href='//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css';
+                           oCSS.onload=function()
+                           {
+                               var oJS = document.createElement('script');
+                               oJS.type='text/javascript';
+                               oJS.src='//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js';
+                               oJS.onload=function()
+                               {
+                                   $(dateClass).datepicker({ dateFormat: 'yy-mm-dd' });
+                               }
+                               document.body.appendChild(oJS);
+                           }
+                           document.body.appendChild(oCSS);
+                       }
+                   }
+
+                   function stepThree(){
+                       let entree = $("input[name=entree]").val();
+                       if (!entree){
+                           alert("请填写入住时间");
+                           return false;
+                       }
+                       return true;
+                   }
+
+                   function stepFour(){
+                       let message = $("#message").val();
+                       if (!message){
+                           alert("请填写自我介绍");
+                           return false;
+                       }
+                       return true;
+                   }
+
+                   function startBooking(){
+                        Loadding();
+                        let dataArray = $("#booking-room").serializeArray();
+                        let params = {};
+                        for(let i in dataArray){
+                            params[dataArray[i].name] = dataArray[i].value;
+                        }
+
+                        params["rid"] = residence.id;
+                        params["pid"] = residence.uid;
+                        params["hid"] = room.id;
+
+                       console.log(params);
+
+                       $.post("/user/residence/booking/room",params,function (data) {
+                            console.log(data);
+                           stopLoadding();
+                           if (data.status==1){
+                                window.location.assign("");
+                           }
+                        });
+                   }
+
+                   $("html").on("click",".btn-next",function () {
+                        let id = $(this).parents(".booking-steps").attr("data-id");
+                        if (parseInt(id)==3){
+                            if (!stepThree()){
+                                return;
+                            }
+                        }else if (parseInt(id)==4){
+                            if (stepFour()){
+                                startBooking();
+                            }
+                            return;
+                        }
+                        $(".booking-steps").hide();
+                        $(".residence-booking-step-"+(parseInt(id)+1)).show();
+                   });
+
+
+                   $("html").on("click",".btn-pre",function () {
+                        let id = $(this).parents(".booking-steps").attr("data-id");
+                       $(".booking-steps").hide();
+                       $(".residence-booking-step-"+(parseInt(id)-1)).show();
+                   });
+
+                   $("html").on("click",".apply-item",function () {
+                        if (room.persons==1){
+                            alert("住宿方该房源要求最多只能住 "+room.persons+" 个人")
+                            return;
+                        }
+                        let id = $(this).attr("data-id");
+                        $(".apply-item").each(function (key,item) {
+                            if (id==$(item).attr("data-id")){
+                                $(item).addClass("active");
+                            }else{
+                                $(item).removeClass("active");
+                            }
+                        });
+
+                       $(".add-roomate-item").remove();
+
+                       if (parseInt(id)==2){
+                            $(".booking-user-items").append(addRoomates);
+                       }
+                   });
+
+
+
+
+                   $("html").on("change",".duree",function () {
+                       let month = $(this).val();
+                       if (month<residence.duree){
+                           alert("公寓规定不能住少于"+residence.duree+"个月");
+                           $(this).val(residence.duree);
+                       }
+                   });
+
+                   $("html").on("click",".duree-add",function () {
+                       let month = $(".duree").val();
+                       $(".duree").val(parseInt(month)+1);
+                   });
+
+                   $("html").on("click",".duree-mins",function () {
+                       let month = $(".duree").val();
+                       if (month -1 >= residence.duree) {
+                           $(".duree").val(parseInt(month) - 1);
+                       }
+                   });
+
+                   $("html").on("click",".upload-image",function () {
+                        $("input[name=photo]").click();
+                   });
+
+                   $("input[name=photo]").change(function (){
+                       let length =  $(this).get(0).files.length;
+                       if(length>0){
+                           let file = $(this).get(0).files[0];
+                           let id = $(this).attr("id");
+                           let fileType = file.type.split("/");
+
+                           if (fileType[1]){
+                               if (!fileType[1].match(/jpg|gif|png|jpeg/i)){
+                                   alert("您只能上传图片格式或pdf格式");
+                                   return;
+                               }
+                           }else{
+                               alert("您只能上传图片格式或pdf格式");
+                               return;
+                           }
+
+                           compressImage(file,function (success) {
+                               var formdata =  new FormData();
+                               formdata.append('file',success,success.fileName);
+                               formdata.append("type",id);
+                               $("html").addClass("progress-active");
+                               $("body").addClass("progress-active");
+                               $('html').append(progressDiv);
+                               $.ajax({
+                                   xhr: function() {
+                                       var xhr = new window.XMLHttpRequest();
+                                       xhr.upload.addEventListener("progress", function(evt) {
+                                           if (evt.lengthComputable) {
+                                               var percentComplete = evt.loaded / evt.total;
+                                               percentComplete = parseInt(percentComplete * 100);
+                                               $("#hwwd-progress").val(percentComplete);
+                                               if (percentComplete === 100) {
+                                                   $("html").removeClass("progress-active");
+                                                   $("body").removeClass("progress-active");
+                                                   $("#hwwd-upload-progress").remove();
+                                               }
+                                           }
+                                       }, false);
+                                       return xhr;
+                                   },
+                                   url:'/user/uplaod/file',
+                                   type: 'post',
+                                   data: formdata,
+                                   processData: false,
+                                   contentType: false,
+                                   success: function(data) {
+                                       if (data.status==1){
+                                           alert(data.message);
+                                           if (data.path){
+                                               $(".selfish").html("");
+                                               $(".selfish").append("<input name='photo' type='file' class='form-control' hidden/>");
+                                               $(".selfish").append("<img src='/users/"+data.uid+"/"+data.path+"'/>");
+                                               $(".selfish").append("<input name='cover' hidden value='"+data.path+"'/>");
+                                           }
+                                       }else if(data.status==0){
+                                           alert(data.message);
+                                       }
+                                   },
+                                   error: function(err) {
+                                       $("html").removeClass("progress-active");
+                                       $("body").removeClass("progress-active");
+                                       $("#hwwd-upload-progress").remove();
+                                       alert("图片上传失败");
+                                   }
+                               });
+                           },function (error){
+                               console.error(error);
+                           });
+
+                       }
+                   });
+
+
+
+                   function compressImage(file,success,error){
+                       let name = file.name;
+                       let reader = new FileReader();
+                       reader.readAsDataURL(file);
+                       reader.onload = e =>{
+                           let src = e.target.result;
+                           let img = new Image();
+                           img.src = src;
+                           img.onload = e =>{
+                               let w = img.width;
+                               let h = img.height;
+                               // let quality =  0.8;
+
+                               let canvas = document.createElement('canvas');
+                               let ctx = canvas.getContext('2d');
+
+                               let anw = document.createAttribute('width');
+                               anw.nodeValue = w;
+                               let anh = document.createAttribute('height');
+                               anh.nodeValue = h;
+                               canvas.setAttributeNode(anw);
+                               canvas.setAttributeNode(anh);
+
+                               ctx.fillStyle = "#fff";
+                               ctx.drawImage(img,0,0,w,h);
+
+                               let quality = caculateSize(file,canvas,src,1);
+
+                               let base64 = canvas.toDataURL('image/jpeg',quality);
+                               let size = ((base64.length/1024).toFixed(2)/(src.length/1024).toFixed(2)).toFixed(2)*file.size;
+
+                               let bytes = window.atob(base64.split(',')[1]);
+
+                               let ab  = new ArrayBuffer(bytes.length);
+                               let ia = new Uint8Array(ab);
+
+                               for (let i=0;i<bytes.length;i++){
+                                   ia[i] = bytes.charCodeAt(i);
+                               }
+                               file = new Blob([ab],{type:'image/jpeg'});
+                               file.fileName = name;
+                               file.lastModifiedDate = new Date();
+                               success(file);
+                               console.log(file.size/(1024*1024));
+
+                           }
+                           img.onerror = e =>{
+                               error(e);
+                           }
+                       }
+                       reader.onerror = e =>{
+                           error(e);
+                       }
+                   }
+
+
+                   function caculateSize(file,canvas,src,quality) {
+                       quality *= 0.8
+                       let base64 = canvas.toDataURL('image/jpeg',quality);
+                       let size = ((base64.length/1024).toFixed(2)/(src.length/1024).toFixed(2)).toFixed(2)*file.size;
+                       if (size/(1024*1024)>=1){
+                           return caculateSize(file,canvas,src,quality);
+                       }
+                       return quality;
+                   }
+
+
+                   let contactDiv = "<div class='add-roomate-background'>" +
+                                    "    <div class='add-roomate-div'>" +
+                                    "       <div class='add-roomate-div-title'>" +
+                                    "           <h5>添加室友</h5>" +
+                                    "           <h5 class='add-roomate-div-close'>x</h5>" +
+                                    "       </div>" +
+                                    "       <div class='add-roomate-div-info'>" +
+                                    "           <div class='form-group'>" +
+                                    "              <label>对方账户的邮箱</label>" +
+                                    "              <div>" +
+                                    "                  <input name='email' class='form-control' />" +
+                                    "              </div>" +
+                                    "           </div>" +
+                                    "           <div class='form-group'>" +
+                                    "              <label>对方账户的电话</label>" +
+                                    "              <div>" +
+                                    "                  <input name='telephone' class='form-control' />" +
+                                    "              </div>" +
+                                    "           </div>" +
+                                    "           <div class='form-group button-group text-align-right'>" +
+                                    "               <button class='btn btn-success btn-add-person'>添加</button>"+
+                                    "           </div>" +
+                                    "       </div>" +
+                                    "    </div>" +
+                                    "</div>";
+
+
+                   $("html").on("click",".add-roomate-item",function () {
+
+                       let persons = $(".booking-user-item").length
+                       if (room.persons<=persons-1){
+                           alert("住宿方该房源要求最多只能住 "+room.persons+" 个人");
+                           return;
+                       }
+                       $("html").addClass("progress-active");
+                       $("body").addClass("progress-active");
+                       $("html").append(contactDiv);
+                   });
+
+                   $("html").on("click",".add-roomate-div-close",function () {
+                       $(".add-roomate-background").remove();
+                       $("html").removeClass("progress-active");
+                       $("body").removeClass("progress-active");
+                   });
+
+                   $("html").on("click",".btn-add-person",function () {
+
+                       let email = $("input[name=email]").val();
+                       let telephone = $("input[name=telephone]").val();
+
+                       if(!email){
+                           alert("对方账户邮箱不能为空！")
+                           return;
+                       }
+
+                       if (!telephone){
+                           alert("对方账户电话不能为空！");
+                           return;
+                       }
+
+                       let params = {};
+
+                       params["email"] = email;
+
+                       params["telephone"] = telephone;
+
+
+                       $.post("/user/residence/add/roomate",params,function (data) {
+                           if(data.status==1){
+                               let flag = true;
+                               $(".booking-user-item").each(function (key,item) {
+                                  let id = $(item).attr("data-id");
+                                  if (id && parseInt(id) == data.user.id){
+                                      flag = false;
+                                  }
+                               });
+
+                               if (!flag){
+                                   alert("该用户已添加");
+                                   return;
+                               }
+
+                               count++;
+                               let roomateDiv =
+                                   "   <div class='booking-user-item' data-id='"+data.user.id+"'>" +
+                                   "       <input name='users["+count+"]' value='"+data.user.id+"' hidden />" +
+                                   "       <div class='booking-user-title'>" +
+                                   "           <div>合租</div>" +
+                                   "           <div class='booking-roomate-delete'><i class='fas fa-trash-alt text-danger'></i></div>" +
+                                   "       </div>" +
+                                   "       <div class=''>"+data.user.nom+" "+data.user.prenom+"</div>" +
+                                   "       <div>"+data.user.telephone+"</div>" +
+                                   "   </div>";
+
+                               $(".add-roomate-item").remove();
+
+                               $(".booking-user-items").append(roomateDiv);
+                               $(".booking-user-items").append(addRoomates);
+                               $(".add-roomate-div-close").click();
+                           }else{
+                               alert("不存在该用户,请仔细确认信息！");
+                           }
+                       });
+
+                   });
+
+                   $("html").on("click",".booking-roomate-delete",function () {
+                       $(this).parents(".booking-user-item").remove();
+                   });
+
+               }else if (data.status==2){
+                   window.location.assign("/user/residence/apply");
+               }
+           });
+        });
+    </script>
+    <style>
+        .footer{
+            display: none;
+        }
+
+
+        .div-center{
+            width: 100vw;
+            height: 100vh;
+        }
+
+        @media screen and (max-width: 500px){
+            .residence-booking{
+                height: 100%;
+            }
+
+            .residence-room-detail{
+                width: 100%;
+                background-image:url("/img/residence/creative.png");
+                padding: 15px;
+            }
+        }
+
+
+        @media screen and (min-width: 501px){
+            .residence-booking{
+                display: flex;
+                height: 100%;
+            }
+
+
+            .residence-room-detail{
+                width: 40%;
+                background-image:url("/img/residence/creative.png");
+                padding: 30px;
+            }
+        }
+
+
+        .room-detail{
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 3px 3px rgba(0,0,0,0.3);
+        }
+
+        .detail-div-title{
+            text-align: center;
+            color: white;
+        }
+
+        .room-detail-img{
+            border-radius: 5px;
+            overflow: hidden;
+            max-height: 25vh;
+        }
+
+        .room-detail-img img{
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .margin-right-10{
+            margin-right: 10px;
+        }
+
+
+        .address{
+            color: #0f6674;
+        }
+
+        .text-align-right{
+            text-align: right;
+            font-size: 18px;
+        }
+
+        .residence-room-booking{
+            padding: 50px;
+            background-color: #bdec7f;
+            width: 100%;
+            overflow-y: scroll;
+        }
+
+        .residence-booking-detail{
+            margin: auto;
+        }
+
+        .text-align-center{
+            text-align: center;
+        }
+
+        .residence-booking-title{
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 36px;
+            color: #36417d;
+        }
+
+        .booking-des-content{
+            padding: 50px;
+            width: 38vw;
+            margin: auto;
+        }
+
+        .residence-booking-step-2,
+        .residence-booking-step-3,
+        .residence-booking-step-4{
+            display: none;
+        }
+
+        .button-begin{
+            width: 38vw;
+            margin: auto;
+        }
+        .button-begin button{
+            width: 100%;
+        }
+
+        .apply-items{
+            display: flex;
+            justify-content: space-around;
+        }
+
+
+        .apply-item{
+            width: 35%;
+            min-width: 120px;
+            height: 200px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .apply-item text{
+            padding: 5px;
+            display: block;
+        }
+
+        .apply-items .active{
+            border:1px solid #1b6997;
+        }
+
+        .apply-item:hover{
+            border:1px solid #1b6997;
+            box-shadow: 0 3px 3px rgba(0,0,0,0.3);
+        }
+
+        .box-line{
+            margin: 20px auto 20px;
+            height: 1px;
+            width: 80%;
+            background-color: #f5f5f5;
+        }
+
+        .info-box{
+            padding: 10px;
+            background-color: #19AAD8;
+            color: white;
+            width: 80%;
+            margin: auto;
+            border-radius: 5px;
+        }
+
+
+        .margin-bottom-20{
+            margin-bottom: 20px;
+        }
+
+        .booking-user-item{
+            width: 80%;
+            margin: 20px auto  20px;
+            border-radius: 5px;
+            background-color: white;
+            padding: 20px;
+        }
+
+        .booking-user-title{
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .booking-moi-editor,
+        .booking-roomate-delete{
+            cursor: pointer;
+        }
+
+        .residence-center-item{
+            width: 80%;
+            margin: 20px auto 20px;
+        }
+
+        .residence-center-item label{
+            color: #1b6997;
+        }
+
+        .button-group{
+            margin-top: 50px;
+        }
+
+        .margin-left-20{
+            margin-left: 20px;
+        }
+
+
+        #hwwd-upload-progress{
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            z-index: 5000;
+            top: 0;
+            left: 0;
+            background-color: rgba(0,0,0,0.6);
+        }
+
+        #hwwd-progress{
+            width: 80%;
+            position: relative;
+            margin: 45vh 10% auto;
+        }
+
+        .progress-active{
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .selfish{
+            width: 30vw;
+            height: 30vw;
+            overflow: hidden;
+            border-radius: 5px;
+            background-color: white;
+            border: 1px solid #1b6997;
+        }
+        .selfish img{
+            width: 30vw;
+            height: 30vw;
+            object-fit: cover;
+        }
+
+        #message{
+            height: 28vh;
+        }
+
+        .add-roomate-background{
+            background-color: rgba(0,0,0,0.3);
+            width: 100vw;
+            height: 100vh;
+            z-index: 500;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .add-roomate-div{
+            background-color: white;
+            border-radius: 5px;
+            width: 65%;
+            height: 80%;
+            margin: 5% auto 10%;
+            overflow-x: hidden;
+        }
+
+        .add-roomate-item{
+            cursor: pointer;
+        }
+
+        .add-roomate-div-title{
+            background-color: #0f6674;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .add-roomate-div-close{
+            cursor: pointer;
+        }
+
+        .add-roomate-div-info{
+            padding: 50px;
+            width: 100%;
+            height: calc( 80vh - 72px );
+            overflow-y: scroll;
+        }
+    </style>
+</div>
+</html>

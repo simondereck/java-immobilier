@@ -1,0 +1,1028 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <link rel="stylesheet" th:href="@{/css/bussiness/join-us.css}" />
+    <link rel="stylesheet" th:href="@{/css/bussiness/bussiness-estimation.css}" />
+    <link rel="stylesheet" th:href="@{/css/widget/hwwd-selector.css}" />
+
+    <div class="estimate-div" th:data-id="${id}">
+        <div>
+            <div class="progress">
+                <div id="step-progress" class="progress-bar bg-success" role="progressbar"  aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+        <div class="estimate-form">
+            <div class="estimate-content-form">
+                <form id="estimate-form">
+                    <div class="steps step-1">
+                        <div class="form-group step-header">
+                            <h2>第一步:详细地址</h2>
+                            <input name="id" hidden th:value="${id}"/>
+                        </div>
+                        <div class="form-group pays-set location-item">
+
+                        </div>
+                        <div class="location-item form-group" id="area-div">
+                            <label for="area">地区</label>
+                            <div>
+                                <input type="text" class="form-control search-input" name="area"  id="area" placeholder="地段"/>
+                                <input type="text" name="location" hidden="hidden" />
+                            </div>
+                            <text class="location-error error"></text>
+                        </div>
+                        <div class="form-group">
+                            <label>地址</label>
+                            <input placeholder="Ex : 10 rue du Château, Paris" class="form-control" name="address"/>
+                        </div>
+                        <div class="form-group">
+                            <label>中间层</label>
+                            <div class="hwwd-selectors">
+                                <span class="hwwd-selectors-item active" data-id="1">是</span>
+                                <span class="hwwd-selectors-item" data-id="0">否</span>
+                                <input name="middle" hidden="hidden" value="1"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>大小</label>
+                            <div class="input-group">
+                                <input name="size" type="number" class="form-control" aria-describedby="basic-addon1"/>
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon1">平米</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group button-group">
+                            <button class="btn btn-success btn-next" type="button" data-id="1">下一步</button>
+                        </div>
+                    </div>
+                    <div class="steps step-2">
+                        <div class="form-group step-header">
+                            <h2>第二步：房屋类型</h2>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>类别</label>
+                                <div>
+                                    <div class="form-group">
+                                        <select name="types" class="form-control">
+                                            <option value="0">住房</option>
+                                            <option value="1">商业地产</option>
+                                            <option value="2">其他</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group selects-res">
+                                <label>房源类型</label>
+                                <div class="house-type selects" data-type="0" data-name="houseType">
+                                    <div data-id="0" class="select-item">别墅</div>
+                                    <div data-id="1" class="select-item">公寓</div>
+                                    <div data-id="2" class="select-item">整栋楼</div>
+                                    <div data-id="3" class="select-item">船</div>
+                                    <div data-id="4" class="select-item">养老房</div>
+                                </div>
+                                <div class="house-type selects" data-type="1" style="display: none;" data-name="houseType">
+                                    <div data-id="0" class="select-item">办公室</div>
+                                    <div data-id="1" class="select-item">商铺</div>
+                                    <div data-id="2" class="select-item">商铺转让</div>
+                                </div>
+                                <div class="house-type selects" data-type="2" style="display: none;" data-name="houseType">
+                                    <div data-id="0" class="select-item">停车场</div>
+                                    <div data-id="1" class="select-item">地皮</div>
+                                </div>
+                                <input name="houseType" hidden="hidden" value="0" />
+                            </div>
+                            <div class="form-group">
+                                <label>房屋类型</label>
+                                <div>
+                                    <select class="form-control" name="roomType">
+                                        <option value="0">-----都不是-----</option>
+                                        <option value="1">studio T1</option>
+                                        <option value="2">T2 一室一厅</option>
+                                        <option value="3">T3 二室一厅</option>
+                                        <option value="4">T4 三室一厅</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>建筑时间</label>
+                                <div>
+                                    <select name="consTime" class="form-control">
+                                        <option value="0">-----请选择-----</option>
+                                        <option value="1">1850 之前</option>
+                                        <option value="2">1850 至 1913</option>
+                                        <option value="3">1914 至 1947</option>
+                                        <option value="4">1970 至 1980</option>
+                                        <option value="5">1981 至 1991</option>
+                                        <option value="6">1992 至 2000</option>
+                                        <option value="7">2001 至 2010</option>
+                                        <option value="8">2011 之后</option>
+                                        <option value="11">我不知道</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group selects-res">
+                                <label>新旧程度</label>
+                                <div class="nouv selects" data-name="nouv">
+                                    <div class="select-item" data-id="0">全新</div>
+                                    <div class="select-item" data-id="1">七成新</div>
+                                    <div class="select-item" data-id="2">半新</div>
+                                    <div class="select-item" data-id="3">旧的</div>
+                                </div>
+                                <input name="nouv" hidden="hidden" value="0"/>
+                            </div>
+                        </div>
+                        <div class="form-group button-group">
+                            <button class="btn btn-info btn-before" type="button" data-id="2">上一步</button>
+                            <button class="btn btn-success btn-next" type="button" data-id="2">下一步</button>
+                        </div>
+                    </div>
+                    <div class="steps step-3">
+                        <div class="form-group step-header">
+                            <h2>第三步：房屋配置</h2>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>电梯</label>
+                                <div class="hwwd-selectors">
+                                    <span class="hwwd-selectors-item active" data-id="1">有</span>
+                                    <span class="hwwd-selectors-item" data-id="0">无</span>
+                                    <input name="lift" hidden="hidden" value="1"/>
+                                </div>
+                            </div>
+                            <div class="double-elements form-group">
+                                <div class="form-group group-item">
+                                    <label>阳台</label>
+                                    <div class="hwwd-selectors">
+                                        <span class="hwwd-selectors-item active" data-id="1">有</span>
+                                        <span class="hwwd-selectors-item" data-id="0">无</span>
+                                        <input name="balcon" hidden="hidden" value="1"/>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <input name="balconSize" type="number" class="form-control" aria-describedby="basic-addon2"/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="basic-addon2">平米</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="double-elements form-group">
+                                <div class="form-group group-item">
+                                    <label>地窖</label>
+                                    <div class="hwwd-selectors">
+                                        <span class="hwwd-selectors-item active" data-id="1">有</span>
+                                        <span class="hwwd-selectors-item" data-id="0">无</span>
+                                        <input name="cave" hidden="hidden" value="1"/>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <input name="caveSize" type="number" class="form-control" aria-describedby="basic-addon3"/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="basic-addon3">平米</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>停车位</label>
+                                <div class="hwwd-selectors">
+                                    <span class="hwwd-selectors-item active" data-id="1">有</span>
+                                    <span class="hwwd-selectors-item" data-id="0">无</span>
+                                    <input name="parking" hidden="hidden" value="1"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group button-group">
+                            <button class="btn btn-info btn-before" type="button" data-id="3">上一步</button>
+                            <button class="btn btn-success btn-next" type="button" data-id="3">下一步</button>
+                        </div>
+                    </div>
+                    <div class="steps step-4">
+                        <div class="form-group step-header">
+                            <h2>第四步：产权信息</h2>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>是否是您的产业</label>
+                                <div class="hwwd-selectors">
+                                    <span class="hwwd-selectors-item active" data-id="1">是</span>
+                                    <span class="hwwd-selectors-item" data-id="0">否</span>
+                                    <input name="isOwn" hidden="hidden" value="1"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>您打算出售此物业吗？</label>
+                                <div>
+                                    <select class="form-control" name="isSell">
+                                        <option value="0">-----请选择------</option>
+                                        <option value="1">是的尽快</option>
+                                        <option value="2">3个月内</option>
+                                        <option value="3">6个月内</option>
+                                        <option value="4">一年内</option>
+                                        <option value="5">我不打算卖</option>
+                                        <option value="6">我已经卖完</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>您想与专业人员联系以得到精确的估价吗？</label>
+                                <div class="hwwd-selectors">
+                                    <span class="hwwd-selectors-item active" data-id="1">是</span>
+                                    <span class="hwwd-selectors-item" data-id="0">否</span>
+                                    <input name="contactUs" hidden="hidden" value="1"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group button-group">
+                            <button class="btn btn-info btn-before" type="button" data-id="4">上一步</button>
+                            <button class="btn btn-success btn-next" type="button" data-id="4">下一步</button>
+                        </div>
+                    </div>
+                    <div class="steps step-5">
+                        <div class="form-group step-header">
+                            <h2>第五步：联系方式</h2>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>性别：</label>
+                                <div class="hwwd-selectors" data-name="sex">
+                                    <span class="hwwd-selectors-item active" data-id="0">先生</span>
+                                    <span class="hwwd-selectors-item" data-id="1">女士</span>
+                                    <input name="sex" hidden="hidden"  value="0"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>* 姓：</label>
+                                <div>
+                                    <input name="nom" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>* 名：</label>
+                                <div>
+                                    <input name="prenom" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>微信:</label>
+                                <div>
+                                    <input name="wechat" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>邮件:</label>
+                                <div>
+                                    <input name="email" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>电话：</label>
+                                <div>
+                                    <input name="telephone" class="form-control"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group button-group">
+                            <button class="btn btn-info btn-before" type="button" data-id="5">上一步</button>
+                            <button class="btn btn-success btn-next" type="button" data-id="5">提交</button>
+                        </div>
+                    </div>
+                    <div class="steps step-6">
+                        <div class="form-group step-header">
+                            <h2>最后：正在估价</h2>
+                        </div>
+                        <div class="form-group loading-group" style="text-align: center;">
+                            <div class="spinner-grow text-warning" role="status">
+                                <span class="sr-only">正在为您进行系统估价...</span>
+                            </div>
+                            <text style="color: #c69500;font-size: 18px;margin-left: 20px;">正在为您进行系统估价...</text>
+                        </div>
+                        <div class="form-group button-group editor-before">
+                            <button class="btn btn-info btn-before" type="button" data-id="6">上一步</button>
+                        </div>
+
+                        <div id="estimation-detail-div">
+                            <div class='form-group'>
+                                <h4 style='color:#0c5460;'>你的周边每平米的房价为：</h4>
+                                <text id="low-price"></text> EURO ~ <text id="max-price"></text> EURO 每平米
+                            </div>
+                            <div class='form-group'><h4>根据近10年的数据，您的房价为：</h4></div>
+                            <div class='form-group'>
+                                <div class='slider-div'>
+                                    <label id='house-low'>houseLow</label>
+                                    <div id='slider'></div>
+                                    <label id='house-max'>houseMax</label>
+                                </div>
+                                <h4 id="house-middle"></h4>
+                            </div>
+                        </div>
+
+                        <div id="results-demo">
+
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
+    <script>
+
+        $(function () {
+            var villes;
+            var ville;
+            var center;
+
+            var estimates;
+
+            $('.search-input').focus(function () {
+                $('.search-input').attr("autocomplete","off")
+            });
+            $("#area").keyup(function (){
+                let val = $(this).val();
+                var data = {keyword:val};
+                $.get("/user/location/keywords",data,function (result){
+                    if (result) {
+                        villes = result;
+                        var $table = "<table id='search-table'>" +
+                            " <tr class='header'>" +
+                            "<th style='width:30%' >邮编</th>" +
+                            "<th style='width:30%' >城市</th>" +
+                            "<th style='width:30%' >省</th></tr>";
+
+                        villes.forEach(function (ville, key) {
+                            $table += "<tr class='select-ville' data-id='"+ville.id+"' data-key='"+key+"'>" +
+                                "<td>"+ville.postcode+"</td>"+
+                                "<td>"+ville.name+"</td>"+
+                                "<td>"+ville.code+"</td>"+
+                                "</tr>"
+                        });
+                        $table += "</table>";
+                        let old = $("#search-table");
+                        if (old){
+                            old.remove();
+                        }
+                        $("#area-div").append($table);
+                    }
+                });
+            });
+
+            setMap();
+            initData();
+
+            $(".btn-before").click(function () {
+                let id = $(this).attr("data-id");
+                $(".step-"+id).toggle();
+                $(".step-"+(parseInt(id)-1)).toggle();
+                $("#step-progress").attr("aria-valuenow",20 * (parseInt(id)-1));
+                $("#step-progress").css("width",20 * (parseInt(id) -1)+"%");
+            });
+
+            $(".btn-next").click(function () {
+                let id = $(this).attr("data-id");
+                let flag = false;
+                switch (parseInt(id)) {
+                    case 1:
+                        flag = stepOne();
+                        break;
+                    case 2:
+                        flag = stepTwo();
+                        break;
+                    case 3:
+                        flag = stepThree();
+                        break;
+                    case 4:
+                        flag = stepFour();
+                        break;
+                    case 5:
+                        flag = stepFive();
+                        break;
+                    case 6:
+                        flag = true;
+                        if (flag){
+                            stepSix();
+                        }
+                        break;
+                }
+
+                // flag = false;
+                if (flag){
+                    $(".step-"+id).toggle();
+                    $(".step-"+(parseInt(id)+1)).toggle();
+                    $("#step-progress").attr("aria-valuenow",20*parseInt(id));
+                    $("#step-progress").css("width",20*parseInt(id)+"%");
+                }
+
+
+            });
+
+
+            function initData(){
+                let id = $(".estimate-div").attr("data-id");
+                if (id!=null){
+                    let params = {id:id};
+                    $.post("/partner/bussiness/estimation/editor/data",params,function (data) {
+                        console.log(data);
+                        if(data.status==1){
+                            //todo step 1
+                            $("input[name=address]").val(data.model.address);
+                            if (data.ville){
+                                $("input[name=area]").val(data.model.area);
+                                $("input[name=location]").val(data.model.location);
+                                ville = data.ville;
+                            }
+
+
+                            $("input[name=middle]").val(data.model.middle);
+                            $("input[name=middle]").parent(".hwwd-selectors").children(".hwwd-selectors-item").each(function (key,item) {
+                                if (data.model.middle == $(item).attr("data-id")){
+                                    $(item).addClass("active");
+                                }else{
+                                    $(item).removeClass("active");
+                                }
+                            });
+                            $("input[name=size]").val(data.model.size);
+
+                            //todo step 2
+                            $("select[name=types]").val(data.model.types);
+
+                            $("input[name=houseType]").val(data.model.houseType);
+                            $(".house-type").each(function (key,item) {
+                                if($(item).attr("data-type")==data.model.types){
+                                    $(item).show();
+                                    $(item).children(".select-item").each(function (ckey,citem) {
+                                        // console.log(ckey,citem);
+                                        if ($(citem).attr("data-id")==data.model.houseType){
+                                            $(citem).addClass("active");
+                                        }else{
+                                            $(citem).removeClass("active");
+                                        }
+                                    });
+                                }else{
+                                    $(item).hide();
+                                }
+                            });
+
+
+                            $("select[name=roomType]").val(data.model.roomType);
+
+                            $("select[name=consTime]").val(data.model.consTime);
+
+                            //todo step 3
+
+                            $("input[name=lift]").val(data.model.lift);
+                            $("input[name=lift]").parent(".hwwd-selectors").children(".hwwd-selectors-item").each(function (key,item) {
+                                if($(item).attr("data-id") == data.model.lift){
+                                    $(item).addClass("active");
+                                }else{
+                                    $(item).removeClass("active");
+                                }
+                            });
+
+                            $("input[name=balcon]").val(data.model.balcon);
+                            $("input[name=balcon]").parent(".hwwd-selectors").children(".hwwd-selectors-item").each(function (key,item) {
+                                if($(item).attr("data-id") == data.model.balcon){
+                                    $(item).addClass("active");
+                                }else{
+                                    $(item).removeClass("active");
+                                }
+                            });
+
+                            $("input[name=balconSize]").val(data.model.balconSize);
+
+                            $("input[name=cave]").val(data.model.cave);
+                            $("input[name=cave]").parent(".hwwd-selectors").children(".hwwd-selectors-item").each(function (key,item) {
+                                if($(item).attr("data-id") == data.model.cave){
+                                    $(item).addClass("active");
+                                }else{
+                                    $(item).removeClass("active");
+                                }
+                            });
+
+                            $("input[name=caveSize]").val(data.model.caveSize);
+
+                            $("input[name=parking]").val(data.model.parking);
+                            $("input[name=parking]").parent(".hwwd-selectors").children(".hwwd-selectors-item").each(function (key,item) {
+                                if($(item).attr("data-id") == data.model.parking){
+                                    $(item).addClass("active");
+                                }else{
+                                    $(item).removeClass("active");
+                                }
+                            });
+
+
+                            //todo step 4
+                            $("input[name=isOwn]").val(data.model.isOwn);
+                            $("input[name=isOwn]").parent(".hwwd-selectors").children(".hwwd-selectors-item").each(function (key,item) {
+                                if($(item).attr("data-id") == data.model.isOwn){
+                                    $(item).addClass("active");
+                                }else{
+                                    $(item).removeClass("active");
+                                }
+                            });
+
+                            $("select[name=isSell]").val(data.model.isSell);
+
+                            $("input[name=contactUs]").val(data.model.contactUs);
+                            $("input[name=contactUs]").parent(".hwwd-selectors").children(".hwwd-selectors-item").each(function (key,item) {
+                                if($(item).attr("data-id") == data.model.contactUs){
+                                    $(item).addClass("active");
+                                }else{
+                                    $(item).removeClass("active");
+                                }
+                            });
+
+
+                            //todo step 5
+
+
+                            $("input[name=sex]").val(data.model.sex);
+                            $("input[name=sex]").parent(".hwwd-selectors").children(".hwwd-selectors-item").each(function (key,item) {
+                                if($(item).attr("data-id") == data.model.sex){
+                                    $(item).addClass("active");
+                                }else{
+                                    $(item).removeClass("active");
+                                }
+                            });
+
+                            $("input[name=nom]").val(data.model.nom);
+
+                            $("input[name=prenom]").val(data.model.prenom);
+
+                            $("input[name=wechat]").val(data.model.wechat);
+
+                            $("input[name=email]").val(data.model.email);
+                            $("input[name=telephone]").val(data.model.telephone);
+
+                        }
+                    });
+                }
+            }
+
+            function stepOne() {
+                let area = $("input[name=area]").val();
+                let location = $("input[name=location]").val();
+                let address = $("input[name=address]").val();
+                let size = $("input[name=size]").val();
+
+                if(!location){
+                    alert("地区必须填写");
+                    return false;
+                }
+
+                if(!address){
+                    alert("详细地址必须填写");
+                    return false;
+                }
+
+                if(!size){
+                    alert("房屋的大小必须填写");
+                    return false;
+                }
+
+                let params = {};
+                params["address"] = address;
+                params["code"] = ville.postcode;
+                $.post("/bussiness/getLocation",params,function (data) {
+                    console.log(data);
+                    if (data.status==1){
+                        if(data.response && data.response.features && data.response.features[0]){
+                            center = data.response.features[0].center;
+                            var marker = new mapboxgl.Marker({color:"#dc0000"})
+                                .setLngLat(center);
+                            marker.addTo(map);
+                            map.flyTo({
+                                center: center,
+                                zoom:13
+                            });
+                            map.resize();
+                        }
+                    }
+                });
+                return true;
+            }
+            
+            
+            function stepTwo() {
+                let houseType = $("input[name=houseType]").val();
+
+                return true;
+            }
+            
+            
+            function stepThree() {
+                let roomType = $("input[name=roomType]").val();
+                // let cave = $("input[name=cave]").prop("checked");
+                let cave = $("input[name=cave]").val();
+
+                let caveSize = $("input[name=caveSize]").val();
+                let balcon = $("input[name=balcon]").val();
+                let balconSize = $("input[name=balconSize]").val();
+
+                if (cave==1){
+                    if (!caveSize){
+                        alert("地窖的大小必须填写");
+                        return false;
+                    }
+                }
+
+                if (balcon==1){
+                    if (!balconSize){
+                        alert("阳台的大小必须填写");
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+
+            
+            function stepFour() {
+                let isSell = $("select[name=isSell]").val();
+                if(isSell>=1){
+                    return true;
+                }
+                alert("请选择是否出售此物业");
+                return false;
+            }
+            
+            function stepFive() {
+                $(".loading-group").show();
+                $(".editor-before").hide();
+                let nom = $("input[name=nom]").val();
+                let prenom = $("input[name=prenom]").val();
+                let wechat = $("input[name=wechat]").val();
+                let email = $("input[name=email]").val();
+                let telephone = $("input[name=telephone]").val();
+
+                if (!nom||!prenom){
+                    alert("请填写姓名");
+                    return false;
+                }
+
+                if (!wechat){
+                }
+
+                if (!email){
+                    alert("邮件必须填写")
+                    return false;
+                }
+
+                if (!telephone){
+                    alert("电话必须填写")
+                    return false;
+                }
+
+
+                let dataArray = $("#estimate-form").serializeArray();
+
+                let params = {};
+                for (let i in dataArray){
+                    params[dataArray[i].name] = dataArray[i].value;
+                }
+
+                params["lng"] = center[0];
+                params["lat"] = center[1];
+
+                console.log(params);
+
+                let url = "/bussiness/estimation/upload/data";
+                $.post(url,params,function (data) {
+                    console.log(data);
+                    $(".loading-group").toggle('slow');
+                    $(".editor-before").show();
+                    if (data.status==1){
+                        if (data.uid){
+                            let estimations = localStorage.getItem("estimation");
+                            var estJson;
+                            if (estimations) estJson = JSON.parse(estimations);
+                            else estJson = {};
+                            estJson[estJson.length] = params;
+                            localStorage.setItem("estimation",JSON.stringify(estJson));
+                        }
+
+                        if(data.estimates){
+                            estimates = data.estimates;
+                            let dataEstimations = {};
+                            let prices = {};
+                            for (let i in estimates) {
+                                let estimation = estimates[i];
+                                let price = estimation.valeur_fonciere;
+                                let size = estimation.surface_reelle_bati;
+                                let year = new Date(estimation.date_mutation).getFullYear();
+
+                                let divHouseDemo = "<div class='estimation-item' data-id='"+estimation.id+"' data-key='"+i+"'>" +
+                                    "   <div class='form-group'><label>价格：</label>"+price +" EURO</div>" +
+                                    "   <div class='form-group'><label>大小：</label>"+size+" 平米</div>" +
+                                    "   <div class='form-group'><label>交易日期:</label>"+estimation.date_mutation+"</div>";
+                                if (estimation.code_type_local==1){
+                                    divHouseDemo += "<div class='form-group'><label>房屋类型：</label>别墅</div>";
+                                    divHouseDemo += "<div class='form-group'><label>占地面积:</label>"+estimation.surface_reelle_bati+"</div>";
+                                }else{
+                                    divHouseDemo += "<div class='form-group'><label>房屋类型：</label>公寓</div>";
+                                }
+                                divHouseDemo += "<div class='form-group'>"+estimation.adresse_numero + " "
+                                    + estimation.adresse_suffixe + " "
+                                    + estimation.adresse_nom_voie + " , "
+                                    + estimation.code_postal + " , " + estimation.nom_commune + "</div>";
+                                divHouseDemo += "</div>";
+                                $("#results-demo").append(divHouseDemo);
+                                if (dataEstimations[year]){
+                                    dataEstimations[year][i] = estimation;
+                                    prices[year][i] = Math.round(price/size);
+                                }else{
+                                    dataEstimations[year] = [];
+                                    dataEstimations[year][i] = estimation;
+                                    prices[year] = [];
+                                    prices[year][i] = Math.round(price/size);
+                                }
+
+
+                                if (estimation.longitude && estimation.latitude){
+                                    let latlng = [parseFloat(estimation.longitude),parseFloat(estimation.latitude)]
+                                    var marker = new mapboxgl.Marker({color:"#28a745"})
+                                        .setLngLat(latlng);
+
+                                    marker.getElement().addEventListener('click',function () {
+                                        let popWindow = "<div class='estimation-item' data-id='"+estimation.id+"'>" +
+                                            "   <div class='form-group'>价格："+price +" EURO</div>" +
+                                            "   <div class='form-group'>大小："+size+" 平米</div>" +
+                                            "   <div class='form-group'>交易日期:"+estimation.date_mutation+"</div>";
+                                        if (estimation.code_type_local==1){
+                                            popWindow += "<div class='form-group'><label>房屋类型：</label>别墅</div>";
+                                            popWindow += "<div class='form-group'><label>占地面积:</label>"+estimation.surface_reelle_bati+"</div>";
+                                        }else{
+                                            popWindow += "<div class='form-group'><label>房屋类型：</label>公寓</div>";
+                                        }
+
+                                        popWindow += "<div class='form-group'>"+estimation.adresse_numero + " "
+                                            + estimation.adresse_suffixe + " "
+                                            + estimation.adresse_nom_voie + " , "
+                                            + estimation.code_postal + " , " + estimation.nom_commune + "</div>";
+
+                                        popWindow += "</div>";
+
+                                        addPop(latlng,popWindow);
+                                    });
+                                    marker.addTo(map);
+                                }
+                            }
+
+                            map.resize();
+
+
+                            let yearNow = new Date().getFullYear();
+                            let priceLow = {};
+                            let priceMax = {};
+                            let priceMiddle =  {};
+                            for(let j in prices){
+                                prices[j].sort(function(a, b){return a - b});
+                                let len = prices[j].length;
+                                console.log(prices[j]);
+                                console.log("长度",len);
+                                if (len>3){
+                                    prices[j].pop();
+                                    prices[j].shift();
+                                }
+                                console.log(prices[j]);
+                                console.log("长度：：：：：",prices[j].length);
+                                priceLow[j] = prices[j][0];
+                                priceMax[j] = prices[j][prices[j].length-1];
+
+                                if (Math.ceil(prices[j].length/2)-1>0){
+                                    priceMiddle[j] = prices[j][Math.ceil(prices[j].length/2)-1];
+                                }else{
+                                    priceMiddle[j] = priceMax[j][0];
+                                }
+                            }
+
+                            let low = 0;
+                            let lowYear = 2014;
+                            let max = 0;
+                            let maxYear = 2014;
+                            let middle = 0;
+                            let middleYear = 2014;
+                            for(let m in priceLow){
+                                if(priceLow[m]>low){
+                                    low = priceLow[m];
+                                    lowYear = m;
+                                }
+                            }
+
+                            for(let n in priceMax){
+                                if(priceMax[n]>max){
+                                    max = priceMax[n];
+                                    maxYear = n;
+                                }
+                            }
+
+
+
+                            for(let k in priceMiddle){
+                                if (priceMiddle[k]>middle){
+                                    middle = priceMiddle[k];
+                                    middleYear = k;
+                                }
+                            }
+
+
+                            console.log("middle",middle);
+                            console.log("priceMin",priceLow);
+                            console.log("priceMax",priceMax);
+                            console.log("pricemiddle",priceMiddle);
+
+                            low = low *  Math.pow((1 + 0.045),(yearNow - lowYear)) ;
+                            max = max * Math.pow(( 1+ 0.045),(yearNow - maxYear)) ;
+                            middle = middle * Math.pow(( 1+ 0.045),(yearNow - middleYear)) ;
+
+                            low = Math.ceil(low);
+                            max = Math.ceil(max);
+                            middle = Math.ceil(middle);
+
+
+                            let houseLow = params["size"] * low;
+                            let houseMax = params["size"] * max;
+                            let houseMiddle = params["size"] * middle;
+                            console.log(params);
+                            if (params["cave"]==1){
+                                houseMax += params["caveSize"] * 0.5 * max;
+                                houseLow += params["caveSize"] * 0.5 * low;
+                                houseMiddle += params["caveSize"] * 0.5 * middle;
+                            }
+
+                            houseMax = Math.ceil(houseMax);
+                            houseLow = Math.ceil(houseLow);
+                            houseMiddle = Math.ceil(houseMiddle);
+
+                            if (houseMiddle>houseMax||houseMiddle==0||houseMiddle<houseLow){
+                                houseMiddle = Math.ceil(( houseMax + houseLow)/2 * 1.2);
+                            }
+
+                            $("#low-price").text(low );
+                            $("#max-price").text(max );
+                            $("#house-max").text(houseMax + " EURO");
+                            $("#house-low").text(houseLow + " EURO");
+                            $("#house-middle").html("系统估算您的房价约为: <lable style='color:darkred;'>"+ houseMiddle + "</lable> EURO");
+                            $("#estimation-detail-div").toggle("slow");
+                            $("#slider").slider('option',{min: parseInt(houseLow), max: parseInt(houseMax),value:parseInt(houseMiddle)});
+                            //todo upload price
+
+
+                            let uploadParams = {};
+                            for (let j in data.model){
+                                uploadParams[j] = data.model[j];
+                            }
+                            console.log(uploadParams);
+                            uploadParams["price"] = houseMiddle;
+                            $.post("/bussiness/estimation/upload/price",uploadParams,function (data) {
+                                if (data.status==1){
+                                    console.log("upload success");
+                                }else{
+                                    console.log("failed");
+                                }
+                            });
+                        }
+                    }else{
+                        alert("系统暂时无法帮你做出估价");
+                        let path = location.pathname;
+                        window.location.assign(path);
+                    }
+                });
+                return true;
+            }
+
+            function addPop(latlng,popWindow){
+                var popup = new mapboxgl.Popup({ closeOnClick: false })
+                    .setLngLat(latlng)
+                    .setHTML(popWindow)
+                    .addTo(map);
+            }
+
+            $("#slider").slider();
+            $("#slider").slider({
+                change: function() {
+
+                },
+                slide: function() {
+                    var value = $("#slider").slider("option","value");
+                }
+            });
+
+
+            $("#results-demo").on("click",".estimation-item",function () {
+                let key = $(this).attr("data-key");
+                let estimation = estimates[key];
+                let latlng = [parseFloat(estimation.longitude),parseFloat(estimation.latitude)]
+                map.flyTo({
+                    center: latlng,
+                    zoom:13
+                });
+            });
+
+
+            function stepSix(){
+
+            }
+
+            $(".select-item").click(function () {
+                let id = $(this).attr("data-id");
+                $(this).parent(".selects").children(".select-item").each(function (key,item) {
+                    if($(item).attr("data-id")==id){
+                        $(item).addClass("active");
+                    }else{
+                        $(item).removeClass("active");
+                    }
+                });
+                $(this).parent(".selects").parent(".selects-res").children("input").val(id);
+                console.log($(this).parent(".selects").parent(".selects-res").children("input").val());
+            });
+
+
+            $("select[name=types]").change(function () {
+                let val = $(this).val();
+                $(".house-type").each(function (key,item) {
+                    if ($(item).attr("data-type")==val){
+                        $(item).show();
+                    } else{
+                        $(item).hide();
+                    }
+                    //todo set house type
+                });
+            });
+
+
+            $(".hwwd-selectors").on("click",".hwwd-selectors-item",function () {
+                let id = $(this).attr("data-id");
+                $(this).parent(".hwwd-selectors").children(".hwwd-selectors-item").each(function (key,item) {
+                    if($(item).attr("data-id") == id){
+                        $(item).addClass("active");
+                        $(this).parent(".hwwd-selectors").children("input").val(id);
+                    }else{
+                        $(item).removeClass("active");
+                    }
+                });
+            });
+
+
+            $(".location-item").on('click',".select-ville",function (){
+                let key = $(this).attr("data-key");
+                let id = $(this).attr("data-id");
+                $("input[name=location]").val(id);
+                let value = villes[key].postcode + " -- " + villes[key].name + " -- " + villes[key].code;
+                ville = villes[key];
+                map.flyTo({
+                    center: [ville.lng,ville.lat],
+                    zoom:13
+                });
+
+                $("input[name=area]").val(value);
+                $("#search-table").remove();
+            });
+
+
+            $.get("/data/pays",function (data) {
+                if (data){
+                    let dataString  = '<label for="pays" class="control-label">国家</label>';
+                    dataString += '<div><select name="pay" id="pays" class="form-control">';
+                    data.forEach(function (item,key) {
+                        dataString += '<option value="'+item.id+'">'+item.name+'</option>';
+                    })
+                    dataString += '</select></div>';
+                    $(".pays-set").html(dataString);
+                }
+            });
+
+        });
+
+
+
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGFpd2FpaHVhbmdkaSIsImEiOiJja2huZGpmZmUyZW5pMnJxcXA0bHlycmc0In0.Wh2Kzu-CfQYA0D91x5YyNg';
+        let map;
+        function setMap(){
+
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+                center: [2.2770199, 48.8589507], // starting position [lng, lat]
+                zoom:13
+            });
+
+            var nav = new mapboxgl.NavigationControl();
+            map.addControl(nav, 'top-left');
+
+        }
+
+    </script>
+</div>
+</html>

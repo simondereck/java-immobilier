@@ -1,0 +1,228 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+    <div layout:fragment="content">
+        <div class="signup-div">
+            <div class="steps">
+                <span id="step-1" class="step-register active">注册 ></span>
+                <span id="step-2" class=" step-register">个人信息 ></span>
+                <span id="step-3" class="step-register">填写需求 ></span>
+                <span id="step-4" class="step-register">担保/提前支付 ></span>
+                <span id="step-5" class="step-register">发送需求 </span>
+            </div>
+            <div class="signup-from">
+                <form class="form-horizontal"   th:action="@{/user/needs}"  method="post">
+                    <div class="step-1">
+                        <div class="signup-title"><h1>注册</h1></div>
+                        <br/><br/>
+                        <div class="form-group">
+                            <label for="email" class="control-label">Email：</label>
+                            <div>
+                                <input type="text" class="form-control" name="email"  id="email" placeholder="Email"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="telephone" class=" control-label">电话：</label>
+                            <div class="telephone-div">
+                                <input type="text" class="form-control" name="telephone"  id="telephone" placeholder="电话号码"/>
+                                <button type="button" class="btn get-code">获取</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="code" class="control-label" >验证码</label>
+                            <div >
+                                <input type="text" class="form-control" name="code" id="code" placeholder="Code"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="control-label" >密码</label>
+                            <div >
+                                <input type="password" class="form-control" name="password" id="password" placeholder="Password"/>
+                            </div>
+                        </div>
+                        <div class="form-group button-group">
+                            <button type="button" class="btn btn-success btn-signup">注册</button>
+                        </div>
+                    </div>
+                    <div class="step-2">
+                        <div class="signup-title"><h1>个人信息</h1></div>
+                        <br/><br/>
+                        <div class="form-group">
+                            <label for="sex" class="control-label">性别</label>
+                            <div>
+                                <select name="sex" id="sex" class="form-control">
+                                    <option value="0">先生</option>
+                                    <option value="1">女士</option>
+                                    <option value="2">其他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="prenom" class="control-label">姓：</label>
+                            <div>
+                                <input type="text" class="form-control" name="prenom"  id="prenom" placeholder="姓"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="nom" class=" control-label">名：</label>
+                            <div >
+                                <input type="text" class="form-control" name="nom"  id="nom" placeholder="名"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="age" class="control-label">生日</label>
+                            <div>
+                                <input type="date" class="form-control" name="birthday"  id="age" placeholder="Age"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="identity" class="control-label">身份</label>
+                            <div>
+                                <select name="identity" id="identity" class="form-control">
+                                    <option value="0">学生</option>
+                                    <option value="1">工作</option>
+                                    <option value="2">退休</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="salary" class="control-label">工作(选填)</label>
+                            <div>
+                                <select name="salary" id="salary" class="form-control">
+                                    <option value="0">< 600欧</option>
+                                    <option value="1">600 ~ 1000 欧</option>
+                                    <option value="2">1000 ~ 1800 欧</option>
+                                    <option value="3">1800 ~ 2500 欧</option>
+                                    <option value="4">> 2500 欧 </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="address" class="control-label">地址</label>
+                            <div>
+                                <input type="text" class="form-control" name="address"  id="address" placeholder="地址"/>
+                            </div>
+                        </div>
+                        <div class="form-group button-group">
+                            <button type="submit" class="btn btn-success btn-next">下一步</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script>
+            $(".get-code").click(function (){
+               //get code
+               alert("get code form platform");
+            });
+
+            function ValidateEmail(email)
+            {
+
+                var pattern= /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+                var strEmail=pattern.test(email);
+                if(strEmail){
+                    return true;
+                }else{
+                    alert("请输入正确的邮箱");
+                    //邮箱格式不正确
+                    return false;
+                }
+
+            }
+
+
+            $(".btn-signup").click(function (){
+                //do something check email telephone
+                let $telephone = $("input[name=telephone]").val();
+                let $email = $("input[name=email]").val();
+
+                // $.post("")
+                if(ValidateEmail($email)){
+                    let params = {};
+                    params["email"] = $email;
+                    params["telephone"] = $telephone;
+
+                    console.log(params);
+
+                    $.post("/checkUserExist",params,function (data){
+                        console.log(data);
+                    })
+
+                    let $code = $("input[name=code]").val();
+                    let $password = $("input[name=password]").val();
+
+                    if ($code && $password){
+                        $("div[class=step-1]").toggle();
+                        $("div[class=step-2]").toggle('slow');
+                        $("#step-1").removeClass("active");
+                        $("#step-2").addClass("active");
+                    }
+                }
+            });
+
+        </script>
+        <style>
+            .signup-div{
+                width:100vw;
+                height: 85vh;
+                padding-top:50px;
+                overflow-y: scroll;
+                background: whitesmoke;
+            }
+            .signup-title{
+                text-align: center;
+            }
+            .signup-from {
+                margin: auto;
+                /*width: 70vw;*/
+                max-width: 700px;
+                padding: 30px;
+                /*box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);*/
+                background: white;
+                border-radius: 5px;
+            }
+
+            .telephone-div{
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .telephone-div input[type=text]{
+                min-width: 550px;
+            }
+
+            .button-group{
+                text-align: right;
+            }
+            div[class=step-2]{
+                display: none;
+            }
+
+            .step-register{
+                padding: 10px;
+            }
+            .steps{
+                margin: auto;
+                max-width: 700px;
+                color: gray;
+                margin-bottom: 20px;
+            }
+            .steps .active{
+                /*background-color:#0c5460;*/
+                color: black;
+                border-bottom: #0c5460 3px solid;
+
+            }
+
+            .step-register:hover{
+                cursor: pointer;
+                /*box-shadow: 0 3px 3px rgba(0,0,0,0.3);*/
+                border-bottom: #0c5460 3px solid;
+            }
+
+        </style>
+    </div>
+</html>

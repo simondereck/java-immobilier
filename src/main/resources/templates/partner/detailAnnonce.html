@@ -1,0 +1,569 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <script th:src="@{/js/add-source.js}"></script>
+    <script th:src="@{/js/partner-upload-file.js}"></script>
+    <script th:src="@{/js/partner/partner-annonce-add-source.js}"></script>
+    <link th:href="@{/css/hwwd-image-editor-display.css}" rel="stylesheet">
+    <script th:src="@{/js/hwwd-image-editor-display.js}"></script>
+    <link th:href="@{/css/hwwd-image-update.css}" rel="stylesheet"/>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <link th:href="@{/css/partner/partner-upload-file.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content" th:data-id="${id}">
+            <div class="annonce-nav">
+                <span data-id="1" class="active">封面/图片</span>
+                <span data-id="2">基本信息</span>
+                <span data-id="3">房屋描述</span>
+                <span data-id="4">房屋详情</span>
+            </div>
+            <form id="updateSource" method="post" th:action="@{/partner/admin/house/detail/}+${id}">
+                <div class="add-source">
+                    <div class="button-group"><button class="btn btn-success btn-update" type="button">更新</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            let id = $(".content").attr("data-id");
+            $.get("/partner/admin/house/detail/data/"+id,function (data) {
+                console.log(data);
+                if (data.status==1){
+                    let annonce = data.annonce;
+                    let bases = data.bases;
+                    let imms = data.imms;
+                    let meubles = data.meubles;
+                    let rtypes = data.rtypes;
+                    let trans = data.trans;
+                    let ville = data.ville;
+                    let annonceDiv = "";
+
+
+                    annonceDiv += "<div class='steps step-1' data-id='1'>";
+                    if (annonce.cover){
+                        annonceDiv += "<div class='form-group'>" +
+                            "                            <label>封面</label>" +
+                            "                            <div class='cover'>" +
+                            "                                <img id='cover-image' src='/partners/"+annonce.pid+"/"+annonce.cover+"'/>" +
+                            "                                <input name='cover'  hidden id='cover'/>" +
+                            "                            </div>" +
+                            "                        </div>"
+                    }
+                    annonceDiv += "<div class='form-group'>" +
+                                  "   <div class='annonce-item-imgs'>";
+                    if (annonce.imgsJson){
+                        let images = JSON.parse(annonce.imgsJson);
+                        for (let i in images){
+                            annonceDiv += "<div class='img-item'>" +
+                                "<img src='/partners/"+annonce.pid+"/"+images[i]+ "' />" +
+                                "<input type='hidden' name='images["+i+"]' value='" + images[i] +"' class='img-item-input'/>"+
+                                "</div>";
+                        }
+                    }
+                    annonceDiv += "<div class='add-image'><img src='/img/add.png' /></div>";
+                    annonceDiv += "</div></div>"
+                    annonceDiv += "</div>";
+
+                    annonceDiv += "<div class='steps step-2' data-id='2'>";
+                    annonceDiv += "<div class='location-div form-group'>" +
+                        "                            <div class='location-item' id='area-div'>" +
+                        "                                <label for='area'>地区</label>" +
+                        "                                <div>";
+                    if (annonce.location){
+                        annonceDiv += "<input type='text' class='form-control search-input' name='area'  id='area' placeholder='地段' value='"+ville.postcode + "--" +ville.name+"--" + ville.code +"'/>" +
+                                      "<input type='text' name='location' hidden='hidden' value='"+annonce.location+"'/>";
+                    }else{
+                        annonceDiv += "<input type='text' class='form-control search-input' name='area'  id='area' placeholder='地段' />" +
+                                      "<input type='text' name='location' hidden='hidden' />";
+                    }
+                    annonceDiv += "</div>" +
+                        "<text class='location-error error'></text>" +
+                        "</div>";
+
+                    annonceDiv += "<div class='location-item'>" +
+                        "   <label for='address'>地址</label>" +
+                        "   <div>" +
+                        "       <input name='address' id='address' class='form-control' placeholder='详细地址' value='"+annonce.address+"'/>" +
+                        "   </div>" +
+                        "   <text class='address-error error'></text>" +
+                        "   </div>" +
+                        "</div>";
+
+                    annonceDiv += "<div class='form-group'>" +
+                        "               <label for='sdate'>可出租日期</label>" +
+                        "               <input type='date' class='form-control datechk' name='sdate' id='sdate' value='"+annonce.sdate+"'/>" +
+                        "               <text class='sdate-error error'></text>" +
+                        "           </div>";
+
+                    annonceDiv +=  "<div class='form-group'>" +
+                                "       <label for='rtype'>房子类型</label>"+
+                                "       <select name='rtype' id='rtype' class='form-control'>";
+
+                    for (let r in rtypes){
+                        if (r==annonce.rtype){
+                            annonceDiv += "<option value='"+r+"' selected>"+rtypes[r]+"</option>";
+                        }else{
+                            annonceDiv += "<option value='"+r+"'>"+rtypes[r]+"</option>";
+                        }
+                    }
+
+                    annonceDiv += "</select></div>";
+
+                    annonceDiv +=   "<div class='form-group'>" +
+                                    "   <label for='size'>大小</label>" +
+                                    "       <div>" +
+                                    "           <input class='form-control' name='size' id='size' value='"+annonce.size+"' placeholder='m²' type='number'/>" +
+                                    "       </div>" +
+                                    "       <text class='size-error error'></text>" +
+                                    "</div>";
+
+                    annonceDiv +=   "<div class='form-group'>" +
+                                    "   <h4>房租 <span class='price'></span></h4>" +
+                                    "   <div class='form-group price-div'>" +
+                                    "       <input class='form-control' name='loyer' type='number' placeholder='房租' value='"+annonce.loyer+"'/>" +
+                                    "       <input class='form-control' name='charges' type='number' placeholder='物业费' value='"+annonce.charges+"'/>" +
+                                    "   </div>" +
+                                    "   <text class='price-error error'></text>" +
+                                    "</div>";
+
+                    annonceDiv += "</div>";
+
+                    annonceDiv += "<div class='steps step-3' data-id='3'>";
+
+                    annonceDiv += "<div class='form-group'>" +
+                        "                            <div><h5>细节描述</h5></div>" +
+                        "                            <textarea  class='form-control' id='house-description' name='description' placeholder='Attention" +
+                        "Inutile d’indiquer ici la date de disponible , celle-ci est systématiquement envoyee aux locataires sélectionnés ." +
+                        " Décrivez votre logement, son agencement , ses equipments (cuisine équipée ,parking cave , …… ),ses points forts ," +
+                        " sa proximité des transports , le quartier ,etc . Et n’oubliez pas les photos!' >"+annonce.description+"</textarea>" +
+                        "                            <text class='description-error error'></text>" +
+                        "                        </div>";
+
+                    annonceDiv += "<div class='form-group'>" +
+                        "                            <div><h5>DPE 能源等级</h5></div>" +
+                        "                            <div class='energy-item-group'>";
+
+                    if (annonce.energy==0){
+                        annonceDiv += "<input type='radio' name='energy' checked='checked' value='0'/>";
+                    }else{
+                        annonceDiv += "<input type='radio' name='energy' value='0'/>";
+                    }
+
+                    annonceDiv += "                                <div class='energy-item energy-item-0'>" +
+                        "                                    <span style='color: black'>无等级</span>" +
+                        "                                </div>" +
+                        "                            </div>" +
+                        "                            <div class='energy-item-group'>";
+
+                    if (annonce.energy==1){
+                        annonceDiv += "<input type='radio' name='energy' checked='checked' value='1'/>";
+                    }else{
+                        annonceDiv += "<input type='radio' name='energy' value='1'/>";
+                    }
+
+                    annonceDiv += "                                <div class='energy-item energy-item-1' style='background-color: #478E3E;'>" +
+                        "                                    <span>A</span>" +
+                        "                                    <div></div>" +
+                        "                                </div>" +
+                        "                            </div>"+
+                        "                           <div class='energy-item-group'>";
+
+                    if (annonce.energy==2){
+                        annonceDiv += "<input type='radio' name='energy' checked='checked' value='2'/>";
+                    }else{
+                        annonceDiv += "<input type='radio' name='energy' value='2'/>";
+                    }
+
+                    annonceDiv  +=  "                <div class='energy-item energy-item-2' style='background-color: #579F31;'>" +
+                        "                                    <span>B</span>" +
+                        "                                    <div></div>" +
+                        "                                </div>" +
+                        "                            </div>" +
+                        "                            <div class='energy-item-group'>";
+
+                    if (annonce.energy==3){
+                        annonceDiv += "<input type='radio' name='energy' checked='checked' value='3'/>";
+                    }else{
+                        annonceDiv += "<input type='radio' name='energy' value='3'/>";
+                    }
+
+                    annonceDiv  += "                 <div class='energy-item energy-item-3' style='background-color: #ABC524;'>" +
+                        "                                    <span>C</span>" +
+                        "                                    <div></div>" +
+                        "                                </div>" +
+                        "                            </div>" +
+                        "                            <div class='energy-item-group'>";
+
+                    if (annonce.energy==4){
+                        annonceDiv += "<input type='radio' name='energy' checked='checked' value='4'/>";
+                    }else{
+                        annonceDiv += "<input type='radio' name='energy' value='4'/>";
+                    }
+
+
+                    annonceDiv  +=  "                                <div class='energy-item energy-item-4' style='background-color: #FFEE33;'>" +
+                        "                                    <span>D</span>" +
+                        "                                    <div></div>" +
+                        "                                </div>" +
+                        "                            </div>" +
+                        "                            <div class='energy-item-group'>";
+
+                    if (annonce.energy==5){
+                        annonceDiv += "<input type='radio' name='energy' checked='checked' value='5'/>";
+                    }else{
+                        annonceDiv += "<input type='radio' name='energy' value='5'/>";
+                    }
+
+                    annonceDiv += "                  <div class='energy-item energy-item-5' style='background-color: #EBAD30;'>" +
+                        "                                    <span>E</span>" +
+                        "                                    <div></div>" +
+                        "                                </div>" +
+                        "                            </div>" +
+                        "                            <div class='energy-item-group'>";
+
+                    if (annonce.energy==6){
+                        annonceDiv += "<input type='radio' name='energy' checked='checked' value='6'/>";
+                    }else{
+                        annonceDiv += "<input type='radio' name='energy' value='6'/>";
+                    }
+
+                    annonceDiv += "                  <div class='energy-item energy-item-6' style='background-color: #D3702F;'>" +
+                        "                                    <span>F</span>" +
+                        "                                    <div></div>" +
+                        "                                </div>" +
+                        "                            </div>" +
+                        "                            <div class='energy-item-group'>";
+
+                    if (annonce.energy==7){
+                        annonceDiv += "<input type='radio' name='energy' checked='checked' value='7'/>";
+                    }else{
+                        annonceDiv += "<input type='radio' name='energy' value='7'/>";
+                    }
+
+                    annonceDiv += "                      <div class='energy-item energy-item-7' style='background-color: #C74034;'>" +
+                        "                                    <span>G</span>" +
+                        "                                    <div></div>" +
+                        "                                </div>" +
+                        "                            </div>" +
+                        "                        </div>";
+
+                    annonceDiv += "</div>";
+
+                    annonceDiv += "<div class='steps step-4' data-id='4'>";
+                    annonceDiv += "<div class='form-group'>" +
+                                  "   <label>选择标签</label>"+
+                                  "   <select class='form-control' name='type'>";
+                    if (data.model){
+                        if (data.model.type==3){
+                            annonceDiv += "<option value='3' selected>学生公寓</option>";
+                        }else{
+                            if (annonce.type==1){
+                                annonceDiv += "<option value='1' selected>个人</option>" +
+                                    "<option value='2'>中介</option>";
+                            }else{
+                                annonceDiv += "<option value='1'>个人</option>" +
+                                    "<option value='2' selected>中介</option>";
+                            }
+                            annonceDiv += "<option value='3' disabled>学生公寓</option>";
+                        }
+                    }else{
+                        annonceDiv += "<option value='1' selected>个人</option>";
+                    }
+
+                    annonceDiv +=  "</select>";
+
+
+                    annonceDiv += "</div>" +
+                        "                        <div class='form-group'>" +
+                        "                            <label for='trans'>地铁/公交</label>";
+
+                    annonceDiv  +=  "<div class='form-group'><input class='form-control' name='transation' /></div>";
+
+                    annonceDiv += "              </div>" +
+                        "                        <div class='form-group'>" +
+                        "                            <label for='meuble'>有无家具</label>" +
+                        "                            <div id='meuble'>" +
+                        "                                <select name='furniture' class='form-control'>";
+
+                    if (annonce.furniture==0){
+                        annonceDiv += "<option value='0' selected>无家具</option>" +
+                        "<option value='1'>家具齐全</option>";
+                    }else{
+                        annonceDiv += "<option value='0'>无家具</option>" +
+                            "<option value='1' selected>家具齐全</option>";
+                    }
+
+                    annonceDiv += "                      </select>" +
+                        "                            </div>" +
+                        "                        </div>" +
+                        "                        <div class='form-group'>" +
+                        "                            <label for='bases'>基本配置</label>" +
+                        "                            <div id='bases'>";
+
+
+                    if (annonce.envirJson){
+                        let envir  = JSON.parse(annonce.envirJson);
+                        console.log(envir);
+                        for (let b in bases){
+                            let flag = false;
+                            for (let e in envir){
+                                if (e==b){
+                                    annonceDiv += "<view class='base-item active' data-id='"+b+"'>" +
+                                        "   <text>"+bases[b]+"</text>" +
+                                        "   <input name='base["+b+"]' type='hidden' value='"+b+"'/>" +
+                                        "</view>";
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (!flag){
+                                annonceDiv += "<view class='base-item' data-id='"+b+"'>" +
+                                    "   <text>"+bases[b]+"</text>" +
+                                    "</view>";
+                            }
+                        }
+                    }else{
+                        for (let b in bases){
+                            annonceDiv += "<view class='base-item' data-id='"+b+"'>" +
+                                          "   <text>"+bases[b]+"</text>" +
+                                          "</view>";
+                        }
+                    }
+
+                    annonceDiv += "                </div>" +
+                        "                        </div>" +
+                        "                        <div class='form-group'>" +
+                        "                            <label for='envir'>高级配置</label>" +
+                        "                            <div id='envir'>";
+
+                    if (annonce.immsJson){
+                        let annonceImms = JSON.parse(annonce.immsJson);
+                        console.log(annonceImms);
+                        for (let i in imms){
+                            let flag = false;
+                            for (let ai in annonceImms){
+                                if (i==ai){
+                                    annonceDiv += "<view class='imm-item active' data-id='"+i+"'>" +
+                                        "   <text>"+imms[i]+"</text>" +
+                                        "   <input name='envir["+i+"]' type='hidden' value='"+i+"'/>" +
+                                        "</view>";
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (!flag){
+                                annonceDiv += "<view class='imm-item' data-id='"+i+"'>" +
+                                    "   <text>"+imms[i]+"</text>" +
+                                    "</view>";
+                            }
+
+                        }
+                    }else{
+                        for (let i in imms){
+                            annonceDiv += "<view class='imm-item' data-id='"+i+"'>" +
+                                          "   <text>"+imms[i]+"</text>" +
+                                          "</view>";
+                        }
+                    }
+
+                    annonceDiv += "</div></div>";
+                    annonceDiv += "<input name='id' value='"+annonce.id+"' hidden/>";
+                    annonceDiv += "</div>";
+
+
+                    $(".add-source").append(annonceDiv);
+
+                    if(annonce.transation){
+                        $("input[name=transation]").val(annonce.transation);
+                    }
+
+                }
+            });
+        })
+
+        $('.search-input').focus(function () {
+            $('.search-input').attr("autocomplete","off")
+        });
+
+        $(".btn-update").on('click',function (){
+            let images = $(".img-item-input");
+            if (images && images.length>0){
+                //pass
+            }else {
+                alert("请先上传图片");
+                return false;
+            }
+
+            let $location = $("input[name=location]").val();
+            let $address = $("input[name=address]").val();
+            let $sdate = $("input[name=sdate]").val();
+            let $size = $("input[name=size]").val();
+            let $loyer = $("input[name=loyer]").val();
+            let $description = $("textarea[name=description]").val();
+
+            if (!$location){
+                if ($("#area").val()){
+                    $(".location-error").text("你选择的区域可能不存在！");
+                }else{
+                    $(".location-error").text("请选择房源的区域！");
+                }
+                return false;
+            }else{
+                $(".location-error").text("");
+            }
+
+            if(!$address){
+                $(".address-error").text("请填写你的房源地址！");
+                return false;
+            }else{
+                $(".address-error").text("");
+            }
+
+            if(!$sdate){
+                $(".sdate-error").text("可出租时间不能为空!");
+                return false;
+            }else{
+                $(".sdate-error").text("");
+            }
+
+            if (!$size){
+                $(".size-error").text("请填写房屋大小！");
+                return false;
+            }else{
+                $(".size-error").text("");
+            }
+
+            if(!$loyer){
+                $(".price-error").text("请填写你的出租价格");
+                return false;
+            }else{
+                $(".price-error").text();
+            }
+
+            if (!$description){
+                $(".description-error").text("您的房子的描述，你用户展示是很重要的！");
+                return false;
+            }else{
+                $(".description-error").text("");
+            }
+
+            let $charges = $("input[name=charges]").val();
+            if (!$charges) {
+                $("input[name=charges]").val(0);
+            }
+
+
+            $("#updateSource").submit();
+        });
+
+
+
+        $(".annonce-nav").on("click","span",function () {
+            let id = $(this).attr("data-id");
+            $(".steps").each(function (key,item) {
+                if ($(item).attr("data-id")==id){
+                    $(item).show();
+                }else{
+                    $(item).hide();
+                }
+            });
+
+            $(".annonce-nav").find("span").each(function (key,item) {
+               if ($(item).attr("data-id")==id){
+                   $(item).addClass("active");
+               }else{
+                   $(item).removeClass("active");
+               }
+            });
+        })
+
+    </script>
+    <style>
+        .error{
+            padding: 5px;
+            font-size: 12px;
+            color: brown;
+        }
+
+        .step-2,.step-3,.step-4{
+            display: none;
+        }
+
+        .cover img{
+            width: 100%;
+            max-height: 25vh;
+            object-fit: cover;
+        }
+
+
+
+        .annonce-nav{
+            padding: 10px;
+            background-color: whitesmoke;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .annonce-nav span{
+            padding: 10px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .annonce-nav span:hover{
+            border-bottom: 2px solid saddlebrown;
+        }
+
+        .annonce-nav .active{
+            border-bottom: 2px solid saddlebrown;
+        }
+
+
+
+        .annonce-item-imgs{
+            padding-left: 2.5%;
+        }
+
+
+        .img-item{
+            width: 30%;
+            height: 30vw;
+            line-height: 30vw;
+            margin-bottom: 30px;
+            margin-right: 2.5%;
+            display: inline-block;
+        }
+
+        .img-item img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .img-item img:hover{
+            box-shadow: 5px 10px 10px rgba(0,0,0,0.5);
+        }
+
+        .add-image{
+            display: inline-block;
+            width: 22%;
+            height: 22%;
+            margin-bottom: 0 2.5% 30px;
+            border: 1px rgba(0,0,0,0.3) dashed;
+
+        }
+
+        .add-image img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+    </style>
+</div>
+</html>

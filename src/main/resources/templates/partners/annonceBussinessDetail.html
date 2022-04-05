@@ -1,0 +1,321 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <link th:href="@{/css/hwwd-image-display.css}" rel="stylesheet"/>
+    <script th:src="@{/js/hwwd-image-display.js}" ></script>
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+            <div th:data-id="${id}" class="annonce-item">
+                <div class="annonce-nav">
+                    <span data-id="0">封面/图片</span>
+                    <span data-id="1">基本信息</span>
+                    <span data-id="2">房屋详情</span>
+                    <span data-id="3">房源描述</span>
+                    <span data-id="4">联系方式</span>
+                </div>
+                <div id="annonce-detail">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:if="${id}">
+        $(function () {
+            let id = $(".annonce-item").attr("data-id");
+            $.get("/partner/bussiness/data/annonce/bussiness/detail/"+id,function (data) {
+                if (data.status==1){
+
+                    data.annonce.images;
+                    data.annonce.houseLabel;
+
+                    let imageHouse = "<div class='house-images annonce-item-item' data-id='0'>";
+                    imageHouse += "<div class='button-group form-group'>" +
+                        "<button class='btn btn-link update-button' data-href='/partner/bussiness/annonce/update/"+data.annonce.id+"/0'>更新</button>" +
+                        "</div>";
+
+                    if (data.annonce.cover){
+                        imageHouse += "<div class='form-group'><label>封面</label><div class='cover'><img src='"+data.imgUrl+data.annonce.cover+"'/></div></div>";
+                    }else{
+                        imageHouse += "<div class='form-group'><label>封面</label><div class='cover'><img src='/img/default.jpg'/></div></div>";
+                    }
+
+                    if (data.annonce.imgsJson){
+                        let imgs = JSON.parse(data.annonce.imgsJson);
+                        let imgsDiv = "<div class='form-group'><div class='form-group'><label>图片</label></div><div class='annonce-item-imgs'>";
+                        for (let i=0;i<imgs.length;i++){
+                            if (imgs.length>i){
+                                imgsDiv += "<div class='img-item'><img src='"+data.imgUrl+ imgs[i]+ "' /></div>"
+                            }
+                        }
+                        imgsDiv += "</div></div>";
+                        imageHouse += imgsDiv;
+                    }
+
+
+                    imageHouse += "</div>";
+
+
+                    $("#annonce-detail").append(imageHouse);
+
+
+                    let houseBase = "<div class='house-base annonce-item-item' data-id='1'>";
+                    houseBase += "<div class='button-group form-group'>" +
+                        "<button class='btn btn-link update-button' data-href='/partner/bussiness/annonce/update/"+data.annonce.id+"/1'>更新</button>" +
+                        "</div>";
+                    if(data.pays){
+                        houseBase += "<div class='form-group'><label>国家：</label><span>"+data.pays.name+"</span></div>";
+                    }else{
+                        houseBase += "<div class='form-group'><label>国家：</label><span>"+" "+"</span></div>";
+                    }
+
+                    if (data.annonce.area){
+                        houseBase += "<div class='form-group'><label>地区：</label><span>"+data.annonce.area+"</span></div>";
+                    }else{
+                        houseBase += "<div class='form-group'><label>地区：</label><span></span></div>";
+                    }
+
+                    houseBase += "<div class='form-group'><label>地址：</label><span>"+data.annonce.address+"</span></div>";
+                    houseBase += "<div class='form-group'><label>面积：</label><span>"+data.annonce.size+" 平米</span></div>";
+
+                    if (data.annonce.middle){
+                        houseBase += "<div class='form-group'><label>中间层：</label><span>是</span></div>";
+                    }else{
+                        houseBase += "<div class='form-group'><label>中间层：</label><span>否</span></div>";
+                    }
+                    houseBase += "<div class='form-group'><label>价格：</label><span>"+data.annonce.price+"</span></div>";
+                    houseBase += "</div>";
+
+                    $("#annonce-detail").append(houseBase);
+
+
+                    let houseDetail = "<div class='house-detail annonce-item-item' data-id='2'>";
+                    houseDetail += "<div class='button-group form-group'>" +
+                        "<button class='btn btn-link update-button' data-href='/partner/bussiness/annonce/update/"+data.annonce.id+"/2'>更新</button>" +
+                        "</div>";
+                    if (data.annonce.types){
+
+                    }
+                    houseDetail += "<div class='form-group'><label>类别:</label><span>"+data.types[data.annonce.types]+"</span></div>";
+
+                    houseDetail += "<div class='form-group'><label>房源类型:</label><span>"+data.houseType[data.annonce.houseType]+"</span></div>";
+
+                    houseDetail += "<div class='form-group'><label>房屋类型:</label><span>"+data.roomType[data.annonce.roomType]+"</span></div>";
+                    if (data.annonce.lift){
+                        houseDetail += "<div class='form-group'><label>电梯</label><span>有电梯</span></div>";
+                    }else{
+                        houseDetail += "<div class='form-group'><label>电梯</label><span>无电梯</span></div>";
+                    }
+
+                    if (data.annonce.balcon){
+                        houseDetail += "<div class='form-group'><label>阳台</label><span>有阳台</span></div>";
+                        houseDetail += "<div class='form-group'><label>大小：</label><span>"+data.annonce.balconSize+" 平米</span></div>";
+                    }else{
+                        houseDetail += "<div class='form-group'><label>阳台</label><span>无阳台</span></div>";
+                    }
+
+                    if (data.annonce.cave){
+                        houseDetail += "<div class='form-group'><label>地窖</label><span>有地窖</span></div>";
+                        houseDetail += "<div class='form-group'><label>大小：</label><span>"+data.annonce.caveSize+" 平米</span></div>";
+                    }else{
+                        houseDetail += "<div class='form-group'><label>地窖</label><span>无地窖</span></div>";
+                    }
+
+                    if (data.annonce.parking){
+                        houseDetail += "<div class='form-group'><label>停车场</label><span>有停车场</span></div>";
+                    }else{
+                        houseDetail += "<div class='form-group'><label>停车场</label><span>无停车场</span></div>";
+                    }
+                    houseDetail += "</div>";
+
+                    $("#annonce-detail").append(houseDetail);
+
+                    let houseDescription = "<div class='house-description annonce-item-item' data-id='3'>";
+                    houseDescription += "<div class='button-group form-group'>" +
+                        "<button class='btn btn-link update-button' data-href='/partner/bussiness/annonce/update/"+data.annonce.id+"/3'>更新</button>" +
+                        "</div>";
+                    houseDescription += "<div class='form-group'>" +
+                        "<label>交通：</label>" +
+                        "<span>"+data.annonce.trans+"</span>" +
+                        "</div>"
+                    switch (data.annonce.houseLabel){
+                        case 0:
+                            houseDescription += "<div class='form-group'><label>类型：</label><span>个人</span></div>";
+                            break;
+                        case 1:
+                            houseDescription += "<div class='form-group'><label>类型：</label><span>房管</span></div>";
+                            break;
+                        case 2:
+                            houseDescription += "<div class='form-group'><label>类型：</label><span>中介</span></div>";
+                            break;
+                        case 3:
+                            houseDescription += "<div class='form-group'><label>类型：</label><span>加盟商</span></div>";
+                            break;
+                        case 4:
+                            houseDescription += "<div class='form-group'><label>类型：</label><span>平台自营</span></div>";
+                            break;
+                    }
+
+                    houseDescription += ""
+                    houseDescription += "<div class='form-group'>" +
+                        "<label>房屋描述：</label>" +
+                        "<textarea disabled class='form-control'>"+data.annonce.description+"</textarea>" +
+                        "</div>";
+
+
+                    houseDescription += "</div>";
+
+
+                    $("#annonce-detail").append(houseDescription);
+
+                    let contactDetail = "<div class='contact-deatail annonce-item-item' data-id='4'>";
+                    contactDetail += "<div class='button-group form-group'>" +
+                        "<button class='btn btn-link update-button' data-href='/partner/bussiness/annonce/update/"+data.annonce.id+"/4'>更新</button>" +
+                        "</div>";
+                    if (data.annonce.sex==0){
+                        contactDetail += "<div class='form-group'><label>性别：</label><span>男</span></div>";
+                    }else{
+                        contactDetail += "<div class='form-group'><label>性别：</label><span>女</span></div>";
+                    }
+
+                    contactDetail += "<div class='form-group'>" +
+                        "<label>姓：</label>" +
+                        "<span>"+data.annonce.nom +"</span>" +
+                        "</div>";
+
+                    contactDetail += "<div class='form-group'>" +
+                        "<label>名：</label>" +
+                        "<span>"+data.annonce.prenom+"</span>" +
+                        "</div>";
+
+                    contactDetail += "<div class='form-group'>" +
+                        "<label>微信：</label>" +
+                        "<span>"+data.annonce.wechat+"</span>" +
+                        "</div>";
+
+                    contactDetail += "<div class='form-group'>" +
+                        "<label>邮箱：</label>" +
+                        "<span>"+data.annonce.email+"</span>" +
+                        "</div>";
+
+                    contactDetail += "<div class='form-group'>" +
+                        "<label>电话：</label>" +
+                        "<span>"+data.annonce.telephone+"</span>" +
+                        "</div>";
+
+
+                    contactDetail += "</div>";
+
+                    $("#annonce-detail").append(contactDetail);
+                    setView();
+
+                }else {
+                    alert("你请求的房源信息不存在");
+                }
+            });
+
+            $(".annonce-nav span").each(function (key,item) {
+                if ($(item).attr("data-id")==0){
+                    $(item).addClass("active");
+                }
+            });
+
+            function setView(){
+                $(".annonce-item-item").each(function (key,item) {
+                    if ($(item).attr("data-id")==0){
+                        $(item).show();
+                    }else{
+                        $(item).hide();
+                    }
+                });
+            }
+
+            $(".annonce-nav span").click(function () {
+                let id = $(this).attr("data-id");
+                $(".annonce-nav span").each(function (key,item) {
+                    if($(item).attr("data-id")==id){
+                        $(item).addClass("active");
+                    }else{
+                        $(item).removeClass("active");
+                    }
+                });
+                $(".annonce-item-item").each(function (key,item) {
+                   if($(item).attr("data-id")==id){
+                       $(item).show();
+                   }else{
+                       $(item).hide();
+                   }
+                });
+            });
+
+            $("html").on("click",".update-button",function () {
+                let href = $(this).attr("data-href");
+                window.location.assign(href);
+            });
+
+            $("html").on("click",".img-item",function () {
+               let src = $(this).children("img").attr("src");
+               initImageDisplay(src);
+            });
+        });
+
+    </script>
+    <style>
+        .cover img{
+            width: 100%;
+            max-height: 50vh;
+            object-fit: cover;
+        }
+        .annonce-nav{
+            padding: 10px;
+            background-color: whitesmoke;
+            font-size: 16px;
+        }
+        .annonce-nav span{
+            padding: 10px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .annonce-nav span:hover{
+            border-bottom: 2px solid saddlebrown;
+        }
+
+        .annonce-nav .active{
+            border-bottom: 2px solid saddlebrown;
+        }
+        .form-group label{
+            min-width: 80px;
+        }
+
+        .annonce-item-imgs{
+            padding: 10px;
+            /*display: inline-block;*/
+        }
+
+
+        .img-item{
+            width: 30%;
+            height: 30%;
+            margin-bottom: 30px;
+            display: inline-block;
+            padding-left: 3%;
+        }
+
+        .img-item img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .img-item img:hover{
+            box-shadow: 5px 10px 10px rgba(0,0,0,0.5);
+        }
+    </style>
+</div>
+</html>

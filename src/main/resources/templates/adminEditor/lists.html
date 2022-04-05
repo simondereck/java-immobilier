@@ -1,0 +1,83 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <script src="https://cdn.tiny.cloud/1/ccdalwh299ar3x26hxudobwbjcl2atcgo4reojd7rts3h6d2/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <div class="lists-div">
+        <div class="form-group"><a class="btn btn-success" href="/admin/editor/add">添加</a></div>
+        <table>
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>类型</td>
+                    <td>状态</td>
+                    <td>创建时间</td>
+                    <td>修改时间</td>
+                    <td>option</td>
+                </tr>
+            </thead>
+            <tbody class="data-bodys">
+
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(function () {
+            $.get("/admin/editor/data/lists",function (data) {
+                if (data.status==1){
+                    let pages = data.pageEditors;
+                    let dataDiv = "";
+                    for (let k in pages) {
+                        dataDiv += "<tr>" +
+                            "<td>"+pages[k].id+"</td>" +
+                            "<td>"+data.types[pages[k].ptype]+"</td>" +
+                            "<td>"+data.istatus[pages[k].iStatus]+"</td>" +
+                            "<td>"+pages[k].ctime+"</td>" +
+                            "<td>"+pages[k].utime+"</td>" +
+                            "<td><a href='/admin/editor/update/"+pages[k].id+"'>更新</a></td>" +
+                            "</tr>"
+                    }
+                    $(".data-bodys").append(dataDiv);
+                }
+            });
+        })
+    </script>
+    <style>
+
+        .lists-div{
+            margin: auto;
+            width: 90vw;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+        }
+
+        td,th{
+            text-align: center;
+            padding: 10px;
+            min-width: 120px;
+        }
+        thead{
+            background-color: #0c5460;
+            color: white;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: whitesmoke;
+        }
+        tbody tr:nth-child(even) {
+            background-color: lightgray;
+        }
+
+        .button-group button{
+            width:100%;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+    </style>
+</div>
+</html>

@@ -1,0 +1,217 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="employe-detail" th:data-id="${id}">
+        <div class="form-group selects-div">
+            <div class="select-item active" data-id="0">基本信息</div>
+            <div class="select-item" data-id="1">当天操作</div>
+            <div class="select-item btn-date" data-id="2">员工考勤</div>
+        </div>
+        <div class="admin-info form-group admin-item" data-id="0">
+
+        </div>
+        <div class="admin-logins form-group admin-item" data-id="1">
+            <table class="form-group">
+                <thead>
+                    <tr>
+                        <td>日期</td>
+                        <td>登录时间</td>
+                    </tr>
+                </thead>
+                <tbody id="logins">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            let id = $(".employe-detail").attr("data-id");
+            $(".btn-date").click(function () {
+                window.location.assign("/admin/employe/date/search/"+id);
+            });
+            $.get("/admin/employe/detail/data/"+id,function (data) {
+               console.log(data);
+               if (data.status==1){
+                   let adminDiv = "";
+                   if (data.admin){
+                       adminDiv += "<tbody>";
+                        adminDiv += "<tr><td>姓名</td><td>"+data.admin.username+"</td></tr>";
+                        switch (data.admin.permission) {
+                            case 6:
+                                adminDiv += "<tr><td>权限</td><td>实习生</td></tr>";
+                                break;
+                            case 7:
+                                adminDiv += "<tr><td>权限</td><td>普通管理员</td></tr>";
+
+                                break;
+                            case 8:
+                                adminDiv += "<tr><td>权限</td><td>金牌管理员</td></tr>";
+
+                                break;
+                            case 9:
+                                adminDiv += "<tr><td>权限</td><td>超级管理员</td></tr>";
+                                break;
+                        }
+                        adminDiv += "<tr><td>邮件</td><td>"+data.admin.email+"</td></tr>";
+                        adminDiv += "<tr><td>电话</td><td>"+data.admin.telephone+"</td></tr>";
+
+
+
+                       if (data.admin.loginAddress){
+                           adminDiv += "<tr><td>登录地址：</td><td>"+data.admin.loginAddress +" , "+data.admin.loginPostcode+"</td></tr>";
+                       }
+
+                       if (data.admin.backupAddress){
+                           adminDiv += "<tr><td>备份地址：</td><td>"+data.admin.backupAddress+" , "+data.admin.backupPostcode+"</td></tr>"
+                       }
+
+                       adminDiv += "<tr><td>更新时间</td><td>"+data.admin.utime+"</td></tr>";
+                       adminDiv += "<tr><td>创建时间</td><td>"+data.admin.ctime+"</td></tr>";
+
+                       switch (data.admin.astatus){
+                           case 0:
+                               adminDiv += "<tr><td>状态</td><td style='background-color: gray;padding: 10px;'>屏蔽</td></tr>";
+                               break;
+                           case 1:
+                               adminDiv += "<tr><td>状态</td><td style='background-color: darkgreen;color: white;padding: 10px;'>激活</td></tr>";
+                               break;
+                           case 2:
+                               adminDiv += "<tr><td>状态</td><td style='background-color: darkred;color: white;padding: 10px;'>离职</td></tr>";
+                               break;
+                       }
+
+
+                       adminDiv += "</tbody>";
+
+                       if (data.location){
+                           adminDiv += "<tr><td>最近首次登录</td><td>"+data.location.stime+"</td></tr>"
+                           adminDiv += "<tr><td>最新在线时间</td><td>"+data.location.utime+"</td></tr>";
+                       }
+
+                   }
+
+                   $(".admin-info").append(adminDiv);
+
+                   let loginsDiv = "";
+                   if (data.logins){
+                       let logins = data.logins;
+                       for (let i in logins){
+                           loginsDiv += "<tr><td>"+logins[i].date+"</td><td>"+logins[i].etime+"</td></tr>";
+                       }
+                       $("#logins").append(loginsDiv);
+                   }
+               }
+            });
+
+            $(".selects-div").on("click",".select-item",function () {
+                let id = $(this).attr("data-id");
+                if ($(this).hasClass("active")){
+                    return;
+                }else{
+                    $(".select-item").each(function (key,item) {
+                        $(item).removeClass("active");
+                    });
+                    $(this).addClass("active");
+                }
+                $(".admin-item").each(function (key,item) {
+                   if(id == $(item).attr("data-id")){
+                       $(item).show();
+                   }else{
+                       $(item).hide();
+                   }
+                });
+            });
+
+
+        });
+    </script>
+    <style>
+
+        .employe-detail{
+            margin: auto;
+            width: 90vw;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+            overflow: scroll;
+        }
+
+
+        .button-group button{
+            width:100%;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+        td,th{
+            text-align: center;
+            padding: 10px;
+            min-width: 120px;
+        }
+        thead{
+            background-color: #0c5460;
+            color: white;
+        }
+
+
+        tbody tr:nth-child(odd) {
+            background-color: whitesmoke;
+        }
+        tbody tr:nth-child(even) {
+            background-color: lightgray;
+        }
+
+        .admin-logins{
+            display: none;
+            width: fit-content;
+            margin: auto;
+        }
+
+        .admin-info{
+            width: fit-content;
+            margin: auto;
+        }
+
+        .admin-info tbody td:nth-child(odd) {
+            background-color: #0f6674;
+            color: white;
+        }
+
+        .selects-div{
+            margin: auto;
+            width: fit-content;
+            display: flex;
+            margin-bottom: 30px;
+        }
+
+        .select-item{
+            min-width: 120px;
+            height: 50px;
+            text-align: center;
+            border-radius: 50px;
+            line-height: 50px;
+            border: 1px solid whitesmoke;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+        .select-item:hover,
+        .selects-div .active{
+            background-color: #4d9200;
+            color: white;
+            border: none;
+        }
+
+        .select-item:hover{
+            box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+            border: none;
+        }
+
+    </style>
+</div>
+</html>

@@ -1,0 +1,303 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <script src="https://cdn.tiny.cloud/1/ccdalwh299ar3x26hxudobwbjcl2atcgo4reojd7rts3h6d2/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <div class="lists-div" th:data-id="${id}">
+        <form method="post" id="post-article">
+
+        </form>
+    </div>
+    <script>
+        $(function () {
+           let id = $(".lists-div").attr("data-id");
+            $.get("/admin/editor/data/"+id,function (data) {
+                if (data.status==1){
+                    let contentDiv = "";
+                    contentDiv += "   <div class='form-group'>" +
+                    "                        <label>栏目</label>" +
+                    "                        <div>" +
+                    "                            <select name='ptype' class='form-control'>";
+                    if (data.pageEditor.ptype==1){
+                        contentDiv +=  "<option value='0'>---请选择分类栏目---</option>" +
+                            "<option value='1' selected>投资我们</option>" +
+                            "<option value='2' >招贤纳才</option>"+
+                            "<option value='3' >关于我们</option>";
+
+                    }else if (data.pageEditor.ptype==2){
+                        contentDiv +=  "<option value='0'>---请选择分类栏目---</option>" +
+                            "<option value='1' >投资我们</option>" +
+                            "<option value='2' selected>招贤纳才</option>"+
+                            "<option value='3' >关于我们</option>";
+                    }else if (data.pageEditor.ptype==3){
+                        contentDiv +=  "<option value='0'>---请选择分类栏目---</option>" +
+                            "<option value='1' >投资我们</option>" +
+                            "<option value='2' >招贤纳才</option>"+
+                            "<option value='3' selected>关于我们</option>";
+                    }
+
+
+                    contentDiv += "</select></div></div>";
+
+                    // if (data.pageEditor.description){
+                        contentDiv += "<div class='form-group'>" +
+                            "<textarea id='recrut' name='description' ></textarea>" +
+                            "</div>";
+                    // }
+
+                    contentDiv += "         <div class='form-group'>" +
+                        "                        <label>状态</label>" +
+                        "                        <div>" +
+                        "                            <select name='iStatus' class='form-control'>";
+
+                    if(data.pageEditor.iStatus==1){
+                        contentDiv += "<option value='0'>---请选择状态---</option>" +
+                            "<option value='1' selected>保存</option>" +
+                            "<option value='2'>发布</option>" ;
+                    }else{
+                        contentDiv += "<option value='0'>---请选择状态---</option>" +
+                            "<option value='1' >保存</option>" +
+                            "<option value='2' selected>发布</option>" ;
+                    }
+
+                    contentDiv += "</select></div></div>";
+
+                    contentDiv += "  <div class='form-group button-group'>" +
+                        "                        <button class='btn btn-success btn-submit' type='button'>确定</button>" +
+                        "                    </div>";
+
+
+                    $("#post-article").append(contentDiv);
+                    $("#recrut").val(data.pageEditor.description);
+                    initView();
+                }else{
+                    alert("你所找的页面不存在");
+                }
+            });
+        });
+
+        function initView() {
+            tinymce.init({
+                selector: '#recrut',//绑定渲染区
+                height: 600,
+                plugins: 'paste importcss code table advlist fullscreen imagetools  textcolor colorpicker hr  autolink link image lists preview media wordcount',
+                toolbar: 'styleselect |  formatselect | fontsizeselect | forecolor backcolor | bold italic underline strikethrough | image  media | table | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | preview removeformat  hr | paste code  link | undo redo | fullscreen',
+                skin: 'oxide',
+                language: 'zh_CN',//汉化
+                convert_urls: false,
+                // relative_urls : true,
+                images_upload_url: '../tmmedia/upload',//图片上传地址
+                images_upload_credentials: true,
+                image_dimensions: false,
+                image_class_list: [
+                    {title: '无', value: ''},
+                    {title: '预览', value: 'preview'},
+                ],
+                images_upload_handler:function(blobInfo, success, failure){
+                    let file = blobInfo.blob();
+                    if (file){
+                        compressImage(file,function (successFile) {
+                            let xhr, formData;
+                            xhr = new XMLHttpRequest();
+                            xhr.open('POST', '/tmmedia/upload');//自定义文件上传
+                            xhr.withCredentials = true;
+                            xhr.upload.onprogress = function (e) {
+                                // 进度(e.loaded / e.total * 100)
+                            };
+                            xhr.onerror = function () {
+                                console.log(xhr.status);
+                                return;
+                            };
+                            xhr.onload = function () {
+                                let json;
+
+                                if (xhr.status < 200 || xhr.status >= 300) {
+                                    console.log('HTTP 错误: ' + xhr.status);
+                                    return;
+                                }
+                                json = JSON.parse(xhr.responseText);
+                                // console.log(json.location);
+                                success(json.location);
+                            };
+                            formData = new FormData();
+                            //假设接口接收参数为file,值为选中的文件
+                            formData.append('file', successFile,blobInfo.filename());
+                            //正式使用将下面被注释的内容恢复
+                            xhr.send(formData);
+                        },function (error){
+                            failure(error);
+                            console.error(error);
+                        });
+                    }
+
+
+                },
+                // images_upload_base_path: '/',
+                forced_root_block: 'p',
+                force_p_newlines: true,
+                importcss_append: true,
+                content_style: `
+    *                         { padding:0; margin:0; }
+    html, body                { height:100%; }
+    img                       { max-width:100%; display:block;height:auto; }
+    a                         { text-decoration: none; }
+    iframe                    { width: 100%; }
+    p                         { line-height:1.6; margin: 0px; }
+    table                     { word-wrap:break-word; word-break:break-all; max-width:100%; border:none; border-color:#999; }
+    .mce-object-iframe        { width:100%; box-sizing:border-box; margin:0; padding:0; }
+    ul,ol                     { list-style-position:inside; }
+  `,
+                insert_button_items: 'image link | inserttable',
+                // CONFIG: Paste
+                paste_retain_style_properties: 'all',
+                paste_word_valid_elements: '*[*]',        // word需要它
+                paste_data_images: true,                  // 粘贴的同时能把内容里的图片自动上传
+                paste_convert_word_fake_lists: false,     // 插入word文档需要该属性
+                paste_webkit_styles: 'all',
+                paste_merge_formats: true,
+                nonbreaking_force_tab: false,
+                paste_auto_cleanup_on_paste: false,
+
+                // CONFIG: Font
+                fontsize_formats: '10px 11px 12px 14px 16px 18px 20px 24px',
+
+                // CONFIG: StyleSelect
+                style_formats: [
+                    {
+                        title: '首行缩进',
+                        block: 'p',
+                        styles: {'text-indent': '2em'}
+                    },
+                    {
+                        title: '行高',
+                        items: [
+                            {title: '1', styles: {'line-height': '1'}, inline: 'span'},
+                            {title: '1.5', styles: {'line-height': '1.5'}, inline: 'span'},
+                            {title: '2', styles: {'line-height': '2'}, inline: 'span'},
+                            {title: '2.5', styles: {'line-height': '2.5'}, inline: 'span'},
+                            {title: '3', styles: {'line-height': '3'}, inline: 'span'}
+                        ]
+                    }
+                ],
+                // Tab
+                tabfocus_elements: ':prev,:next',
+                object_resizing: true,
+
+                // Image
+                imagetools_toolbar: 'rotateleft rotateright | flipv fliph | editimage imageoptions',
+                file_picker_types: 'media',
+                media_live_embeds: true,
+                // //be used to add custom file picker to those dialogs that have it.
+                // file_picker_callback: function (cb, value, meta) {
+                //     return;
+                // }
+            });
+
+
+            function caculateSize(file,canvas,src,quality) {
+                quality *= 0.8
+                let base64 = canvas.toDataURL('image/jpeg',quality);
+                let size = ((base64.length/1024).toFixed(2)/(src.length/1024).toFixed(2)).toFixed(2)*file.size;
+                if (size/(1000*1000)>=1){
+                    return caculateSize(file,canvas,src,quality);
+                }
+                return quality;
+            }
+
+            function compressImage(file,success,error){
+                let name = file.name;
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = e =>{
+                    let src = e.target.result;
+                    let img = new Image();
+                    img.src = src;
+                    img.onload = e =>{
+                        let w = img.width;
+                        let h = img.height;
+
+                        let canvas = document.createElement('canvas');
+                        let ctx = canvas.getContext('2d');
+
+                        let anw = document.createAttribute('width');
+                        let anh = document.createAttribute('height');
+                        anh.nodeValue = h;
+                        anw.nodeValue = w;
+                        canvas.setAttributeNode(anw);
+                        canvas.setAttributeNode(anh);
+
+                        ctx.fillStyle = "#fff";
+                        ctx.drawImage(img,0,0,w,h);
+
+                        let quality = caculateSize(file,canvas,src,1);
+
+                        let base64 = canvas.toDataURL('image/jpeg',quality);
+
+                        let bytes = window.atob(base64.split(',')[1]);
+
+                        let ab  = new ArrayBuffer(bytes.length);
+                        let ia = new Uint8Array(ab);
+
+                        for (let i=0;i<bytes.length;i++){
+                            ia[i] = bytes.charCodeAt(i);
+                        }
+                        file = new Blob([ab],{type:'image/jpeg'});
+                        file.fileName = name;
+                        file.lastModifiedDate = new Date();
+                        success(file);
+                    }
+                    img.onerror = e =>{
+                        error(e);
+                    }
+                }
+                reader.onerror = e =>{
+                    error(e);
+                }
+            }
+
+            $(".btn-submit").click(function () {
+                let dataArray = $("#post-article").serializeArray();
+                let dataParams = {};
+                dataArray.forEach(function (item,key) {
+                    dataParams[item.name] = item.value;
+                });
+                if (dataParams["ptype"]<1&&dataParams["iStatus"]<1){
+                    alert("栏目和状态必须选择");
+                    return;
+                }
+                dataParams["description"] = tinymce.activeEditor.getContent();
+                $.post("/admin/editor/data",dataParams,function (data) {
+                    if(data.status==1){
+                        alert("保存成功")
+                        window.location.assign("/admin/editor/lists");
+                    }else{
+                        alert("失败");
+                    }
+                });
+            });
+        }
+
+    </script>
+    <style>
+
+        .lists-div{
+            margin: auto;
+            width: 90vw;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+        }
+
+
+        .button-group button{
+            width:100%;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+    </style>
+</div>
+</html>

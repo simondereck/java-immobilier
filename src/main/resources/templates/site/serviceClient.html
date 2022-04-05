@@ -1,0 +1,62 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+
+<div layout:fragment="content">
+    <div class="choice-div">
+        <div id="messages" class="messages"></div>
+        <div class="bottom-group">
+            <textarea class="form-control" id="message"></textarea>
+            <button class="btn btn-success" id="send">send</button>
+        </div>
+    </div>
+    <style>
+        .choice-div{
+            background-image: url("/img/002.jpg");
+            width: 100%;
+            height: 90vh;
+        }
+        .messages{
+            width: 100%;
+            height: 75%;
+            overflow-y: scroll;
+            padding: 5px;
+        }
+
+        .bottom-group{
+            display: flex;
+            line-height: 25%;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        textarea{
+            border: none;
+            height: 20%;
+            border-radius: 5%;
+            padding: 5%;
+            width: 70%;
+        }
+
+        .message-send-item{
+            padding: 5px;
+            background-color: white;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .message-rec-item{
+            padding: 5px;
+            background-color: white;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+    </style>
+
+
+</div>
+</html>

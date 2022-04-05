@@ -1,0 +1,148 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <td>ID</td>
+                        <td>名称</td>
+                        <td>code</td>
+                        <td>检索字母</td>
+                        <td>权重</td>
+                        <td>更新时间</td>
+                        <td>Option</td>
+                    </tr>
+                    <tr>
+                        <form id="searchPays">
+                            <td><input name="id" class="form-control"/></td>
+                            <td><input name="name" class="form-control" /></td>
+                            <td><input name="code" class="form-control" /></td>
+                            <td><input name="zname" class="form-control"/></td>
+                            <td><input name="premission" class="form-control"></td>
+                            <td></td>
+                            <td><button class="btn btn-success btn-search-pays" type="button">搜索</button></td>
+                        </form>
+                    </tr>
+                </thead>
+                <tbody class="pays-content">
+
+                </tbody>
+            </table>
+            <div class="page-helper form-group">
+
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            initPage();
+
+            function initPage(url) {
+                let urlPath = url ? url : "/admin/pays/data/lists"
+                $.get(urlPath, function (data) {
+                    if (data.status === 1) {
+                        $(".pays-content").html("");
+                        let pays = data.pays;
+                        for (let k in pays) {
+                            let payDiv = "<tr>" +
+                                "    <td>" + pays[k].id + "</td>" +
+                                "    <td>" + pays[k].name + "</td>" +
+                                "    <td>" + pays[k].code + "</td>" +
+                                "    <td>" + pays[k].zname + "</td>" +
+                                "    <td>" + pays[k].premission + "</td>" +
+                                "    <td>" + pays[k].utime + "</td>" +
+                                "    <td><a href='/admin/pays/update/" + pays[k].id + "'>更新</a></td>" +
+                                "</tr>";
+
+                            $(".pays-content").append(payDiv);
+                        }
+
+                        $(".page-helper").html("");
+                        let helper = data.pageHelper;
+                        let helperDiv = "<div class='pages-set'>";
+                        if (helper.totalPage > 0) {
+                            helperDiv += "<ul class='pagination'>"
+                            for (let i in helper.pages) {
+                                helperDiv += "<li  class='page-item'><a data-href='" + helper.pages[i].url + "' class='page-link'>" + helper.pages[i].key + "</a></li>";
+                            }
+                            helperDiv += "</ul>";
+                        }
+                        helperDiv += "</div>";
+                        $(".page-helper").append(helperDiv);
+                    }
+                });
+            }
+
+            $(".page-helper").on("click","a",function () {
+                let href = $(this).attr("data-href");
+                initPage(href);
+            });
+            
+            $(".btn-search-pays").click(function () {
+                let keywords = $("#searchPays").serializeArray();
+                let params = {};
+                for (let i in keywords) {
+                    if (keywords[i].value){
+                        params[keywords[i].name] = keywords[i].value;
+                    }
+                }
+                $.post("/admin/search/pays",params,function (data) {
+                    if (data.status === 1) {
+                        $(".pays-content").html("");
+                        $(".page-helper").html("");
+                        let pays = data.pays;
+                        for (let k in pays) {
+                            let payDiv = "<tr>" +
+                                "    <td>" + pays[k].id + "</td>" +
+                                "    <td>" + pays[k].name + "</td>" +
+                                "    <td>" + pays[k].code + "</td>" +
+                                "    <td>" + pays[k].zname + "</td>" +
+                                "    <td>" + pays[k].premission + "</td>" +
+                                "    <td>" + pays[k].utime + "</td>" +
+                                "    <td><a href='/admin/pays/update/" + pays[k].id + "'>更新</a></td>" +
+                                "</tr>";
+
+                            $(".pays-content").append(payDiv);
+                        }
+
+                    }
+                });
+            });
+        });
+    </script>
+    <style>
+        td,th{
+            text-align: center;
+            padding: 10px;
+            min-width: 120px;
+        }
+        thead{
+            background-color: #0c5460;
+            color: white;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: whitesmoke;
+        }
+        tbody tr:nth-child(even) {
+            background-color: lightgray;
+        }
+        .partner-center .content{
+            width: fit-content;
+        }
+        .button-group{
+            text-align: right;
+        }
+
+        .page-helper{
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+</div>
+</html>

@@ -1,0 +1,192 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <script th:src="@{/js/partner-nav.js}"></script>
+    <script th:src="@{/js/add-source.js}"></script>
+    <link th:href="@{/css/partner-center.css}" rel="stylesheet" />
+    <div class="partner-center">
+        <div th:replace="layout/partner-nav"></div>
+        <div class="content">
+            <div class="add-source">
+                <div class="title"><h3>新建房源</h3></div>
+                <form method="post" th:action="@{/partner/admin/addSource}" id="addSource" class="form-horizontal" >
+                    <div class="location-div form-group">
+                        <div class="location-item" id="area-div">
+                            <label for="area">地区</label>
+                            <div>
+                                <input type="text" class="form-control search-input" name="area"  id="area" placeholder="地段"/>
+                                <input type="text" name="location" hidden="hidden" />
+                            </div>
+                        </div>
+                        <div class="location-item">
+                            <label for="address">地址</label>
+                            <div>
+                                <input name="address" id="address" class="form-control" placeholder="详细地址"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="sdate">可出租日期</label>
+                        <input type="date" class="form-control" name="sdate" id="sdate" />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="rtype">房子类型</label>
+                        <select name="rtype" id="rtype" class="form-control">
+                            <view th:each="type,inter:${rtypes}">
+                                <option th:value="${inter.index}" th:text="${type}"></option>
+                            </view>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="size">大小</label>
+                        <div>
+                            <input class="form-control" name="size" id="size" placeholder="m²"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <h4>房租 <span class="price"></span></h4>
+                        <div class="form-group price-div">
+                            <input class="form-control" name="loyer" type="number" placeholder="房租" />
+                            <input class="form-control" name="charges" type="number" placeholder="物业费" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div><h5>细节描述</h5></div>
+                        <textarea  class="form-control" id="house-description" name="description" placeholder="Attention
+Inutile d’indiquer ici la date de disponible , celle-ci est systématiquement envoyee aux locataires sélectionnés .
+ Décrivez votre logement, son agencement , ses equipments (cuisine équipée ,parking cave , …… ),ses points forts ,
+ sa proximité des transports , le quartier ,etc . Et n’oubliez pas les photos!"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div><h5>DPE 能源等级</h5></div>
+                        <div class="energy-item-group">
+                            <input type="radio" name="energy" checked="checked" value="0"/>
+                            <div class="energy-item energy-item-0">
+                                <span style="color: black">无等级</span>
+                            </div>
+                        </div>
+                        <div class="energy-item-group">
+                            <input type="radio" name="energy" value="1"/>
+                            <div class="energy-item energy-item-1" style="background-color: #478E3E;">
+                                <span>A</span>
+                                <div></div>
+                            </div>
+                        </div>
+                        <div class="energy-item-group">
+                            <input type="radio" name="energy" value="2"/>
+                            <div class="energy-item energy-item-2" style="background-color: #579F31;">
+                                <span>B</span>
+                                <div></div>
+                            </div>
+                        </div>
+                        <div class="energy-item-group">
+                            <input type="radio" name="energy" value="3"/>
+                            <div class="energy-item energy-item-3" style="background-color: #ABC524;">
+                                <span>C</span>
+                                <div></div>
+                            </div>
+                        </div>
+                        <div class="energy-item-group">
+                            <input type="radio" name="energy" value="4"/>
+                            <div class="energy-item energy-item-4" style="background-color: #FFEE33;">
+                                <span>D</span>
+                                <div></div>
+                            </div>
+                        </div>
+                        <div class="energy-item-group">
+                            <input type="radio" name="energy" value="5"/>
+                            <div class="energy-item energy-item-5" style="background-color: #EBAD30;">
+                                <span>E</span>
+                                <div></div>
+                            </div>
+                        </div>
+                        <div class="energy-item-group">
+                            <input type="radio" name="energy" value="6"/>
+                            <div class="energy-item energy-item-6" style="background-color: #D3702F;">
+                                <span>F</span>
+                                <div></div>
+                            </div>
+                        </div>
+                        <div class="energy-item-group">
+                            <input type="radio" name="energy" value="7"/>
+                            <div class="energy-item energy-item-7" style="background-color: #C74034;">
+                                <span>G</span>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="trans">交通</label>
+                        <div>
+                            <select id="trans" class="form-control" name="trans">
+                                <view th:each="tran,iter:${trans}">
+                                    <option th:value="${iter.index}" th:text="${tran}"></option>
+                                </view>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bases">基本家具配置</label>
+                        <div id="bases">
+                            <view  th:each="base,iter:${bases}" class="base-item" th:data-id="${iter.index}">
+                                <text th:text="${base}"></text>
+                            </view>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="envir">高级配置</label>
+                        <div id="envir">
+                            <view  th:each="imm,iter:${imms}" class="imm-item" th:data-id="${iter.index}">
+                                <text th:text="${imm}"></text>
+                            </view>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pic">图片</label>
+                        <div class="images form-group" id="images">
+
+                        </div>
+                        <div class="form-group">
+                            <button id="select" class="btn btn-danger" type="button">(重新)选择图片</button>
+                            <button id="add" class="btn btn-info" type="button">添加图片</button>
+                        </div>
+                        <input type="file" name="pic"  accept="image/*" class="form-control" id="pic" multiple style="display:none"/>
+                    </div>
+                    <div class="form-group button-group">
+                        <button class="btn btn-success" id="submit" type="button">上传图片</button>
+                        <button class="btn btn-info submit-info">添加</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <style>
+        .image-item{
+            position: relative;
+            margin: 5px;
+            display:inline-block;
+        }
+        .image-item-title{
+            position: absolute;
+            top: 0;
+            width: 100%;
+            color: white;
+            text-align: right;
+            background-color: darkred;
+            padding: 5px;
+        }
+        .delete:hover{
+            cursor: pointer;
+        }
+
+
+    </style>
+</div>
+</html>

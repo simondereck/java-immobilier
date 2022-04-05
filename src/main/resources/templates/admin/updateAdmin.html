@@ -1,0 +1,194 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <div class="update-admin-div">
+        <div class="update-admin-form">
+            <div class="update-title"><h3>更新管理员</h3></div>
+            <form class="" method="post" th:action="@{/admin/update/}+${admin.id}">
+                <div class="form-group">
+                    <label for="username" class="control-label">姓名：</label>
+                    <div>
+                        <input type="text" class="form-control" name="username"  id="username" placeholder="姓名" th:value="${admin.username}"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="control-label">邮箱：</label>
+                    <div>
+                        <input type="text" class="form-control" name="email"  id="email" placeholder="Email" th:value="${admin.email}"/>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="telephone" class="control-label">电话：</label>
+                    <div>
+                        <input type="text" class="form-control" name="telephone"  id="telephone" placeholder="Telephone" th:value="${admin.telephone}"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="control-label">密码：</label>
+                    <div>
+                        <input type="password" class="form-control" name="password"  id="password" placeholder="密码" th:value="${admin.password}"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="permission" class="control-label">权限</label>
+                    <div>
+                        <select name="permission" id="permission" class="form-control">
+                            <view th:each="role,iter:${roles}">
+                                <view th:if="${admin.permission==role.key}">
+                                    <option th:value="${role.key}" th:text="${role.value}" selected />
+                                </view>
+                                <view th:unless="${admin.permission==role.key}">
+                                    <option th:value="${role.key}" th:text="${role.value}" />
+                                </view>
+                            </view>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="status" class="control-label">状态</label>
+                    <div>
+                        <select name="astatus" class="form-control" id="status">
+                            <view th:each="su,iter:${adminStatus}">
+                                <view th:if="${admin.astatus==iter.index}" th:remove="tag">
+                                    <option th:value="${iter.index}" th:text="${su}" selected />
+                                </view>
+                                <view th:unless="${admin.astatus==iter.index}" th:remove="tag">
+                                    <option th:value="${iter.index}" th:text="${su}" />
+                                </view>
+                            </view>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="loginAddress" >主要登录地址</label>
+                    <div class="form-group" style="display: flex;">
+                        <input name="loginAddress" class="form-control" id="loginAddress" placeholder="地址" th:value="${admin.loginAddress}"/>
+                        <input name="loginPostcode" class="form-control" placeholder="邮编" th:value="${admin.loginPostcode}"/>
+                        <input name="loginLat" hidden="hidden" th:value="${admin.loginLat}"/>
+                        <input name="loginLng" hidden="hidden" th:value="${admin.loginLng}"/>
+                        <button type="button" class="btn btn-info btn-address">定位</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="backupAddress">备用登录地址</label>
+                    <div class="form-group"  style="display: flex;">
+                        <input name="backupAddress" class="form-control" id="backupAddress" placeholder="地址" th:value="${admin.backupAddress}"/>
+                        <input name="backupPostcode" class="form-control" placeholder="邮编" th:value="${admin.backupPostcode}"/>
+                        <input name="backupLat" hidden="hidden" th:value="${admin.backupLat}"/>
+                        <input name="backupLng" hidden="hidden" th:value="${admin.backupLng}"/>
+                        <button type="button" class="btn btn-info btn-backup-address">定位</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="button-group">
+                        <button class="btn btn-success">更新</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="map"></div>
+    </div>
+    <script>
+        $(function () {
+            mapboxgl.accessToken = 'pk.eyJ1IjoiaGFpd2FpaHVhbmdkaSIsImEiOiJja2huZGpmZmUyZW5pMnJxcXA0bHlycmc0In0.Wh2Kzu-CfQYA0D91x5YyNg';
+            let map;
+
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+                center: [2.2770199, 48.8589507], // starting position [lng, lat]
+                zoom:13
+            });
+
+            var nav = new mapboxgl.NavigationControl();
+            map.addControl(nav, 'top-left');
+
+
+
+            $(".btn-backup-address").click(function () {
+                let params = {};
+                params["address"] = $("input[name=backupAddress]").val();
+                params["code"] = $("input[name=backupPostcode]").val();
+                $.post("/bussiness/getLocation",params,function (data) {
+                    console.log(data);
+                    if (data.status==1){
+                        if(data.response && data.response.features && data.response.features[0]){
+                            center = data.response.features[0].center;
+                            var marker = new mapboxgl.Marker({color:"#dc0000"})
+                                .setLngLat(center);
+                            marker.addTo(map);
+                            map.flyTo({
+                                center: center,
+                                zoom:13
+                            });
+                            map.resize();
+                            $("input[name=backupLng]").val(center[0]);
+                            $("input[name=backupLat]").val(center[1]);
+                        }
+                    }
+                });
+            });
+
+            $(".btn-address").click(function () {
+                let params = {};
+                params["address"] = $("input[name=loginAddress]").val();
+                params["code"] = $("input[name=loginPostcode]").val();
+                $.post("/bussiness/getLocation",params,function (data) {
+                    console.log(data);
+                    if (data.status==1){
+                        if(data.response && data.response.features && data.response.features[0]){
+                            center = data.response.features[0].center;
+                            var marker = new mapboxgl.Marker({color:"#0c5460"})
+                                .setLngLat(center);
+                            marker.addTo(map);
+                            map.flyTo({
+                                center: center,
+                                zoom:13
+                            });
+                            map.resize();
+                            $("input[name=loginLat]").val(center[1]);
+                            $("input[name=loginLng]").val(center[0]);
+                        }
+                    }
+                });
+            });
+
+
+        });
+    </script>
+    <style>
+        .update-title{
+            text-align: center;
+        }
+        .update-admin-div{
+            display: flex;
+            width: 100%;
+        }
+        .update-admin-form{
+            width: 60vw;
+            padding: 50px;
+            margin: auto;
+            background-color: white;
+            overflow-y: scroll;
+            height: calc( 100vh - 72px );
+        }
+        #map{
+            width: 40vw;
+            height: calc( 100vh - 72px );
+            background-color: cadetblue;
+        }
+        .button-group{
+            text-align: right;
+        }
+
+    </style>
+</div>
+</html>

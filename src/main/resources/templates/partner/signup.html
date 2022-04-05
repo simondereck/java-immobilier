@@ -1,0 +1,197 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/playout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet"  th:href="@{/css/partner/signup.css}" />
+    <div class="signup-div">
+        <div class="steps">
+            <span id="step-1" class="step-register active">注册 ></span>
+            <span id="step-2" class=" step-register">验证你的邮箱或电话</span>
+        </div>
+        <div class="signup-from">
+            <form class="form-horizontal"   th:action="@{/partner/signup}"  method="post" id="signup-form">
+                <div class="signup-title"><h1>电话注册</h1></div>
+                <br/>
+                <div class="form-group top-buttons-div">
+                    <button class="btn btn-info  button-telephone" type="button">电话注册</button>
+                    <button class="btn btn-light  button-email" type="button">邮箱注册</button>
+                </div>
+                <br/>
+                <div class="form-group">
+                    <label for="sex" class="control-label">性别</label>
+                    <div>
+                        <select name="sex" id="sex" class="form-control">
+                            <option value="0">先生</option>
+                            <option value="1">女士</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group pays-set">
+
+                </div>
+                <div class="form-group">
+                    <label for="prenom" class="control-label">姓：</label>
+                    <div>
+                        <input type="text" class="form-control" name="prenom"  id="prenom" placeholder="姓" th:value="${partner.prenom}"/>
+                    </div>
+                    <text class="prenom-error error"></text>
+                </div>
+                <div class="form-group">
+                    <label for="nom" class="control-label">名：</label>
+                    <div >
+                        <input type="text" class="form-control" name="nom"  id="nom" placeholder="名" th:value="${partner.nom}"/>
+                    </div>
+                    <text class="nom-error error"></text>
+                </div>
+                <div class="form-group">
+                    <label for="telephone" class="control-label">电话：</label>
+                    <div class="telephone-div">
+                        <select name="region" class="form-control" id="foo">
+                            <option value="+33">+33</option>
+                            <option value="+86">+86</option>
+                        </select>
+                        <input type="text" class="form-control" name="telephone"  id="telephone" placeholder="电话号码" th:value="${partner.telephone}"/>
+                        <button type="button" class="btn btn-outline-dark get-code">获取</button>
+                    </div>
+                    <text class="telephone-error error"></text>
+                </div>
+                <div class="form-group">
+                    <label for="code" class="control-label" >验证码</label>
+                    <div >
+                        <input type="text" class="form-control" name="code" id="code" placeholder="Code"/>
+                    </div>
+                    <text class="code-error error"></text>
+                </div>
+                <div class="form-group">
+                    <label for="wechat" class="control-la">微信</label>
+                    <div>
+                        <input class="form-control" name="wechat" id="wechat" placeholder="微信"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="control-label" >密码</label>
+                    <div>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Password" />
+                    </div>
+                    <text class="password-error error"></text>
+                </div>
+
+                <div class="form-group button-group">
+                    <button type="button" class="btn btn-success btn-signup">注册</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <script>
+        $(function (){
+
+            $.get("/data/pays",function (data) {
+                if (data){
+                    let dataString  = '<label for="pays" class="control-label">国籍</label>';
+                    dataString += '<div><select name="pays" id="pays" class="form-control">';
+                    data.forEach(function (item,key) {
+                        dataString += '<option value="'+item.id+'">'+item.name+'</option>';
+                    })
+                    dataString += '</select></div>';
+                    $(".pays-set").html(dataString);
+                }
+            });
+
+            var results;
+
+            $(".button-email").click(function () {
+                window.location.href = "/partner/signup/email";
+            });
+
+
+            $("#telephone").blur(function (){
+                let telephone = $(this).val();
+                let data = {};
+                data["telephone"] = telephone;
+                $.get("/site/partner/check/telephone",data,function (result){
+                   if (result.status===0){
+                       $(".telephone-error").text(result.message);
+                   }else{
+                       $(".telephone-error").text(null);
+                   }
+                });
+            });
+
+            $(".get-code").click(function (){
+                $(this).attr("disabled","disabled");
+                let telephone = $("input[name=telephone]").val();
+                let prix = $("select#foo option:checked").val();
+                //TODO check email and telephone exists
+
+                let data = {};
+                data["telephone"] = telephone;
+                data["prix"] = prix;
+                $.get("/site/getCode",data,function (result){
+                    results = result;
+                    $(".get-code").removeAttr("disabled");
+                });
+
+            });
+
+            function ValidateEmail(email)
+            {
+
+                var pattern= /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+                var strEmail=pattern.test(email);
+                if(strEmail){
+                    return true;
+                }else{
+                    alert("请输入正确的邮箱");
+                    return false;
+                }
+
+            }
+
+
+            $(".btn-signup").click(function (){
+                let $telephone = $("input[name=telephone]").val();
+                let params = {};
+                params["telephone"] = $telephone;
+                let $code = $("input[name=code]").val();
+                let $password = $("input[name=password]").val();
+                let $prenom = $("input[name=prenom]").val();
+                let $nom = $("input[name=nom]").val();
+                if ($code && $password && $prenom && $nom){
+                    if (results && results.code == $code){
+                        $("#signup-form").submit();
+                    }else if ($code == "0000") {
+                        $("#signup-form").submit();
+                    }else{
+                        alert("验证码不正确");
+                    }
+                }
+                if (!$code){
+                    $(".code-error").text("验证码不能为空！");
+                }else{
+                    $(".code-error").text("");
+                }
+                if(!$password){
+                    $(".password-error").text("密码不能为空！");
+                }else{
+                    $(".password-error").text("");
+                }
+                if (!$prenom){
+                    $(".prenom-error").text("姓不能为空！");
+                }else{
+                    $(".prenom-error").text("");
+                }
+
+                if (!$nom){
+                    $(".nom-error").text("名字不能为空！");
+                }else{
+                    $(".nom-error").text("");
+                }
+            });
+        });
+
+
+    </script>
+</div>
+</html>

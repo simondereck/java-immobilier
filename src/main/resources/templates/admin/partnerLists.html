@@ -1,0 +1,292 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="admin-partners-div">
+        <div class="admin-partner-title"><h3>业主列表</h3></div>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>性别</th>
+                        <th>姓</th>
+                        <th>名</th>
+                        <th>邮箱</th>
+                        <th>电话</th>
+                        <th>创建时间</th>
+                        <th>更新时间</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                <tr>
+                    <form id="search-form">
+                        <th>
+                            <select name="order" class="form-control">
+                                <option value="0">倒序</option>
+                                <option value="1">正序</option>
+                            </select>
+                        </th>
+                        <th>
+                            <select name="sex" class="form-control">
+                                <option value="-1">----全部----</option>
+                                <option value="0">男</option>
+                                <option value="1">女</option>
+                            </select>
+                        </th>
+                        <th><input name="nom" class="form-control" /></th>
+                        <th><input name="prenom" class="form-control" /></th>
+                        <th><input name="email" class="form-control" /></th>
+                        <th><input name="telephone" class="form-control" /></th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                            <select name="status" class="form-control">
+                                <option value="-1">----全部----</option>
+                                <option value="0">屏蔽</option>
+                                <option value="1">激活</option>
+                            </select>
+                        </th>
+                        <th><button class="btn btn-success btn-search" type="button">search</button></th>
+                    </form>
+                </tr>
+                </thead>
+                <tbody id="partners-body">
+
+                </tbody>
+            </table>
+
+            <div id="pageHelper">
+
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            initPage();
+
+            $(".btn-search").click(function () {
+               initPage();
+            });
+
+            function initPage(url) {
+                let pathUrl = url?url:"/admin/data/partners"
+                let dataArray = $("#search-form").serializeArray();
+                let params = {};
+                for (let i in dataArray){
+                    if (dataArray[i].value!=null)
+                        params[dataArray[i].name] = dataArray[i].value;
+                }
+                $.post(pathUrl,params,function (data) {
+                    if (data.status==1){
+                        if (data.partners){
+                            console.log(data.partners);
+                            let partners = data.partners;
+                            let partnersDiv = "";
+                            for (let i in partners){
+                                partnersDiv += "<tr>" +
+                                "   <td>"+partners[i].id+"</td>";
+                                if (partners[i].sex==0){
+                                    partnersDiv +=  "   <td>男</td>"
+                                }else{
+                                    partnersDiv +=  "   <td>女</td>"
+                                }
+                                partnersDiv +=  "   <td>"+partners[i].nom+"</td>";
+                                partnersDiv +=  "   <td>"+partners[i].prenom+"</td>";
+                                partnersDiv +=  "   <td>"+partners[i].email+"</td>";
+                                partnersDiv +=  "   <td>"+partners[i].telephone+"</td>";
+                                partnersDiv +=  "   <td>"+partners[i].ctime+"</td>";
+                                partnersDiv +=  "   <td>"+partners[i].utime+"</td>";
+                                if (partners[i].status==0) {
+                                    partnersDiv +=  "   <td>屏蔽</td>";
+                                }else{
+                                    partnersDiv +=  "   <td>激活</td>"
+                                }
+                                partnersDiv += "     <td>" +
+                                    "   <span><a href='/admin/partner/detail/"+partners[i].id+"'>详情</a></span>" +
+                                    "   <span><a href='/admin/partner/update/"+partners[i].id+"'>更新</a></span>" +
+                                    "   <span><a href='/admin/partner/login/"+partners[i].id+"' class='btn btn-success'>登录</a></span>" +
+                                    "   <span><span data-href='/admin/partner/delete/"+partners[i].id+"' class='btn btn-danger btn-delete'>删除</span></span>" +
+                                    "</td>";
+                                partnersDiv += "</tr>";
+                            }
+                            $("#partners-body").html(partnersDiv);
+                        }
+
+                        if (data.pageHelper){
+                            $("#pageHelper").html();
+
+                            let pageHelper = "<div class='pages-set'>" +
+                                "   <ul class='pagination'>";
+                            for (let i in data.pageHelper.pages){
+                                if (data.pageHelper.currentPage == data.pageHelper.pages[i].key-1){
+                                    pageHelper += "<li class='page-item active'>" +
+                                        "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                        "</li>";
+                                }else{
+                                    pageHelper += "<li class='page-item'>" +
+                                        "<a data-href='"+data.pageHelper.pages[i].url+"' class='page-link'>"+data.pageHelper.pages[i].key+"</a>" +
+                                        "</li>";
+                                }
+                            }
+                            pageHelper += "</ul></div>";
+                            $("#pageHelper").html(pageHelper);
+                        }
+
+                    }
+                });
+            }
+
+            $("#partners-body").on("click",".btn-delete",function () {
+               let href = $(this).attr("data-href");
+               let deleteConfirm = confirm("确定需要删除该用户和该用户的所有的房源？");
+               if (deleteConfirm){
+                   $.get(href,function (data) {
+                      if (data.status==1){
+                          alert("删除成功");
+                          initPage();
+                      }else{
+                          alert("删除失败");
+                      }
+                   });
+               }
+            });
+
+            $("#pageHelper").on("click","a",function () {
+                let href = $(this).attr("data-href");
+                initPage(href);
+            });
+
+        });
+
+
+        // $("#search-result").on("click",".annonce-status",function () {
+        //     let id = $(this).attr("data-id");
+        //     let confirmDiv = "<div class='hwwd-alart-background'>" +
+        //         "   <div class='hwwd-alart-div'>" +
+        //         "       <div class='form-group'><h3>请选择状态</h3></div>" +
+        //         "       <div class='form-group'>" +
+        //         "           <select  class='form-control annonce-status-alert' data-id='"+id+"'>" +
+        //         "               <option value='0'>隐藏</option>" +
+        //         "               <option value='1'>已出租</option>" +
+        //         "               <option value='2'>正在签约</option>" +
+        //         "               <option value='3'>空房</option>" +
+        //         "               <option value='4'>删除</option>" +
+        //         "           </select>" +
+        //         "       </div>" +
+        //         "       <div class='form-group button-group'>" +
+        //         "           <button class='btn btn-info alert-cancel'>取消</button>" +
+        //         "           <button class='btn btn-success alert-confirm'>确认</button>" +
+        //         "       </div>" +
+        //         "   </div>" +
+        //         "</div>";
+        //
+        //     $("html").append(confirmDiv);
+        //     $("body").addClass("hwwd-alert-div-show");
+        //     $("html").on("click",".alert-cancel",function () {
+        //         $("body").removeClass("hwwd-alert-div-show");
+        //         $(".hwwd-alart-background").remove().toggle();
+        //     });
+        //
+        //     $("html").on("click",".alert-confirm",function () {
+        //         let val = $(".annonce-status-alert").children("option:selected").val();
+        //         let id = $(".annonce-status-alert").attr("data-id");
+        //         $.get("/admin/house/status/update/"+id+"/"+val,function (data) {
+        //             if (data.status===1){
+        //                 $("body").removeClass("hwwd-alert-div-show");
+        //                 $(".hwwd-alart-background").remove().toggle();
+        //                 alert("更新成功");
+        //                 location.assign(window.location.href);
+        //             }else{
+        //                 alert("更新失败");
+        //             }
+        //         });
+        //     });
+        // });
+    </script>
+    <style>
+        .admin-partner-title{
+            text-align: center;
+        }
+        .admin-partners-div{
+            width: 100%;
+            padding: 50px;
+            margin: auto;
+            background-color: white;
+
+        }
+
+        .button-group{
+            text-align: right;
+        }
+
+        .pages-set{
+            text-align: center;
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .pagination{
+            margin: auto;
+            /*display: flex;*/
+        }
+
+
+        td,th{
+            padding: 10px;
+        }
+
+        th{
+            background: #0c5460;
+            color: white;
+            text-align: center;
+        }
+
+        td:nth-child(odd){
+            background-color: #80bdff;
+            text-align: center;
+        }
+        td:nth-child(even){
+            background-color: whitesmoke;
+        }
+
+        tr:nth-child(odd){
+            border: 1px solid lightgray;
+        }
+        tr:nth-child(even){
+            border-right: 1px solid lightgray;
+            border-left: 1px solid lightgray;
+        }
+
+
+        .anonces{
+            margin-top: 50px;
+        }
+
+
+        tr .red>div,
+        tr .orange>div,
+        tr .green>div{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        tr .red>div{
+            background-color: darkred;
+        }
+
+        tr .green>div{
+            background-color: #1c7430;
+        }
+
+        tr .orange>div{
+            background-color: yellow;
+        }
+
+
+
+    </style>
+</div>
+</html>

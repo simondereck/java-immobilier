@@ -1,0 +1,140 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/nlayout" >
+    <div layout:fragment="content">
+        <div class="neuf-content">
+            <div class="neuf-header-top">
+                <div class="search-box-background">
+                    <div class="search-box">
+                        <form action="/neuf/houses">
+                            <div class="search-title form-group">
+                                <h1>海外皇地 🌸 新房 🏠</h1>
+                            </div>
+                            <div class="search-title form-group">
+                                <h4>拥有12年的房地产经验，拥有1万套新房源 🎁</h4>
+                            </div>
+                            <div class="form-group search-div form-control">
+                                <input placeholder="où" />
+                                <button class="btn btn-info">🔍</button>
+                            </div>
+                            <div class="form-group trois-elements" id="search-ext">
+                                <input class="form-control" placeholder="最低预算" name="min" type="number" />
+                                <input class="form-control" placeholder="最高预算" name="max" type="number" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="neuf-background"><img src="/img/neuf-im.jpeg" /></div>
+            </div>
+            <div>
+<!--                hosue lists -->
+            </div>
+        </div>
+        <script>
+            $(function () {
+                $.get("/neuf/houseType",function (data) {
+                    if (data.status===1){
+                        let houseTypeDiv = "<select class='form-control' >";
+                        let types = data.types;
+                        for (let i in types){
+                            houseTypeDiv += "<option value='"+(parseInt(i)+1)+"'>"+types[i]+"</option>";
+                        }
+                        houseTypeDiv += "</select>";
+                        $("#search-ext").prepend(houseTypeDiv);
+                    }
+                });
+            })
+
+        </script>
+        <style>
+
+            .neuf-header-top{
+                width: 100vw;
+                height: 100vh;
+                position: relative;
+            }
+
+            .neuf-background{
+                position: absolute;
+                width: 100vw;
+                height: 100vh;
+                top: 0;
+            }
+
+            .neuf-background img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .search-box-background{
+                background: rgba(0,0,0,0.6);
+                width: 100vw;
+                height: 100vh;
+                position: absolute;
+                z-index: 100;
+                top: 0;
+            }
+
+            .search-div{
+                display: flex;
+                justify-content: space-around;
+                height: 60px;
+                border-radius: 60px;
+                border: 3px solid bisque;
+                margin-bottom: 50px;
+            }
+
+            .search-div:hover{
+                border: 3px solid gold;
+            }
+
+            .search-div input{
+                width: 80%;
+                border: none;
+                height: 100%;
+                outline: none;
+                border-radius: 30px;
+            }
+
+            .search-box input:focus,
+            .search-div input:hover,
+            .search-div input:active{
+                border: none;
+                outline: none;
+            }
+
+            .search-title{
+                text-align: center;
+                color: white;
+                margin-bottom: 50px;
+            }
+
+            .trois-elements{
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .trois-elements input,
+            .trois-elements select{
+                width: 30%;
+            }
+
+
+
+            @media screen and (max-width: 500px) {
+                .search-box{
+                    width: 90%;
+                    margin:15vh auto auto;
+                }
+            }
+
+            @media screen and (min-width: 501px){
+                .search-box{
+                    width: 75%;
+                    margin:15vh auto auto;
+                }
+            }
+        </style>
+    </div>
+</html>

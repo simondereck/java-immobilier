@@ -1,0 +1,191 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="web-message-div">
+        <div class="user-lists">
+            <div th:each="admin,iter:${admins}">
+                <div th:data-id="${admin.id}" class="user-item" th:data-name="${admin.username}">
+                    <span th:text="${admin.username}"></span>
+                    <span th:if="${admin.permission==stage}">(实习生)</span>
+                    <span th:if="${admin.permission==normal}">(普通管理员)</span>
+                    <span th:if="${admin.permission==manage}">(金牌管理员)</span>
+                    <span th:if="${admin.permission==super}">(超级管理员)</span>
+                </div>
+            </div>
+        </div>
+        <div class="message-box-div">
+            <div class="message-box-bar" th:text="${session.user.name}" th:data-id="${session.user.id}"></div>
+            <div class="message-box" id="message-box"></div>
+            <div class="message-option">
+                <textarea class="form-control message-box-content" id="message"></textarea>
+                <button class="btn btn-success" id="btn-send">发送</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function (){
+            let selectId = $(".message-box-bar").attr("data-id");
+            let dataMessages = {};
+            $("#btn-send").click(function (){
+                let message = $("#message").val();
+                if (message!=null&&message!=""){
+                    if (message.length>255){
+                        alert("消息不能太长");
+                        return;
+                    }
+                    let data = {};
+                    data["toAid"] = selectId;
+                    data["message"] = message;
+
+                    if(dataMessages[selectId]){
+                        dataMessages[selectId][dataMessages[selectId].length] = data;
+                    }else{
+                        dataMessages[selectId][0] =  data;
+                    }
+
+                    $.post("/admin/WebMessage/sendMessage",data,function (result){
+                        console.log(result);
+                    });
+                    console.log("dataMessages",dataMessages);
+                    //set message to database ;
+                    $("#message-box").append("<div class='message-item'><div></div><div class='message-send'>"+message+"</div></div>");
+                    $("#message").val("");
+
+                }
+            });
+
+            $(".user-item").click(function (){
+                $(".message-box-bar").text($(this).attr("data-name"));
+                selectId = $(this).attr("data-id");
+                //clean data from
+                $("#message-box").empty();
+                //get all datas
+                if (dataMessages[selectId]){
+                    let chatMessage = dataMessages[selectId];
+                    console.log(chatMessage);
+                    for (let i=0;i<chatMessage.length;i++){
+                        if (chatMessage[i].toAid == selectId){
+                            $("#message-box").append("<div class='message-item'><div></div><div class='message-send'>"+chatMessage[i].message+"</div></div>");
+                        }else{
+                            $("#message-box").append("<div class='message-item'><div class='message-recvi'>"+chatMessage[i].message+"</div><div></div></div>");
+                        }
+                    }
+                }else{
+                    dataMessages[selectId] = [];
+                    let url = "/admin/WebMessage/getMesage/" + selectId;
+                    $.get(url,function (result){
+                        console.log(result);
+                        console.log(selectId);
+                        if (result.length>0){
+                            for (let i=0;i<result.length;i++){
+                                let chatMessage = { "toAid":result[i].toAid,"message":result[i].message};
+                                dataMessages[selectId][i] = chatMessage;
+                                if (chatMessage.toAid==selectId){
+                                    $("#message-box").append("<div class='message-item'><div></div><div class='message-send'>"+chatMessage.message+"</div></div>");
+                                }else{
+                                    $("#message-box").append("<div class='message-item'><div class='message-recvi'>"+chatMessage.message+"</div><div></div></div>");
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <style>
+        .web-message-div{
+            width: 100%;
+            /*height: 83vh;*/
+            display: flex;
+            /*margin-bottom: 80px;*/
+        }
+
+        .message-box-div{
+            width: 75vw;
+            height: 100%;
+        }
+
+        .message-box-bar{
+            background-color: white;
+            padding: 10px;
+        }
+
+        .user-lists{
+            width: 25vw;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            overflow-y: scroll;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .user-lists::-webkit-scrollbar {
+            display: none;
+        }
+
+        .message-box{
+            width: 100%;
+            height: 70vh;
+            background-color: rgba(0,0,0,0.6);
+            padding: 20px;
+        }
+
+
+        .message-option{
+            display: flex;
+            width: 75vw;
+            height: 15vh;
+            background-color: #e4606d;
+        }
+        .message-item{
+            display: flex;
+            justify-content: space-between;
+        }
+        .message-send{
+            position: relative;
+            padding: 10px 20px 10px 20px;
+            max-width: 55vw;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid transparent;
+            box-shadow: 0px 5px 5px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
+            right: 20px;
+        }
+
+        .message-recvi{
+            position: relative;
+            padding: 10px 20px 10px 20px;
+            max-width: 55vw;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid transparent;
+            box-shadow: 0px 5px 5px rgba(0,0,0,0.4);
+            margin-bottom: 20px;
+            left: 20px;
+        }
+
+        .message-box-content{
+            border-radius: 0;
+            border:0px solid transparent;
+        }
+
+        #btn-send{
+            border-radius: 0;
+            border:0 solid transparent;
+            min-width: 150px;
+        }
+
+
+        .user-item{
+            padding: 10px;
+            text-align: center;
+            color: whitesmoke;
+            cursor: pointer;
+            border-bottom:1px gray solid;
+        }
+
+    </style>
+</div>
+</html>

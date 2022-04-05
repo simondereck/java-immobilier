@@ -1,0 +1,137 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/layout" >
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/site/more.css}" />
+    <link th:href="@{/css/map/map-annonces.css}" rel="stylesheet" />
+    <link th:href="@{/css/hwwd-image-display.css}" rel="stylesheet" />
+    <script th:src="@{/js/hwwd-image-display.js}"></script>
+
+    <div class="more-div" th:type="${type}" th:data-id="${id}">
+        <div class="more-div-title"><h3>所有房源</h3></div>
+        <div>
+            <div class="location-details" id="location-details">
+
+            </div>
+            <div id="pageHelper">
+
+            </div>
+
+        </div>
+    </div>
+    <script>
+        $(function () {
+
+            let type = $(".more-div").attr("type");
+            let id = $(".more-div").attr("data-id");
+            let url = "/site/search/data/"+type+"/"+id;
+            initPage(url);
+            console.log(url);
+
+            $(".location-details").on("click",".location-detail-item",function (){
+                let id = $(this).attr("data-id");
+                window.location.assign("/location/house/detail/"+id+".html");
+            });
+
+            function initPage(url){
+                Loadding();
+                $.get(url,function (data) {
+                    console.log(data);
+                    if (data.status===1){
+                        if (data.annonces){
+                            let annonces = data.annonces;
+                            let villes = data.villes;
+                            let annonceDiv = "";
+                            $("#location-details").html("");
+                            for (let i in annonces){
+                                if (i%4===0){
+                                    annonceDiv += "<div class='location-row'>";
+                                    for (let j=0;j<4;j++){
+                                        let m = parseInt(i) + parseInt(j);
+                                        if (annonces[m]){
+                                            annonceDiv += "<div  class='location-detail-item' data-id='"+annonces[m].id+"'>";
+
+                                            if (annonces[m].images && annonces[m].images[0]){
+                                                annonceDiv += "<div><img src='"+annonces[m].images[0]+"' /></div>"
+                                            }else{
+                                                annonceDiv += "<div><img src='/img/default.jpg' /></div>"
+                                            }
+
+                                            annonceDiv += "<div class='location-detail-item-desc'>";
+
+                                            if (annonces[m].location){
+                                                annonceDiv += "<div class='title'>"+villes[annonces[m].location+''].name+"</div>";
+                                            }
+
+                                            if (annonces[m].furniture){
+                                                annonceDiv += "<div class='title'>家具齐全 "+ annonces[m].size + " 平</div>";
+                                            }else{
+                                                annonceDiv += "<div class='title'>不带家具 "+ annonces[m].size + " 平</div>";
+                                            }
+
+                                            annonceDiv += "<div>起租时间：" + annonces[m].sdate + "</div>";
+                                            annonceDiv += "<div>价格：" + annonces[m].price + "</div>";
+
+                                            annonceDiv += "</div></div>";
+                                        }
+
+                                    }
+                                    annonceDiv += "</div>";
+                                }
+                            }
+                            $("#location-details").append(annonceDiv);
+                        }
+
+
+                        if (data.pageHelper){
+                            console.log(data.pageHelper);
+                            $("#pageHelper").html("");
+                            let pageHelper = "<div class='pages-set'>\n" +
+                                "<ul class='pagination'>";
+                            let pages = data.pageHelper.pages;
+                            if (pages){
+                                for (let k in pages){
+                                    let current = data.pageHelper.currentPage + 1 ;
+                                    if (current==pages[k].key){
+                                        pageHelper +=   "<li  class='page-item active'>" +
+                                            "   <a data-href='"+pages[k].url+"' class='page-link'>"+pages[k].key+"</a>" +
+                                            "</li>";
+                                    }else{
+                                        pageHelper +=   "<li  class='page-item'>" +
+                                            "   <a data-href='"+pages[k].url+"' class='page-link'>"+pages[k].key+"</a>" +
+                                            "</li>";
+                                    }
+
+                                }
+                            }
+                            pageHelper += "</ul></div>";
+                            $("#pageHelper").append(pageHelper);
+                        }
+                    }else{
+                        $("#location-details").html("");
+                        $("#pageHelper").html("");
+                    }
+                });
+                stopLoadding();
+            }
+
+            $("#pageHelper").on("click","a",function () {
+                let href = $(this).attr("data-href");
+                initPage(href);
+            });
+
+            $(".rtype").change(function () {
+                initPage();
+            });
+        });
+
+
+    </script>
+    <style>
+        .more-div{
+            margin-bottom: 50px;
+        }
+    </style>
+</div>
+</html>

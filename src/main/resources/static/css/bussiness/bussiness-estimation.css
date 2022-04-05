@@ -1,0 +1,171 @@
+/*moblie*/
+@media screen and (min-width: 501px){
+    .estimate-form{
+        display: flex;
+    }
+
+    .estimate-content-form{
+        width: 60vw;
+        height: calc( 100vh - 72px );
+        background-color: white;
+        padding: 50px;
+        overflow-y: scroll;
+    }
+
+    #map{
+        width: 40vw;
+        height: calc( 100vh - 72px );
+        background-color: cadetblue;
+    }
+}
+
+@media screen and (max-width: 500px){
+    /*.estimate-form{*/
+    /*    display: flex;*/
+    /*}*/
+
+    .estimate-content-form{
+        width: 100vw;
+        height: calc( 60vh - 72px );
+        background-color: white;
+        padding: 50px;
+        overflow-y: scroll;
+    }
+
+    #map{
+        width: 100vw;
+        height: 40vh;
+        background-color: cadetblue;
+    }
+}
+
+body{
+    overflow: hidden;
+    height: 100vh;
+}
+
+.step-header h2{
+    text-align: center;
+    color: #0c5460;
+}
+
+.step-2,.step-3,.step-4,.step-5,.step-6{
+    display: none;
+}
+
+.loading-group{
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin: auto;
+}
+
+
+.select-item{
+    display: inline-table;
+    padding: 15px;
+    border-radius: 5px;
+    border: 2px solid black;
+    margin-bottom: 20px;
+    cursor: pointer;
+    min-width: 80px;
+    text-align: center;
+}
+
+.selects .active,.select-item:hover{
+    background-color: #28a745!important;
+    color: white;
+    border: 2px solid #28a745!important;
+}
+
+
+.search-input{
+    background-image: url('/img/searchicon.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding-left: 40px;
+    margin-bottom: 0;
+}
+
+#search-table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ddd;
+    font-size: 18px;
+}
+
+#search-table th, #search-table td {
+    text-align: center;
+    padding: 5px;
+}
+
+#search-table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+#search-table tr.header, #search-table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+
+
+.content-frame{
+    height: calc( 100vh - 72px );
+}
+.footer{
+    display: none;
+}
+
+.estimation-price-item{
+    padding: 10px;
+    display: flex;
+}
+
+.estimation-price-item span {
+    margin: 5px;
+    padding: 5px;
+}
+
+.estimation-item{
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #f5f5f5;
+    cursor: pointer;
+}
+
+.estimation-item:hover{
+    box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+}
+
+
+
+#results-demo .estimation-item{
+    display: inline-table;
+    margin-bottom: 20px;
+    margin-right:20px;
+    padding: 30px;
+    background: cornsilk;
+}
+
+#results-demo label{
+    min-width: 80px;
+}
+.slider-div{
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+#slider{
+    width: 80%;
+}
+
+#estimation-detail-div{
+    padding: 30px;
+    display: none;
+    text-align: center;
+}
+
+

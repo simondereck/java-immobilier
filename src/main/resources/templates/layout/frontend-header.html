@@ -1,0 +1,75 @@
+<div class="frontend-header" xmlns:th="http://www.w3.org/1999/xhtml" layout:fragment="frontend-header"
+     xmlns:layout="http://www.w3.org/1999/xhtml" th:remove="tag">
+    <a class="navbar-brand" href="/">
+        <img src="/img/logo.svg" width="30" height="30" class="d-inline-block align-top" alt="" />
+        海外皇地
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto nav-flex-icons">
+            <li class="nav-item">
+                <a class="nav-link" href="/site/zh">
+                    <img src="/img/zh.png"  height="15" class="d-inline-block align-top" alt="">
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/site/fr">
+                    <img src="/img/fr.png"  height="15" class="d-inline-block align-top" alt="">
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/">买卖</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/neuf/index">新房</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/site">租赁</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/site/page/2">招贤纳才</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/site/page/1">投资</a>
+            </li>
+
+            <li class="nav-item dropdown" th:unless="${session.user}">
+                <a class="nav-link dropdown-toggle" href="/bussiness/platform" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    登录
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/bussiness/login">房屋买卖</a>
+                    <a class="dropdown-item" href="/partner/login">房屋租赁</a>
+                    <a class="dropdown-item" href="/bussiness/login">按需买房</a>
+                    <a class="dropdown-item" href="/user/login">按需租房</a>
+                    <a class="dropdown-item" href="/bussiness/login">房屋管理</a>
+                    <a class="dropdown-item" href="#">短租宾馆</a>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/site/page/3">关于我们</a>
+            </li>
+
+            <li class="nav-item" th:if="${session.user}">
+                <a class="nav-link" href="/user/center" th:if="${session.user.type==1}" th:text="个人中心"></a>
+                <a class="nav-link" href="/partner/center" th:if="${session.user.type==2}" th:text="业主中心"></a>
+                <a class="nav-link" href="/admin" th:if="${session.user.type==3}" th:text="管理员中心"></a>
+            </li>
+            <view th:unless="${session.admin}" th:remove="tag">
+                <li class="nav-item" th:if="${session.user}">
+                    <a class="nav-link" href="/site/logout" th:text="${'退出('+session.user.name+')'}"></a>
+                </li>
+            </view>
+            <li class="nav-item" th:if="${session.admin}">
+                <a class="nav-link" href="/site/admin" th:text="${'返回管理员('+session.admin.name+')'}"></a>
+            </li>
+        </ul>
+    </div>
+</div>

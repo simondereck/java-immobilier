@@ -1,0 +1,110 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <div class="lists-div">
+        <div th:if="${applys}" th:remove="tag">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>姓,名</th>
+                    <th>电话</th>
+                    <th>邮箱</th>
+                    <th>微信</th>
+                    <th>创建时间</th>
+                    <th>类型</th>
+                    <th>状态</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <div th:each="apply,iter:${applys}">
+                    <tr class="admin-item">
+                        <td th:text="${apply.id}"></td>
+                        <td th:text="${apply.nom + ' ' + apply.prenom}"></td>
+                        <td th:text="${apply.telephone}"></td>
+                        <td th:text="${apply.email}"></td>
+                        <td th:text="${apply.wechat}"></td>
+                        <td th:text="${apply.ctime}"></td>
+                        <view th:if="${apply.type==1}" th:remove="tag">
+                            <td>学生创业</td>
+                        </view>
+                        <view th:if="${apply.type==2}" th:remove="tag">
+                            <td>加盟</td>
+                        </view>
+
+                        <view th:if="${apply.status==1}" th:remove="tag">
+                            <td>已处理</td>
+                        </view>
+                        <view th:if="${apply.status==0}" th:remove="tag">
+                            <td style="background-color: darkred;color: white;">未处理</td>
+                        </view>
+                        <td><a th:href="@{'/admin/apply/update/'}+${apply.id}">更新</a></td>
+                    </tr>
+                </div>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${pageHelper}" class="pages-set">
+            <div th:if="${pageHelper.totalPage>0}" th:remove="tag">
+                <ul class="pagination">
+                    <div th:each="page,iter:${pageHelper.pages}" th:remove="tag">
+                        <li  class="page-item"><a th:text="${page.key}" th:href="${page.url}" class="page-link"></a></li>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <style>
+
+        .lists-div{
+            margin: auto;
+            width: 90vw;
+            padding: 30px;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+            background: white;
+            overflow: scroll;
+        }
+
+
+        .button-group button{
+            width:100%;
+        }
+
+        .form-group h1{
+            text-align: center;
+        }
+
+        td,th{
+            text-align: center;
+            padding: 10px;
+            min-width: 120px;
+        }
+        thead{
+            background-color: #0c5460;
+            color: white;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: whitesmoke;
+        }
+        tbody tr:nth-child(even) {
+            background-color: lightgray;
+        }
+
+        .pages-set{
+            text-align: center;
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .pagination{
+            margin: auto;
+            /*display: flex;*/
+        }
+
+    </style>
+</div>
+</html>

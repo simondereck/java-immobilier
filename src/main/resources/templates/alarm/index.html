@@ -1,0 +1,135 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/alayout" >
+<div layout:fragment="content">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <div class="alarm-div">
+        <div class="alarm-div-title"><h3>报警系统</h3></div>
+        <div class="alarm-admin-div">
+            <div class="progress-item">
+                <label>总房源：(<span th:text="${alarm.totalAnnonces}"></span>)</label>
+                <div class="progress" style="height: 40px;">
+                    <div class="progress-bar bg-info" role="progressbar"
+                         aria-valuemin="0"
+                         th:text="${alarm.totalAnnonces}"
+                         th:aria-valuemax="${alarm.totalAnnonces}"
+                         th:style="${'width:'+alarm.totalAnnonces/alarm.totalAnnonces*100 + '%'}"
+                         th:aria-valuenow="${alarm.totalAnnonces}"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <label>已租房源：(<span th:text="${alarm.successAnnonces}"></span>)</label>
+                <div class="progress"  style="height: 40px;">
+                    <div class="progress-bar bg-success" role="progressbar"
+                         aria-valuemin="0"
+                         th:text="${alarm.successAnnonces}"
+                         th:aria-valuemax="${alarm.totalAnnonces}"
+                         th:style="${'width:'+alarm.successAnnonces/alarm.totalAnnonces*100 + '%'}"
+                         th:aria-valuenow="${alarm.successAnnonces}"></div>
+                </div>
+
+            </div>
+            <div class="progress-item">
+                <label>正在签约房源：(<span th:text="${alarm.contractAnnonces}"></span>)</label>
+                <div class="progress"  style="height: 40px;">
+                    <div class="progress-bar bg-warning" role="progressbar"
+                         aria-valuemin="0"
+                         th:text="${alarm.contractAnnonces}"
+                         th:aria-valuemax="${alarm.totalAnnonces}"
+                         th:style="${'width:'+alarm.contractAnnonces/alarm.totalAnnonces*100 + '%'}"
+                         th:aria-valuenow="${alarm.contractAnnonces}"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <label>空房源:(<span th:text="${alarm.emptyAnnonces}"></span>)</label>
+                <div class="progress"  style="height: 40px;">
+                    <div class="progress-bar bg-danger" role="progressbar"
+                         aria-valuemin="0"
+                         th:text="${alarm.emptyAnnonces}"
+                         th:aria-valuemax="${alarm.totalAnnonces}"
+                         th:style="${'width:'+alarm.emptyAnnonces/alarm.totalAnnonces*100 + '%'}"
+                         th:aria-valuenow="${alarm.emptyAnnonces}"></div>
+                </div>
+            </div>
+        </div>
+        <div id="container" style="width: 100%; min-height: 400px; margin: 0 auto"></div>
+        <script>
+
+            $(document).ready(function() {
+                $.get("/admin/alarm/detail",function (alarm) {
+                    var chart = {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    };
+                    var title = {
+                        text: alarm.date + ' 各房源占有比例' + '（更新于：' + alarm.utime + ')'
+                    };
+                    var tooltip = {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    };
+                    var plotOptions = {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}%</b>: {point.percentage:.1f} %',
+                                style: {
+                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                }
+                            }
+                        }
+                    };
+                    var series= [{
+                        type: 'pie',
+                        name: 'Browser share',
+                        data: [
+                            // ['总房源',   alarm.totalAnnonces],
+                            ['已租房源', alarm.successAnnonces],
+                            ['正在签约房源', alarm.contractAnnonces],
+                            ['空房源',alarm.emptyAnnonces]
+
+                        ]
+                    }];
+
+                    var colors = [
+                        '#1c7430', 'yellow', 'darkred',
+                    ];
+
+                    var json = {};
+                    json.chart = chart;
+                    json.colors = colors;
+                    json.title = title;
+                    json.tooltip = tooltip;
+                    json.series = series;
+                    json.plotOptions = plotOptions;
+                    $('#container').highcharts(json);
+                })
+            });
+        </script>
+    </div>
+    <style>
+        .alarm-div-title{
+            text-align: center;
+        }
+        .alarm-div{
+            width: 70%;
+            padding: 50px;
+            margin: auto;
+            background-color: white;
+        }
+        .button-group{
+            text-align: right;
+        }
+
+        .progress-item{
+            margin-bottom: 40px;
+        }
+
+
+    </style>
+</div>
+</html>
